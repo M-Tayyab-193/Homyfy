@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Circular', Helvetica, Arial, sans-serif;
+  }
+  
+  body {
+    @apply text-airbnb-dark bg-white m-0 p-0;
+    color-scheme: light;
+  }
+  
+  body, #root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-airbnb-primary text-white px-6 py-3 rounded-lg font-medium 
+    hover:bg-opacity-90 transition-all duration-300 ease-in-out shadow-button;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-airbnb-dark px-6 py-3 rounded-lg font-medium border border-gray-300
+    hover:border-black transition-all duration-300 ease-in-out;
+  }
+  
+  .card {
+    @apply bg-white rounded-xl overflow-hidden shadow-card hover:shadow-lg transition-shadow duration-300;
+  }
+  
+  .container-custom {
+    @apply px-6 md:px-10 lg:px-20 mx-auto;
+  }
+  
+  .input-field {
+    @apply w-full p-3 border border-gray-300 rounded-md focus:outline-none
+    focus:ring-2 focus:ring-airbnb-primary focus:border-transparent;
+  }
+}
+
+/* Animation for page transitions */
+.page-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+.page-exit {
+  opacity: 1;
+}
+.page-exit-active {
+  opacity: 0;
+  transition: opacity 300ms;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #bbb;
+}
+
+/* Map styles */
+.mapboxgl-map {
+  border-radius: 12px;
+}
+
+/* Date picker customization */
+.date-range-picker {
+  @apply font-sans;
+}
+
+.date-range-picker .rdrDayNumber span {
+  @apply text-airbnb-dark;
+}
+
+.date-range-picker .rdrDayToday .rdrDayNumber span:after {
+  @apply bg-airbnb-primary;
+}
+
+.date-range-picker .rdrStartEdge,
+.date-range-picker .rdrEndEdge,
+.date-range-picker .rdrInRange {
+  @apply bg-airbnb-primary bg-opacity-20;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

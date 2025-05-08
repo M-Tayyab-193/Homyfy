@@ -4,13 +4,14 @@ import { useListings } from '../contexts/ListingsContext'
 import ListingGrid from '../components/listings/ListingGrid'
 import PropertyFilters from '../components/listings/PropertyFilters'
 import Hero from '../components/ui/Hero'
+import { useMemo } from 'react'
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 
 function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const { fetchListings, totalCount } = useListings()
   const [currentListings, setCurrentListings] = useState([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const listingsPerPage = 12
 
   // Get filter params from URL
@@ -21,8 +22,13 @@ function HomePage() {
   const maxPrice = searchParams.get('maxPrice') || ''
 
   useEffect(() => {
-    document.title = 'Homyfy | Vacation rentals, cabins, beach houses & more'
+    document.title = 'Airbnb Clone | Vacation rentals, cabins, beach houses & more'
   }, [])
+  
+  const amenitiesParam = searchParams.get('amenities')
+  const selectedAmenities = useMemo(() => {
+    return amenitiesParam ? amenitiesParam.split(',') : []
+  }, [amenitiesParam])
 
   useEffect(() => {
     const loadListings = async () => {
@@ -31,7 +37,8 @@ function HomePage() {
         type: activeFilter,
         minPrice: minPrice || undefined,
         maxPrice: maxPrice || undefined,
-        sort: sortType
+        sort: sortType,
+        amenities: selectedAmenities.length ? selectedAmenities : undefined
       }
       try {
         const listings = await fetchListings(currentPage, listingsPerPage, filters)
@@ -43,7 +50,7 @@ function HomePage() {
       setLoading(false)
     }
     loadListings()
-  }, [currentPage, activeFilter, sortType, minPrice, maxPrice, fetchListings])
+  }, [currentPage, activeFilter, sortType, minPrice, maxPrice, selectedAmenities, fetchListings])
 
   const totalPages = Math.ceil(totalCount / listingsPerPage)
 
@@ -86,10 +93,11 @@ function HomePage() {
     updateSearchParams({ filter, page: '1' })
   }
 
-  const handlePriceChange = (min, max) => {
+  const handlePriceChange = (min, max, selectedAmenities) => {
     updateSearchParams({ 
       minPrice: min || '',
       maxPrice: max || '',
+      amenities: selectedAmenities?.join(',') || '',
       page: '1'
     })
   }

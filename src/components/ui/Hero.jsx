@@ -62,13 +62,16 @@ function Hero() {
         </div>
         
         <div className="mt-10">
-          <button 
-            onClick={handleHostClick}
-            className="bg-white text-airbnb-dark px-6 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-colors shadow-lg"
-          >
-            {user?.user_metadata?.role === 'host' ? 'Manage Your Listings' : 'Become a Host'}
-          </button>
-        </div>
+  {user?.user_metadata?.role === 'host' && (
+    <button 
+      onClick={handleHostClick}
+      className="bg-white text-airbnb-dark px-6 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-colors shadow-lg"
+    >
+      Manage your Listings
+    </button>
+  )}
+</div>
+
       </div>
     </div>
   )

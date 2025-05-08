@@ -11,5 +11,14 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     detectSessionInUrl: true,
   },
 })
-
+export const signInWithGoogle = async () => {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+  })
+   if (error) {
+    console.error('Google sign-in error:', error);
+  } else {
+    console.log('OAuth redirect URL:', data?.url);
+  }
+}
 export default supabase

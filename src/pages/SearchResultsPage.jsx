@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import ListingGrid from '../components/listings/ListingGrid'
 import PropertyFilters from '../components/listings/PropertyFilters'
@@ -16,47 +16,36 @@ function SearchResultsPage() {
 
   // Get all params from URL
   const location = searchParams.get('location') || ''
-  const checkIn = searchParams.get('checkIn') 
-    ? new Date(searchParams.get('checkIn')) 
-    : new Date()
-  const checkOut = searchParams.get('checkOut')
-    ? new Date(searchParams.get('checkOut'))
-    : new Date(new Date().setDate(new Date().getDate() + 7))
   const guests = parseInt(searchParams.get('guests') || '1', 10)
   const activeFilter = searchParams.get('filter') || 'all'
   const currentPage = parseInt(searchParams.get('page') || '1', 10)
   const sortType = searchParams.get('sort') || ''
   const minPrice = searchParams.get('minPrice') || ''
   const maxPrice = searchParams.get('maxPrice') || ''
+  const amenitiesParam = searchParams.get('amenities')
+  
+  const selectedAmenities = useMemo(() => {
+    return amenitiesParam ? amenitiesParam.split(',') : []
+  }, [amenitiesParam])
 
   useEffect(() => {
     document.title = `${location || 'All locations'} - Airbnb Clone`
     fetchListings()
-  }, [location, guests, activeFilter, currentPage, sortType, minPrice, maxPrice])
+  }, [location, guests, activeFilter, currentPage, sortType, minPrice, maxPrice, selectedAmenities])
 
   const fetchListings = async () => {
     setLoading(true)
     try {
       let query = supabase
-        .from('listings')
-        .select(`
-          *,
-          users (
-            id,
-            fullname,
-            email
-          ),
-          listing_images (
-            image_url
-          )
-        `, { count: 'exact' })
+        .from('filtered_listings_mv')
+        .select('*', { count: 'exact' })
 
       // Apply location filter if provided
       if (location) {
         query = query.ilike('location', `%${location}%`)
       }
 
-      // Apply guest count filter - ensure guest_count is exactly equal to or greater
+      // Apply guest count filter
       if (guests > 0) {
         query = query.eq('guest_count', guests)
       }
@@ -72,6 +61,11 @@ function SearchResultsPage() {
       }
       if (maxPrice) {
         query = query.lte('price_value', parseFloat(maxPrice))
+      }
+
+      // Apply amenities filter
+      if (selectedAmenities.length > 0) {
+        query = query.contains('amenity_names', selectedAmenities)
       }
 
       // Apply sorting
@@ -90,6 +84,8 @@ function SearchResultsPage() {
             query = query.order('rating_overall', { ascending: true })
             break
         }
+      } else {
+        query = query.order('created_at', { ascending: false })
       }
 
       // Calculate pagination
@@ -99,7 +95,17 @@ function SearchResultsPage() {
 
       const { data, error, count } = await query
 
-      if (error) throw error
+      if (error) {
+        console.error('Error fetching listings:', error)
+        throw error
+      }
+
+      if (!data) {
+        console.warn('No data returned from query')
+        setResults([])
+        setTotalCount(0)
+        return
+      }
 
       // Transform the data
       const transformedData = data.map(listing => ({
@@ -114,11 +120,11 @@ function SearchResultsPage() {
         location: listing.location,
         rating: listing.rating_overall,
         reviewCount: listing.reviews_count,
-        images: listing.listing_images.map(img => img.image_url),
+        images: listing.image_urls,
         host: {
-          id: listing.users?.id,
-          name: listing.users?.fullname,
-          email: listing.users?.email
+          name: listing.host_name,
+          email: listing.host_email,
+          avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${listing.host_email}`
         }
       }))
 
@@ -149,10 +155,11 @@ function SearchResultsPage() {
     updateSearchParams({ filter, page: '1' })
   }
 
-  const handlePriceChange = (min, max) => {
+  const handlePriceChange = (min, max, amenities) => {
     updateSearchParams({ 
       minPrice: min || '',
       maxPrice: max || '',
+      amenities: amenities?.join(',') || '',
       page: '1'
     })
   }
@@ -165,13 +172,6 @@ function SearchResultsPage() {
     updateSearchParams({ page: newPage.toString() })
   }
 
-  // Format date range for display
-  const formatDate = (date) => {
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-  }
-  
-  const dateRangeDisplay = `${formatDate(checkIn)} - ${formatDate(checkOut)}`
-
   return (
     <div className="container-custom py-6">
       {/* Search Summary */}
@@ -180,9 +180,6 @@ function SearchResultsPage() {
           <h1 className="text-2xl font-semibold mb-1">
             {totalCount} {totalCount === 1 ? 'place' : 'places'} in {location || 'all locations'}
           </h1>
-          <p className="text-airbnb-light">
-            {dateRangeDisplay} · {guests} {guests === 1 ? 'guest' : 'guests'}
-          </p>
         </div>
         
         <button
@@ -209,6 +206,7 @@ function SearchResultsPage() {
         currentSort={sortType}
         minPrice={minPrice}
         maxPrice={maxPrice}
+        selectedAmenities={selectedAmenities}
         onFilterChange={handleFilterChange}
         onPriceChange={handlePriceChange}
         onSortChange={handleSortChange}

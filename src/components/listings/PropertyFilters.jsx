@@ -40,7 +40,7 @@ function PropertyFilters({
   }
 
   const handlePriceSubmit = () => {
-    onPriceChange(minPrice, maxPrice)
+    onPriceChange(minPrice, maxPrice, selectedAmenities)
     setShowFilters(false)
   }
 

@@ -76,13 +76,22 @@ function UserMenu({ onClose }) {
               </div>
             </div>
             {currentUser.user_metadata?.role === 'host' ? (
-              <Link 
-                to="/hosting" 
-                className="block w-full text-left px-4 py-3 hover:bg-gray-100"
-                onClick={onClose}
-              >
-                Manage Listings
-              </Link>
+              <>
+                <Link 
+                  to="/hosting" 
+                  className="block w-full text-left px-4 py-3 hover:bg-gray-100"
+                  onClick={onClose}
+                >
+                  Manage Listings
+                </Link>
+                <Link 
+                  to="/profile" 
+                  className="block w-full text-left px-4 py-3 hover:bg-gray-100"
+                  onClick={onClose}
+                >
+                  Profile
+                </Link>
+              </>
             ) : (
               <Link 
                 to="/profile" 
@@ -103,18 +112,20 @@ function UserMenu({ onClose }) {
           >
             Wishlist
           </Link>
-          {currentUser && (
-            <Link 
-              to="/bookings" 
-              className="block w-full text-left px-4 py-3 hover:bg-gray-100"
-              onClick={onClose}
-            >
-              <div className="flex items-center">
-                <FaCalendar className="mr-2" />
-                Your Bookings
-              </div>
-            </Link>
-          )}
+          {currentUser?.user_metadata?.role === 'guest' && (
+  <Link 
+    to="/bookings" 
+    className="block w-full text-left px-4 py-3 hover:bg-gray-100"
+    onClick={onClose}
+  >
+    <div className="flex items-center">
+      <FaCalendar className="mr-2" />
+      Your Bookings
+    </div>
+  </Link>
+)}
+
+
         </div>
 
         <div className="border-t border-gray-200">

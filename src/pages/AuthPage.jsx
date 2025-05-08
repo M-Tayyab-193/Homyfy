@@ -3,10 +3,14 @@ import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { FaAirbnb, FaFacebook, FaGoogle, FaApple, FaEnvelope } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 import supabase from '../supabase/supabase'
+import { signInWithGoogle } from '../supabase/supabase'
 
 function AuthPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    role: 'guest'
+  });
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [showResetPassword, setShowResetPassword] = useState(false)
@@ -16,11 +20,19 @@ function AuthPage() {
   const location = useLocation()
   const redirectPath = location.state?.from || '/'
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
 
-    if (!email || !password) {
+    if (!formData.email || !formData.password) {
       toast.error('Please fill in all fields')
       return
     }
@@ -28,8 +40,8 @@ function AuthPage() {
     setLoading(true)
     try {
       const { data, error: loginError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+        email: formData.email,
+        password: formData.password,
       })
 
       if (loginError) {
@@ -47,19 +59,14 @@ function AuthPage() {
       const { data: userData, error: userError } = await supabase
         .from('users')
         .select('role')
-        .eq('email', email)
+        .eq('email', formData.email)
         .single()
 
       if (userError) throw userError
 
-      if (location.pathname === '/host/login' && userData.role !== 'host') {
+      if (userData.role !== formData.role) {
         await supabase.auth.signOut()
-        throw new Error('This account is not registered as a host. Please use the regular login.')
-      }
-
-      if (location.pathname === '/login' && userData.role !== 'guest') {
-        await supabase.auth.signOut()
-        throw new Error('This account is registered as a host. Please use the host login.')
+        throw new Error(`This account is registered as a ${userData.role}. Please select the correct account type.`)
       }
 
       toast.success('Successfully logged in!')
@@ -155,8 +162,9 @@ function AuthPage() {
                   </label>
                   <input
                     type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
                     className="input-field"
                     placeholder="Enter your email"
                   />
@@ -168,11 +176,42 @@ function AuthPage() {
                   </label>
                   <input
                     type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
                     className="input-field"
                     placeholder="Enter your password"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Account Type
+                  </label>
+                  <div className="flex space-x-4">
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="role"
+                        value="guest"
+                        checked={formData.role === 'guest'}
+                        onChange={handleInputChange}
+                        className="mr-2"
+                      />
+                      Guest
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="role"
+                        value="host"
+                        checked={formData.role === 'host'}
+                        onChange={handleInputChange}
+                        className="mr-2"
+                      />
+                      Host
+                    </label>
+                  </div>
                 </div>
 
                 <button
@@ -203,7 +242,7 @@ function AuthPage() {
                   <FaFacebook className="text-blue-600 mr-3" />
                   <span>Continue with Facebook</span>
                 </button>
-                <button className="w-full flex items-center justify-center py-3 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                <button className="w-full flex items-center justify-center py-3 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors" onClick={signInWithGoogle}>
                   <FaGoogle className="text-red-500 mr-3" />
                   <span>Continue with Google</span>
                 </button>

@@ -15,7 +15,6 @@ const WishlistPage = lazy(() => import('./pages/WishlistPage'))
 const AuthPage = lazy(() => import('./pages/AuthPage'))
 const SignupPage = lazy(() => import('./pages/SignupPage'))
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
-const HostAuthPage = lazy(() => import('./pages/HostAuthPage'))
 const HostingPage = lazy(() => import('./pages/HostingPage'))
 const AddPropertyPage = lazy(() => import('./pages/AddPropertyPage'))
 const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'))
@@ -37,8 +36,6 @@ function App() {
             <Route path="/login" element={<AuthPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
-            <Route path="/host/login" element={<HostAuthPage mode="login" />} />
-            <Route path="/host/signup" element={<HostAuthPage mode="signup" />} />
             <Route path="/hosting" element={<HostingPage />} />
             <Route path="/hosting/add" element={<AddPropertyPage />} />
             <Route path="*" element={<NotFoundPage />} />

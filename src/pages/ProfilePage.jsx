@@ -1,9 +1,72 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback, memo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FaUser, FaCamera, FaLock, FaSignOutAlt, FaTimes, FaTrash } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 import supabase from '../supabase/supabase'
 import axios from 'axios'
+
+// Memoized DeleteAccountModal Component
+const DeleteAccountModal = memo(({ 
+  onClose, 
+  onDelete, 
+  loading, 
+  deletePassword,
+  onPasswordChange,
+  inputRef
+}) => (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4">
+      <h3 className="text-xl font-semibold mb-4">Delete Account</h3>
+      <p className="text-airbnb-light mb-4">
+        This action cannot be undone. Please enter your password to confirm.
+      </p>
+      <input
+        type="password"
+        ref={inputRef}
+        value={deletePassword}
+        onChange={onPasswordChange}
+        className="input-field mb-4"
+        placeholder="Enter your password"
+      />
+      <div className="flex justify-end space-x-2">
+        <button
+          onClick={onClose}
+          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={onDelete}
+          className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+          disabled={loading}
+        >
+          {loading ? 'Deleting...' : 'Delete Account'}
+        </button>
+      </div>
+    </div>
+  </div>
+))
+
+// Memoized ImageModal Component
+const ImageModal = memo(({ imageUrl, email, onClose }) => (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white rounded-xl p-6 max-w-lg w-full mx-4 relative">
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+      >
+        <FaTimes size={24} />
+      </button>
+      <div className="mt-6">
+        <img
+          src={imageUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${email}`}
+          alt="Profile"
+          className="w-full h-auto rounded-lg"
+        />
+      </div>
+    </div>
+  </div>
+))
 
 function ProfilePage() {
   const [user, setUser] = useState(null)
@@ -19,7 +82,9 @@ function ProfilePage() {
     new: '',
     confirm: ''
   })
+  
   const fileInputRef = useRef(null)
+  const deletePasswordInputRef = useRef(null)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -31,7 +96,6 @@ function ProfilePage() {
         return
       }
 
-      // Fetch additional user data from the users table
       const { data: userData, error: userError } = await supabase
         .from('users')
         .select('*')
@@ -50,73 +114,72 @@ function ProfilePage() {
     fetchUser()
   }, [navigate])
 
-  const handleDeleteAccount = async () => {
-  try {
-    setLoading(true);
+  const handleDeletePasswordChange = useCallback((e) => {
+    setDeletePassword(e.target.value)
+  }, [])
 
-    // First, verify the password
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: user.email,
-      password: deletePassword
-    });
+  const handleDeleteAccount = useCallback(async () => {
+    try {
+      setLoading(true)
 
-    if (signInError) {
-      toast.error('Incorrect password');
-      return;
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: deletePassword
+      })
+
+      if (signInError) {
+        toast.error('Incorrect password')
+        return
+      }
+
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession()
+
+      if (sessionError || !session) {
+        throw new Error('Failed to retrieve access token')
+      }
+
+      const access_token = session.access_token
+
+      const response = await fetch('https://sxkihvmmokprqrrklnxp.supabase.co/functions/v1/delete-user', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${access_token}`,
+        },
+        body: JSON.stringify({ userId: user.id }),
+        mode: 'cors',
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        console.error('Error:', result.error)
+        throw new Error(result.error || 'Failed to delete account')
+      }
+
+      const { error: deleteUserError } = await supabase
+        .from('users')
+        .delete()
+        .eq('id', user.id)
+
+      if (deleteUserError) {
+        console.error('Error deleting from custom users table:', deleteUserError)
+        throw new Error('Failed to delete user from custom table')
+      }
+
+      await supabase.auth.signOut()
+      toast.success('Account deleted successfully')
+      window.location.href = '/'
+    } catch (error) {
+      toast.error('Error deleting account: ' + error.message)
+    } finally {
+      setLoading(false)
+      setShowDeleteModal(false)
     }
-
-    // Get access token from session
-    const {
-      data: { session },
-      error: sessionError,
-    } = await supabase.auth.getSession();
-
-    if (sessionError || !session) {
-      throw new Error('Failed to retrieve access token');
-    }
-
-    const access_token = session.access_token;
-
-    // Call the Edge Function to delete the user from the auth table
-    const response = await fetch('https://sxkihvmmokprqrrklnxp.supabase.co/functions/v1/delete-user', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${access_token}`,
-      },
-      body: JSON.stringify({ userId: user.id }),
-      mode: 'cors',
-    });
-
-    const result = await response.json();
-
-    if (!response.ok) {
-      console.error('Error:', result.error);
-      throw new Error(result.error || 'Failed to delete account');
-    }
-
-    // Now delete the user from the custom "users" table
-    const { error: deleteUserError } = await supabase
-      .from('users')
-      .delete()
-      .eq('id', user.id);
-
-    if (deleteUserError) {
-      console.error('Error deleting from custom users table:', deleteUserError);
-      throw new Error('Failed to delete user from custom table');
-    }
-
-    // Sign out user after successful account deletion
-    await supabase.auth.signOut();
-    toast.success('Account deleted successfully');
-    window.location.href = '/';
-  } catch (error) {
-    toast.error('Error deleting account: ' + error.message);
-  } finally {
-    setLoading(false);
-    setShowDeleteModal(false);
-  }
-}
+  }, [deletePassword, user])
   
   const handleImageUpload = async (e) => {
     const file = e.target.files?.[0]
@@ -137,7 +200,6 @@ function ProfilePage() {
 
       const imageUrl = cloudinaryRes.data.secure_url
 
-      // Update user profile image in Supabase
       const { error: updateError } = await supabase
         .from('users')
         .update({ profile_image: imageUrl })
@@ -209,59 +271,6 @@ function ProfilePage() {
       toast.error('Error logging out: ' + error.message)
     }
   }
-
-  const ImageModal = () => (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl p-6 max-w-lg w-full mx-4 relative">
-        <button
-          onClick={() => setShowImageModal(false)}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-        >
-          <FaTimes size={24} />
-        </button>
-        <div className="mt-6">
-          <img
-            src={user?.profile_image || `https://api.dicebear.com/7.x/initials/svg?seed=${user?.email}`}
-            alt={user?.fullname}
-            className="w-full h-auto rounded-lg"
-          />
-        </div>
-      </div>
-    </div>
-  )
-
-  const DeleteAccountModal = () => (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4">
-        <h3 className="text-xl font-semibold mb-4">Delete Account</h3>
-        <p className="text-airbnb-light mb-4">
-          This action cannot be undone. Please enter your password to confirm.
-        </p>
-        <input
-          type="password"
-          value={deletePassword}
-          onChange={(e) => setDeletePassword(e.target.value)}
-          className="input-field mb-4"
-          placeholder="Enter your password"
-        />
-        <div className="flex justify-end space-x-2">
-          <button
-            onClick={() => setShowDeleteModal(false)}
-            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleDeleteAccount}
-            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
-            disabled={loading}
-          >
-            {loading ? 'Deleting...' : 'Delete Account'}
-          </button>
-        </div>
-      </div>
-    </div>
-  )
 
   if (!user) return null
 
@@ -396,7 +405,6 @@ function ProfilePage() {
         </div>
       </div>
 
-      {/* Password Change Modal */}
       {showPasswordModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4">
@@ -449,8 +457,24 @@ function ProfilePage() {
         </div>
       )}
 
-      {showImageModal && <ImageModal />}
-      {showDeleteModal && <DeleteAccountModal />}
+      {showImageModal && (
+        <ImageModal
+          imageUrl={user.profile_image}
+          email={user.email}
+          onClose={() => setShowImageModal(false)}
+        />
+      )}
+
+      {showDeleteModal && (
+        <DeleteAccountModal
+          onClose={() => setShowDeleteModal(false)}
+          onDelete={handleDeleteAccount}
+          loading={loading}
+          deletePassword={deletePassword}
+          onPasswordChange={handleDeletePasswordChange}
+          inputRef={deletePasswordInputRef}
+        />
+      )}
     </div>
   )
 }

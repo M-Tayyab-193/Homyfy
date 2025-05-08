@@ -1,18 +1,45 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, memo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaAirbnb, FaGlobe, FaBars } from "react-icons/fa";
 import supabase from "../../supabase/supabase";
 import UserMenu from "../ui/UserMenu";
+
+// Memoize the UserMenu component
+const MemoizedUserMenu = memo(UserMenu);
 
 function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [profileImage, setProfileImage] = useState(null);
+  const [loadingImage, setLoadingImage] = useState(true);
 
   const navigate = useNavigate();
   const location = useLocation();
   const isHomePage = location.pathname === "/";
+
+  const fetchUserData = useCallback(async (user) => {
+    if (!user) {
+      setLoadingImage(false);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from("users")
+        .select("profile_image")
+        .eq("id", user.id)
+        .single();
+
+      if (error) throw error;
+
+      setProfileImage(data?.profile_image);
+    } catch (err) {
+      console.error("Error fetching profile image:", err);
+    } finally {
+      setLoadingImage(false);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -23,6 +50,7 @@ function Navbar() {
 
       if (error) {
         console.error("Session fetch error:", error);
+        setLoadingImage(false);
         return;
       }
 
@@ -30,33 +58,30 @@ function Navbar() {
       setCurrentUser(user);
 
       if (user) {
-        const { data, error: userError } = await supabase
-          .from("users")
-          .select("profile_image")
-          .eq("id", user.id)
-          .single();
-
-        if (userError) {
-          console.error("Error fetching profile image:", userError);
-        } else {
-          setProfileImage(data?.profile_image);
-        }
-        console.log("Profile image:", data?.profile_image);
+        fetchUserData(user);
+      } else {
+        setLoadingImage(false);
       }
     };
 
     fetchUser();
 
     const { data: listener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setCurrentUser(session?.user ?? null);
+      async (_event, session) => {
+        const user = session?.user;
+        setCurrentUser(user);
+        if (user) {
+          fetchUserData(user);
+        } else {
+          setLoadingImage(false);
+        }
       }
     );
 
     return () => {
-      listener.subscription.unsubscribe();
+      listener?.subscription.unsubscribe();
     };
-  }, []);
+  }, [fetchUserData]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -121,21 +146,28 @@ function Navbar() {
               <FaBars className="text-airbnb-dark" />
               {currentUser ? (
                 <>
-                  <img
-                    src={
-                      profileImage ||
-                      `https://api.dicebear.com/7.x/initials/svg?seed=${currentUser.email}`
-                    }
-                    alt={currentUser.email}
-                    className="w-8 h-8 rounded-full object-cover cursor-pointer"
-                  />
+                  {loadingImage ? (
+                    <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse"></div>
+                  ) : (
+                    <img
+                      src={
+                        profileImage ||
+                        `https://api.dicebear.com/7.x/initials/svg?seed=${currentUser.email}`
+                      }
+                      alt={currentUser.email}
+                      className="w-8 h-8 rounded-full object-cover cursor-pointer"
+                      loading="eager"
+                    />
+                  )}
                 </>
               ) : (
                 <div className="w-8 h-8 rounded-full bg-gray-500"></div>
               )}
             </button>
 
-            {isMenuOpen && <UserMenu onClose={() => setIsMenuOpen(false)} />}
+            {isMenuOpen && (
+              <MemoizedUserMenu onClose={() => setIsMenuOpen(false)} />
+            )}
           </div>
         </div>
       </div>

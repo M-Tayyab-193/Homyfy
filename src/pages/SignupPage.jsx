@@ -3,21 +3,37 @@ import { useNavigate, Link } from 'react-router-dom';
 import { FaAirbnb, FaFacebook, FaGoogle, FaApple } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import supabase from '../supabase/supabase';
+import { signInWithGoogle } from '../supabase/supabase'
 
 function SignupPage() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({
+    email: '',
+    username: '',
+    fullname: '',
+    phone: '',
+    password: '',
+    role: 'guest'
+  });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   
   const navigate = useNavigate();
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     
-    if (!name || !email || !password) {
+    const { email, username, fullname, phone, password, role } = formData;
+    
+    if (!email || !username || !fullname || !phone || !password) {
       toast.error('Please fill in all fields');
       return;
     }
@@ -25,32 +41,31 @@ function SignupPage() {
     setLoading(true);
 
     try {
-      // 1. Check if email already exists
+      // Check if username is already taken
       const { data: existingUser, error: existingUserError } = await supabase
         .from('users')
-        .select('id')
-        .eq('email', email)
+        .select('username')
+        .eq('username', username)
         .maybeSingle();
 
       if (existingUser) {
-        toast.error('An account with this email already exists. Please log in.');
+        toast.error('Username is already taken');
         setLoading(false);
         return;
       }
 
-      // 2. Signup using Supabase Auth
-     const { data, error: signupError } = await supabase.auth.signUp({
-  email,
-  password,
-  options: {
-    data: {
-      name,
-      role: 'guest',
-    },
-    redirectTo: 'https://localhost:3000/', // Specify the redirect URL after email verification
-  }
-});
-
+      // Sign up using Supabase Auth
+      const { data, error: signupError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            username,
+            fullname,
+            role,
+          }
+        }
+      });
 
       const user = data?.user;
 
@@ -58,17 +73,17 @@ function SignupPage() {
         throw new Error(signupError?.message || 'Unknown error during signup');
       }
 
-      // 3. Insert additional info into `users` table
+      // Insert additional info into users table
       const { error: insertError } = await supabase
         .from('users')
         .insert([
           {
             id: user.id,
             email,
-            username: email.split('@')[0],
-            fullname: name,
-            phone: '',
-            role: 'guest',
+            username,
+            fullname,
+            phone,
+            role,
             profile_image: `https://api.dicebear.com/7.x/initials/svg?seed=${email}`
           }
         ]);
@@ -82,7 +97,6 @@ function SignupPage() {
     } catch (err) {
       toast.error(err.message || 'Failed to create an account. Please try again.');
       setError(err.message || 'Failed to create an account. Please try again.');
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -106,27 +120,57 @@ function SignupPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Name
+                Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className="input-field"
+                placeholder="Enter your email"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Username
               </label>
               <input
                 type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                name="username"
+                value={formData.username}
+                onChange={handleInputChange}
                 className="input-field"
-                placeholder="Enter your name"
+                placeholder="Choose a username"
               />
             </div>
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email
+                Full Name
               </label>
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                name="fullname"
+                value={formData.fullname}
+                onChange={handleInputChange}
                 className="input-field"
-                placeholder="Enter your email"
+                placeholder="Enter your full name"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Mobile Number
+              </label>
+              <input
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleInputChange}
+                className="input-field"
+                placeholder="Enter your mobile number"
               />
             </div>
             
@@ -136,11 +180,42 @@ function SignupPage() {
               </label>
               <input
                 type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
                 className="input-field"
                 placeholder="Create a password"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Account Type
+              </label>
+              <div className="flex space-x-4">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="role"
+                    value="guest"
+                    checked={formData.role === 'guest'}
+                    onChange={handleInputChange}
+                    className="mr-2"
+                  />
+                  Guest
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    name="role"
+                    value="host"
+                    checked={formData.role === 'host'}
+                    onChange={handleInputChange}
+                    className="mr-2"
+                  />
+                  Host
+                </label>
+              </div>
             </div>
             
             <button
@@ -164,7 +239,7 @@ function SignupPage() {
               <span>Continue with Facebook</span>
             </button>
             
-            <button className="w-full flex items-center justify-center py-3 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+            <button className="w-full flex items-center justify-center py-3 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors" onClick={signInWithGoogle}>
               <FaGoogle className="text-red-500 mr-3" />
               <span>Continue with Google</span>
             </button>

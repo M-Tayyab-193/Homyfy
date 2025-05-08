@@ -4,6 +4,32 @@ import { FaUpload, FaImage } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 import supabase from '../supabase/supabase'
 import useCurrentUser from '../hooks/useCurrentUser'
+import axios from 'axios'
+
+const PROPERTY_TYPES = [
+  { id: 'Others', label: 'Others' },
+  { id: 'House', label: 'House' },
+  { id: 'Apartment', label: 'Apartment' },
+  { id: 'Villa', label: 'Villa' }
+]
+
+const AMENITIES = [
+  { id: '4161594d-2c38-43d9-8ecb-8be28d0852c5', label: 'Refrigerator' },
+  { id: '345035bd-5092-4404-a964-68cf4362427a', label: 'Microwave' },
+  { id: '5946b5ca-fa4c-433d-a184-637253f3c292', label: 'TV' },
+  { id: '5d9042c5-2c66-4782-998d-10fc1f676fed', label: 'Workspace' },
+  { id: 'fa6f419b-7f4e-4afd-82fd-19df3ce170fe', label: 'WiFi' },
+  { id: 'cd6b85f4-cb94-452d-9cfa-6cd1288a3a4f', label: 'Washing Machine' },
+  { id: 'b7829f09-1bd4-4347-8351-049fe495c839', label: 'Balcony' },
+  { id: 'a6a04e6f-3f86-4eef-b54f-3884c78613dd', label: 'Geyser' },
+  { id: '34ca636f-6926-41ef-9769-cb5ee9f4c582', label: 'Towels' },
+  { id: 'c6e88590-21a6-4aa9-acdc-59546636b012', label: 'Security Cameras' },
+  { id: 'cbdd2e94-6342-46ce-b1e1-0386da83cfd2', label: 'First Aid Kit' },
+  { id: '382d980c-4f92-4d7a-b4f5-393270b5bd40', label: 'Fire Extinguisher' },
+  { id: '185dc318-7ba4-46b4-b2a7-1a508e3c3cf4', label: 'Air Conditioning' },
+  { id: 'f7c110c9-6b5e-4457-a1c5-5576c431bda4', label: 'Heater' },
+  { id: 'cf67e14e-90ea-48e6-8b65-8c688f66234a', label: 'Parking Facility' }
+]
 
 function AddPropertyPage() {
   const { user } = useCurrentUser()
@@ -12,21 +38,16 @@ function AddPropertyPage() {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    type: 'house',
+    type: 'House',
     price: '',
-    beds: 1,
-    bathrooms: 1,
-    max_guests: 1,
-    location: {
-      address: '',
-      city: '',
-      state: '',
-      country: '',
-      coordinates: {
-        lat: 0,
-        lng: 0
-      }
-    },
+    beds: '1',
+    bathrooms: '1',
+    maxGuests: '1',
+    city: '',
+    province: '',
+    country: '',
+    latitude: '',
+    longitude: '',
     amenities: [],
     images: []
   })
@@ -41,56 +62,47 @@ function AddPropertyPage() {
     }))
   }
 
-  const handleLocationChange = (e) => {
-    const { name, value } = e.target
+  const handleAmenityToggle = (amenityId) => {
     setFormData(prev => ({
       ...prev,
-      location: {
-        ...prev.location,
-        [name]: value
-      }
-    }))
-  }
-
-  const handleAmenityToggle = (amenity) => {
-    setFormData(prev => ({
-      ...prev,
-      amenities: prev.amenities.includes(amenity)
-        ? prev.amenities.filter(a => a !== amenity)
-        : [...prev.amenities, amenity]
+      amenities: prev.amenities.includes(amenityId)
+        ? prev.amenities.filter(id => id !== amenityId)
+        : [...prev.amenities, amenityId]
     }))
   }
 
   const handleImageUpload = async (e) => {
-    const files = Array.from(e.target.files)
+    const files = Array.from(e.target.files || [])
     const uploadPromises = files.map(async file => {
-      const fileExt = file.name.split('.').pop()
-      const fileName = `${Math.random()}.${fileExt}`
-      const filePath = `${user.id}/${fileName}`
+      try {
+        const formData = new FormData()
+        formData.append('file', file)
+        formData.append('upload_preset', 'profile_uploads')
+        formData.append('folder', 'profile-images')
 
-      const { error: uploadError, data } = await supabase.storage
-        .from('property-images')
-        .upload(filePath, file)
+        const cloudinaryRes = await axios.post(
+          'https://api.cloudinary.com/v1_1/tayyab193/image/upload',
+          formData
+        )
 
-      if (uploadError) {
-        toast.error(`Error uploading ${file.name}`)
+        return cloudinaryRes.data.secure_url
+      } catch (error) {
+        toast.error(`Error uploading ${file.name}: ${error.message}`)
         return null
       }
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('property-images')
-        .getPublicUrl(filePath)
-
-      return publicUrl
     })
 
-    const uploadedUrls = await Promise.all(uploadPromises)
-    const validUrls = uploadedUrls.filter(Boolean)
+    try {
+      const uploadedUrls = await Promise.all(uploadPromises)
+      const validUrls = uploadedUrls.filter(Boolean)
 
-    setFormData(prev => ({
-      ...prev,
-      images: [...prev.images, ...validUrls]
-    }))
+      setFormData(prev => ({
+        ...prev,
+        images: [...prev.images, ...validUrls]
+      }))
+    } catch (error) {
+      toast.error('Error uploading images: ' + error.message)
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -98,17 +110,58 @@ function AddPropertyPage() {
     setLoading(true)
 
     try {
-      const { error } = await supabase
-        .from('properties')
+      // Create the listing
+      const { data: listing, error: listingError } = await supabase
+        .from('listings')
         .insert([{
-          ...formData,
-          host_id: user.id,
-          price: parseFloat(formData.price)
+          title: formData.title,
+          description: formData.description,
+          property_type: formData.type,
+          price_value: parseFloat(formData.price),
+          bed_count: formData.beds,
+          bathroom_count: formData.bathrooms,
+          guest_count: formData.maxGuests,
+          location: `${formData.city}, ${formData.province}, ${formData.country}`,
+          latitude: formData.latitude,
+          longitude: formData.longitude,
+          user_id: user.id,
+          rating_overall: 0,
+          reviews_count: 0
         }])
+        .select()
+        .single()
 
-      if (error) throw error
+      if (listingError) throw listingError
 
-      toast.success('Property listed successfully!')
+      // Add images
+      if (formData.images.length > 0) {
+        const { error: imagesError } = await supabase
+          .from('listing_images')
+          .insert(
+            formData.images.map(url => ({
+              listing_id: listing.id,
+              image_url: url
+            }))
+          )
+
+        if (imagesError) throw imagesError
+      }
+
+      // Add amenities
+      if (formData.amenities.length > 0) {
+        const { error: amenitiesError } = await supabase
+          .from('listing_amenities')
+          .insert(
+            formData.amenities.map(amenityId => ({
+              listing_id: listing.id,
+              amenity_id: amenityId
+            }))
+          )
+
+        if (amenitiesError) throw amenitiesError
+      }
+
+      toast.success('Listing created successfully!')
       navigate('/hosting')
     } catch (error) {
       toast.error('Error creating listing: ' + error.message)
@@ -119,7 +172,7 @@ function AddPropertyPage() {
 
   return (
     <div className="container-custom py-8">
-      <h1 className="text-3xl font-bold mb-8">Add New Property</h1>
+      <h1 className="text-3xl font-bold mb-8">Add New Listing</h1>
 
       <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
         <div className="bg-white rounded-xl shadow-card p-6 mb-6">
@@ -138,12 +191,9 @@ function AddPropertyPage() {
                 className="input-field"
                 required
               >
-                <option value="house">House</option>
-                <option value="apartment">Apartment</option>
-                <option value="villa">Villa</option>
-                <option value="cabin">Cabin</option>
-                <option value="condo">Condo</option>
-                <option value="treehouse">Treehouse</option>
+                {PROPERTY_TYPES.map(type => (
+                  <option key={type.id} value={type.id}>{type.label}</option>
+                ))}
               </select>
             </div>
 
@@ -181,21 +231,6 @@ function AddPropertyPage() {
           <div className="space-y-4 mb-8">
             <h2 className="text-xl font-semibold mb-4">Location</h2>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Address
-              </label>
-              <input
-                type="text"
-                name="address"
-                value={formData.location.address}
-                onChange={handleLocationChange}
-                className="input-field"
-                placeholder="Street address"
-                required
-              />
-            </div>
-
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -204,8 +239,8 @@ function AddPropertyPage() {
                 <input
                   type="text"
                   name="city"
-                  value={formData.location.city}
-                  onChange={handleLocationChange}
+                  value={formData.city}
+                  onChange={handleInputChange}
                   className="input-field"
                   required
                 />
@@ -213,13 +248,13 @@ function AddPropertyPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  State
+                  Province
                 </label>
                 <input
                   type="text"
-                  name="state"
-                  value={formData.location.state}
-                  onChange={handleLocationChange}
+                  name="province"
+                  value={formData.province}
+                  onChange={handleInputChange}
                   className="input-field"
                   required
                 />
@@ -233,11 +268,41 @@ function AddPropertyPage() {
               <input
                 type="text"
                 name="country"
-                value={formData.location.country}
-                onChange={handleLocationChange}
+                value={formData.country}
+                onChange={handleInputChange}
                 className="input-field"
                 required
               />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Latitude
+                </label>
+                <input
+                  type="text"
+                  name="latitude"
+                  value={formData.latitude}
+                  onChange={handleInputChange}
+                  className="input-field"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Longitude
+                </label>
+                <input
+                  type="text"
+                  name="longitude"
+                  value={formData.longitude}
+                  onChange={handleInputChange}
+                  className="input-field"
+                  required
+                />
+              </div>
             </div>
           </div>
 
@@ -251,11 +316,10 @@ function AddPropertyPage() {
                   Beds
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   name="beds"
                   value={formData.beds}
                   onChange={handleInputChange}
-                  min="1"
                   className="input-field"
                   required
                 />
@@ -266,12 +330,10 @@ function AddPropertyPage() {
                   Bathrooms
                 </label>
                 <input
-                  type="number"
+                  type="text"
                   name="bathrooms"
                   value={formData.bathrooms}
                   onChange={handleInputChange}
-                  min="0.5"
-                  step="0.5"
                   className="input-field"
                   required
                 />
@@ -284,11 +346,10 @@ function AddPropertyPage() {
                   Max Guests
                 </label>
                 <input
-                  type="number"
-                  name="max_guests"
-                  value={formData.max_guests}
+                  type="text"
+                  name="maxGuests"
+                  value={formData.maxGuests}
                   onChange={handleInputChange}
-                  min="1"
                   className="input-field"
                   required
                 />
@@ -317,26 +378,22 @@ function AddPropertyPage() {
             <h2 className="text-xl font-semibold mb-4">Amenities</h2>
             
             <div className="grid grid-cols-2 gap-4">
-              {[
-                'Wifi', 'Kitchen', 'Free parking', 'Air conditioning',
-                'TV', 'Washer', 'Dryer', 'Pool', 'Hot tub', 'Gym',
-                'BBQ grill', 'Fireplace', 'Beach access', 'Mountain view'
-              ].map(amenity => (
+              {AMENITIES.map(amenity => (
                 <label
-                  key={amenity}
+                  key={amenity.id}
                   className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${
-                    formData.amenities.includes(amenity)
+                    formData.amenities.includes(amenity.id)
                       ? 'border-airbnb-primary bg-red-50'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
                   <input
                     type="checkbox"
-                    checked={formData.amenities.includes(amenity)}
-                    onChange={() => handleAmenityToggle(amenity)}
+                    checked={formData.amenities.includes(amenity.id)}
+                    onChange={() => handleAmenityToggle(amenity.id)}
                     className="sr-only"
                   />
-                  <span>{amenity}</span>
+                  <span>{amenity.label}</span>
                 </label>
               ))}
             </div>

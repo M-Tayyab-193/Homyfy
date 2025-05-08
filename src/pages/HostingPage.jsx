@@ -10,7 +10,7 @@ function HostingPage() {
   const { user, loading: userLoading } = useCurrentUser()
   const navigate = useNavigate()
   
-  const [properties, setProperties] = useState([])
+  const [listings, setListings] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -19,46 +19,57 @@ function HostingPage() {
       return
     }
 
-    const fetchProperties = async () => {
+    const fetchListings = async () => {
       try {
         const { data, error } = await supabase
-          .from('properties')
-          .select('*')
-          .eq('host_id', user.id)
+          .from('listings')
+          .select(`
+            *,
+            listing_images (
+              image_url
+            )
+          `)
+          .eq('user_id', user.id)
           .order('created_at', { ascending: false })
 
         if (error) throw error
 
-        setProperties(data)
+        const transformedListings = data.map(listing => ({
+          ...listing,
+          images: listing.listing_images.map(img => img.image_url)
+        }))
+
+        setListings(transformedListings)
       } catch (error) {
-        toast.error('Error fetching properties: ' + error.message)
+        toast.error('Error fetching listings: ' + error.message)
       } finally {
         setLoading(false)
       }
     }
 
     if (user) {
-      fetchProperties()
+      fetchListings()
     }
   }, [user, userLoading, navigate])
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this property?')) {
+    if (!window.confirm('Are you sure you want to delete this listing?')) {
       return
     }
 
     try {
       const { error } = await supabase
-        .from('properties')
+        .from('listings')
         .delete()
         .eq('id', id)
+        .eq('user_id', user.id)
 
       if (error) throw error
 
-      setProperties(prev => prev.filter(prop => prop.id !== id))
-      toast.success('Property deleted successfully')
+      setListings(prev => prev.filter(listing => listing.id !== id))
+      toast.success('Listing deleted successfully')
     } catch (error) {
-      toast.error('Error deleting property: ' + error.message)
+      toast.error('Error deleting listing: ' + error.message)
     }
   }
 
@@ -69,16 +80,16 @@ function HostingPage() {
   return (
     <div className="container-custom py-8">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Your Properties</h1>
+        <h1 className="text-3xl font-bold">Your Listings</h1>
         <Link to="/hosting/add" className="btn-primary">
           <FaPlus className="inline-block mr-2" />
-          Add new property
+          Add new listing
         </Link>
       </div>
 
-      {properties.length === 0 ? (
+      {listings.length === 0 ? (
         <div className="bg-white rounded-xl shadow-card p-8 text-center">
-          <h2 className="text-2xl font-semibold mb-4">No properties listed yet</h2>
+          <h2 className="text-2xl font-semibold mb-4">No listings yet</h2>
           <p className="text-airbnb-light mb-6">
             Start earning by sharing your space with travelers from around the world.
           </p>
@@ -88,23 +99,23 @@ function HostingPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {properties.map(property => (
-            <div key={property.id} className="bg-white rounded-xl shadow-card overflow-hidden">
+          {listings.map(listing => (
+            <div key={listing.id} className="bg-white rounded-xl shadow-card overflow-hidden">
               <div className="relative aspect-video">
                 <img
-                  src={property.images[0] || 'https://via.placeholder.com/400x300'}
-                  alt={property.title}
+                  src={listing.images[0] || 'https://via.placeholder.com/400x300'}
+                  alt={listing.title}
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute top-2 right-2 flex space-x-2">
                   <Link
-                    to={`/hosting/edit/${property.id}`}
+                    to={`/hosting/edit/${listing.id}`}
                     className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors"
                   >
                     <FaEdit className="text-airbnb-dark" />
                   </Link>
                   <button
-                    onClick={() => handleDelete(property.id)}
+                    onClick={() => handleDelete(listing.id)}
                     className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors"
                   >
                     <FaTrash className="text-red-500" />
@@ -113,11 +124,11 @@ function HostingPage() {
               </div>
 
               <div className="p-4">
-                <h3 className="font-medium text-lg mb-1">{property.title}</h3>
+                <h3 className="font-medium text-lg mb-1">{listing.title}</h3>
                 <p className="text-airbnb-light text-sm mb-2">
-                  {property.location.city}, {property.location.state}
+                  {listing.location}
                 </p>
-                <p className="font-semibold">${property.price} per night</p>
+                <p className="font-semibold">${listing.price_value} per night</p>
               </div>
             </div>
           ))}

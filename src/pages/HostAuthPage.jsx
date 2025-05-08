@@ -7,7 +7,8 @@ import supabase from '../supabase/supabase'
 function HostAuthPage({ mode = 'login' }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [name, setName] = useState('')
+  const [fullname, setFullname] = useState('')
+  const [username, setUsername] = useState('')
   const [phone, setPhone] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -19,7 +20,7 @@ function HostAuthPage({ mode = 'login' }) {
     e.preventDefault()
     setError('')
 
-    if (!email || !password || (!isLogin && (!name || !phone))) {
+    if (!email || !password || (!isLogin && (!fullname || !username || !phone))) {
       toast.error('Please fill in all fields')
       return
     }
@@ -63,23 +64,27 @@ function HostAuthPage({ mode = 'login' }) {
           password,
           options: {
             data: {
-              name,
+              fullname,
+              username,
               role: 'host',
               phone
             }
           }
         })
-
+        const user = data?.user;
         if (signupError) throw signupError
 
         // Create user profile in users table
         const { error: profileError } = await supabase
           .from('users')
           .insert([{
+            id: user.id,
             email,
-            name,
+            fullname,
+            username,
             phone,
-            role: 'host'
+            role: 'host',
+            profile_image: `https://api.dicebear.com/7.x/initials/svg?seed=${email}`
           }])
 
         if (profileError) throw profileError
@@ -117,14 +122,27 @@ function HostAuthPage({ mode = 'login' }) {
               <>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Name
+                    Full Name
                   </label>
                   <input
                     type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    value={fullname}
+                    onChange={(e) => setFullname(e.target.value)}
                     className="input-field"
-                    placeholder="Enter your name"
+                    placeholder="Enter your full name"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Username
+                  </label>
+                  <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="input-field"
+                    placeholder="Choose a username"
                   />
                 </div>
 

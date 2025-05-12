@@ -9,6 +9,7 @@ function ReviewSection({
   currentUser,
   hasBooked,
   hasReviewed,
+  setHasReviewed,
   listingId
 }) {
   const [showReviewForm, setShowReviewForm] = useState(false);
@@ -33,25 +34,13 @@ function ReviewSection({
       return;
     }
 
-    if (!hasBooked) {
-      toast.error('You must book this listing before leaving a review');
-      return;
-    }
-
-    if (hasReviewed) {
-      toast.error('You have already reviewed this listing');
-      return;
-    }
-
     try {
-      const { error } = await supabase
-        .from('reviews')
-        .insert([{
-          listing_id: listingId,
-          guest_id: currentUser.id,
-          review_text: userReview,
-          rating: userRating,
-        }]);
+      const { error } = await supabase.rpc("create_review_with_check", {
+      p_listing_id: listingId,
+      p_guest_id: currentUser.id,
+      p_review_text: userReview,
+      p_rating: userRating,
+    });
 
       if (error) throw error;
 
@@ -59,22 +48,19 @@ function ReviewSection({
       setUserReview('');
       setUserRating(5);
       setShowReviewForm(false);
-
+      setHasReviewed(true);
+      
       // Refresh reviews
       const { data: newReviews, error: reviewsError } = await supabase
-        .from('reviews')
-        .select(`
-          *,
-          users (
-            id,
-            fullname,
-            profile_image
-          )
-        `)
-        .eq('listing_id', listingId)
-        .order('created_at', { ascending: false });
+  .rpc('get_reviews_with_user_info', {
+    p_listing_id: listingId,
+  });
 
-      if (reviewsError) throw reviewsError;
+if (reviewsError) {
+  console.error('Error fetching reviews:', reviewsError);
+} else {
+  console.log('Fetched reviews:', newReviews);
+}
       setReviews(newReviews);
     } catch (err) {
       toast.error('Error submitting review: ' + err.message);
@@ -158,12 +144,12 @@ function ReviewSection({
           <div key={review.id} className="border-b border-gray-200 pb-4">
             <div className="flex items-center mb-2">
               <img
-                src={review.users.profile_image || `https://api.dicebear.com/7.x/initials/svg?seed=${review.users.fullname}`}
-                alt={review.users.fullname}
+                src={review.profile_image || `https://api.dicebear.com/7.x/initials/svg?seed=${review.fullname}`}
+                alt={review.fullname}
                 className="w-10 h-10 rounded-full mr-3"
               />
               <div>
-                <p className="font-medium">{review.users.fullname}</p>
+                <p className="font-medium">{review.fullname}</p>
                 <div className="flex items-center">
                   <div className="flex items-center text-yellow-400">
                     <FaStar className="mr-1" />

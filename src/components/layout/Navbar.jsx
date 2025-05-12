@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaAirbnb, FaGlobe, FaBars } from "react-icons/fa";
 import supabase from "../../supabase/supabase";
 import UserMenu from "../ui/UserMenu";
+import { fetchProfileImageById } from "../../utils/fetchProfileImage";
 
 // Memoize the UserMenu component
 const MemoizedUserMenu = memo(UserMenu);
@@ -23,22 +24,11 @@ function Navbar() {
       setLoadingImage(false);
       return;
     }
-
-    try {
-      const { data, error } = await supabase
-        .from("users")
-        .select("profile_image")
-        .eq("id", user.id)
-        .single();
-
-      if (error) throw error;
-
-      setProfileImage(data?.profile_image);
-    } catch (err) {
-      console.error("Error fetching profile image:", err);
-    } finally {
-      setLoadingImage(false);
-    }
+    
+    const imageUrl = await fetchProfileImageById(user.id);
+    setProfileImage(imageUrl);
+    setLoadingImage(false);
+      
   }, []);
 
   useEffect(() => {

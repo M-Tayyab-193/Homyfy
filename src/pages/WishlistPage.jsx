@@ -17,49 +17,39 @@ function WishlistPage() {
   }, [])
 
   const fetchWishlistItems = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      
-      if (!user) {
-        navigate('/login', { state: { from: '/wishlist' } })
-        return
-      }
-
-      const { data, error } = await supabase
-        .from('wishlist')
-        .select(`
-          listing_id,
-          listings (
-            id,
-            title,
-            description,
-            price_value,
-            location,
-            listing_images (
-              image_url
-            )
-          )
-        `)
-        .eq('guest_id', user.id)
-
-      if (error) throw error
-
-      const transformedItems = data.map(item => ({
-        id: item.listings.id,
-        title: item.listings.title,
-        description: item.listings.description,
-        price: item.listings.price_value,
-        location: item.listings.location,
-        images: item.listings.listing_images.map(img => img.image_url)
-      }))
-
-      setWishlistItems(transformedItems)
-    } catch (err) {
-      console.error('Error fetching wishlist:', err)
-    } finally {
-      setLoading(false)
+  try {
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    if (!user) {
+      navigate('/login', { state: { from: '/wishlist' } })
+      return
     }
+
+    const { data, error } = await supabase.rpc('get_user_wishlist', {
+      user_id: user.id
+    })
+
+    console.log(data);
+    if (error) throw error
+
+    const transformedItems = data.map(item => ({
+      id: item.id,
+      title: item.title,
+      description: item.description,
+      price: item.price,
+      location: item.location,
+      images: item.image_urls, // already an array
+      rating: item.rating_overall,
+      reviews: item.reviews_count
+    }))
+
+    setWishlistItems(transformedItems)
+  } catch (err) {
+    console.error('Error fetching wishlist:', err)
+  } finally {
+    setLoading(false)
   }
+}
 
   const handleRemoveFromWishlist = async (e, listingId) => {
     e.preventDefault()

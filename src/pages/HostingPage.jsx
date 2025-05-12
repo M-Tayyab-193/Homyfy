@@ -9,7 +9,7 @@ import LoadingSpinner from '../components/ui/LoadingSpinner'
 function HostingPage() {
   const { user, loading: userLoading } = useCurrentUser()
   const navigate = useNavigate()
-  
+
   const [listings, setListings] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -21,25 +21,11 @@ function HostingPage() {
 
     const fetchListings = async () => {
       try {
-        const { data, error } = await supabase
-          .from('listings')
-          .select(`
-            *,
-            listing_images (
-              image_url
-            )
-          `)
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false })
+        const { data, error } = await supabase.rpc('fetch_listings_by_user', { user_id: user.id })
 
         if (error) throw error
 
-        const transformedListings = data.map(listing => ({
-          ...listing,
-          images: listing.listing_images.map(img => img.image_url)
-        }))
-
-        setListings(transformedListings)
+        setListings(data)
       } catch (error) {
         toast.error('Error fetching listings: ' + error.message)
       } finally {
@@ -58,11 +44,7 @@ function HostingPage() {
     }
 
     try {
-      const { error } = await supabase
-        .from('listings')
-        .delete()
-        .eq('id', id)
-        .eq('user_id', user.id)
+      const { error } = await supabase.rpc('delete_listing', { listing_id: id, user_id: user.id })
 
       if (error) throw error
 

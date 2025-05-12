@@ -1,24 +1,25 @@
-import { Routes, Route } from 'react-router-dom'
-import { lazy, Suspense } from 'react'
-import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-import Navbar from './components/layout/Navbar'
-import Footer from './components/layout/Footer'
-import LoadingSpinner from './components/ui/LoadingSpinner'
+import { Routes, Route } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Navbar from './components/layout/Navbar';
+import Footer from './components/layout/Footer';
+import LoadingSpinner from './components/ui/LoadingSpinner';
 
 // Lazy load pages for better performance
-const HomePage = lazy(() => import('./pages/HomePage'))
-const ListingDetailsPage = lazy(() => import('./pages/ListingDetailsPage'))
-const SearchResultsPage = lazy(() => import('./pages/SearchResultsPage'))
-const ProfilePage = lazy(() => import('./pages/ProfilePage'))
-const WishlistPage = lazy(() => import('./pages/WishlistPage'))
-const AuthPage = lazy(() => import('./pages/AuthPage'))
-const SignupPage = lazy(() => import('./pages/SignupPage'))
-const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
-const HostingPage = lazy(() => import('./pages/HostingPage'))
-const AddPropertyPage = lazy(() => import('./pages/AddPropertyPage'))
-const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'))
-const BookingsPage = lazy(() => import('./pages/BookingsPage'))
+const HomePage = lazy(() => import('./pages/HomePage'));
+const ListingDetailsPage = lazy(() => import('./pages/ListingDetailsPage'));
+const SearchResultsPage = lazy(() => import('./pages/SearchResultsPage'));
+const ProfilePage = lazy(() => import('./pages/ProfilePage'));
+const WishlistPage = lazy(() => import('./pages/WishlistPage'));
+const AuthPage = lazy(() => import('./pages/AuthPage'));
+const SignupPage = lazy(() => import('./pages/SignupPage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
+const HostingPage = lazy(() => import('./pages/HostingPage'));
+const AddPropertyPage = lazy(() => import('./pages/AddPropertyPage'));
+const EditListingPage = lazy(() => import('./pages/EditListingPage'));
+const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'));
+const BookingsPage = lazy(() => import('./pages/BookingsPage'));
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/hosting" element={<HostingPage />} />
             <Route path="/hosting/add" element={<AddPropertyPage />} />
+            <Route path="/hosting/edit/:id" element={<EditListingPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>
@@ -56,7 +58,7 @@ function App() {
         theme="light"
       />
     </>
-  )
+  );
 }
 
-export default App
+export default App;

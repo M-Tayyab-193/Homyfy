@@ -28,57 +28,62 @@ function AuthPage() {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setError('')
+const handleSubmit = async (e) => {
+  e.preventDefault()
+  setError('')
+  
+  if (!formData.email || !formData.password) {
+    toast.error('Please fill in all fields')
+    return
+  }
+  
+  setLoading(true)
+  try {
+    const { data, error: loginError } = await supabase.auth.signInWithPassword({
+      email: formData.email,
+      password: formData.password,
+    })
 
-    if (!formData.email || !formData.password) {
-      toast.error('Please fill in all fields')
+    console.log('Login response:', data);  // Debug: Log the response data
+    
+    if (loginError) {
+      if (loginError.message === 'Invalid login credentials') {
+        toast.error('Incorrect email or password. Please try again.')
+      } else if (loginError.message === 'Email not confirmed') {
+        toast.error('Please confirm your email before logging in.')
+      } else {
+        toast.error('Authentication failed. Please try again later.')
+      }
+      setError(loginError.message)
       return
     }
 
-    setLoading(true)
-    try {
-      const { data, error: loginError } = await supabase.auth.signInWithPassword({
-        email: formData.email,
-        password: formData.password,
-      })
+    console.log('Authenticated user:', data.user);  // Debug: Log the authenticated user
 
-      if (loginError) {
-        if (loginError.message === 'Invalid login credentials') {
-          toast.error('Incorrect email or password. Please try again.')
-        } else if (loginError.message === 'Email not confirmed') {
-          toast.error('Please confirm your email before logging in.')
-        } else {
-          toast.error('Authentication failed. Please try again later.')
-        }
-        setError(loginError.message)
-        return
-      }
+    const { data: userRoleData, error: roleError } = await supabase.rpc('login_user', {
+      input_email: formData.email,
+      expected_role: formData.role,
+    })
 
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('role')
-        .eq('email', formData.email)
-        .single()
+    console.log('Role check response:', userRoleData);  // Debug: Log the role data
 
-      if (userError) throw userError
-
-      if (userData.role !== formData.role) {
-        await supabase.auth.signOut()
-        throw new Error(`This account is registered as a ${userData.role}. Please select the correct account type.`)
-      }
-
-      toast.success('Successfully logged in!')
-      navigate(redirectPath)
-
-    } catch (err) {
-      toast.error(err.message || 'Authentication failed. Please try again.')
-      setError(err.message || 'Authentication failed. Please try again.')
-    } finally {
-      setLoading(false)
+    if (roleError) {
+      await supabase.auth.signOut()
+      toast.error(roleError.message)
+      return
     }
+
+    toast.success('Successfully logged in!')
+    navigate(redirectPath)
+  } catch (err) {
+    console.error('Error:', err);  // Debug: Log the error
+    toast.error(err.message || 'Authentication failed. Please try again.')
+    setError(err.message || 'Authentication failed. Please try again.')
+  } finally {
+    setLoading(false)
   }
+}
+
 
   const handleResetPassword = async (e) => {
     e.preventDefault()

@@ -3,7 +3,7 @@ import { FaTimes } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import supabase from '../../../supabase/supabase';
 
-function ConfirmationModal({ onClose, listing, dateRange }) {
+function ConfirmationModal({ onClose, listing, dateRange, onSuccess }) {
   const [paymentMethod, setPaymentMethod] = useState("");
   const paymentNumberRef = useRef(null);
   const [loading, setLoading] = useState(false);
@@ -31,40 +31,56 @@ function ConfirmationModal({ onClose, listing, dateRange }) {
 
     setLoading(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
 
-      // Create booking
-      const { data: bookingData, error: bookingError } = await supabase
-        .from("bookings")
-        .insert([
-          {
-            guest_id: user.id,
-            listing_id: listing.id,
-            start_date: dateRange.startDate,
-            end_date: dateRange.endDate,
-            total_amount: total,
-            booking_date: new Date(),
-          },
-        ])
-        .select()
-        .single();
+      const user = session?.user;
+      
+      if (sessionError || !user) {
+        console.error("User not authenticated");
+        toast.error("User authentication failed.");
+        return;
+      }
 
-      if (bookingError) throw bookingError;
-
-      // Create payment record
-      const { error: paymentError } = await supabase.from("payments").insert([
+      // Check for overlapping bookings
+      const { data: hasOverlap, error: overlapError } = await supabase.rpc(
+        'check_overlapping_bookings',
         {
-          booking_id: bookingData.id,
-          amount: total,
-          method: paymentMethod,
-          payment_status: paymentMethod === "arrival" ? "pending" : "paid",
-        },
-      ]);
+          p_guest_id: user.id,
+          p_listing_id: listing.id,
+          p_start_date: dateRange.startDate.toISOString().split("T")[0],
+          p_end_date: dateRange.endDate.toISOString().split("T")[0]
+        }
+      );
 
-      if (paymentError) throw paymentError;
+      if (overlapError) {
+        throw overlapError;
+      }
+
+      if (hasOverlap) {
+        toast.error("You already have a reservation for this listing in these dates!");
+        return;
+      }
+
+      const { data, error: rpcError } = await supabase.rpc("create_booking_with_payment", {
+        p_guest_id: user.id,
+        p_listing_id: listing.id,
+        p_start_date: dateRange.startDate.toISOString().split("T")[0],
+        p_end_date: dateRange.endDate.toISOString().split("T")[0],
+        p_total: total,
+        p_method: paymentMethod,
+      });
+
+      if (rpcError) {
+        throw rpcError;
+      }
 
       toast.success("Booking confirmed successfully!");
       onClose();
+      onSuccess(); // Call onSuccess to show the SuccessModal
+
     } catch (error) {
       console.error("Booking error:", error);
       toast.error("Failed to complete booking. Please try again.");
@@ -133,9 +149,7 @@ function ConfirmationModal({ onClose, listing, dateRange }) {
                 type="text"
                 ref={paymentNumberRef}
                 placeholder="Enter 11-digit number"
-                className="w-full p-2 border rounde
-
-d-lg"
+                className="w-full p-2 border rounded-lg"
                 maxLength="11"
               />
             )}

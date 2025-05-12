@@ -15,10 +15,10 @@ export const signInWithGoogle = async () => {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
   })
-   if (error) {
-    console.error('Google sign-in error:', error);
+  if (error) {
+    console.error('Google sign-in error:', error.message)
   } else {
-    console.log('OAuth redirect URL:', data?.url);
+    console.log('Redirecting to Google OAuth:', data?.url)
   }
 }
 export default supabase

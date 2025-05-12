@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { FaAirbnb, FaFacebook, FaGoogle, FaApple } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import supabase from '../supabase/supabase';
-import { signInWithGoogle } from '../supabase/supabase'
+import { signInWithGoogle } from '../supabase/supabase';
 
 function SignupPage() {
   const [formData, setFormData] = useState({
@@ -41,19 +41,6 @@ function SignupPage() {
     setLoading(true);
 
     try {
-      // Check if username is already taken
-      const { data: existingUser, error: existingUserError } = await supabase
-        .from('users')
-        .select('username')
-        .eq('username', username)
-        .maybeSingle();
-
-      if (existingUser) {
-        toast.error('Username is already taken');
-        setLoading(false);
-        return;
-      }
-
       // Sign up using Supabase Auth
       const { data, error: signupError } = await supabase.auth.signUp({
         email,
@@ -73,26 +60,23 @@ function SignupPage() {
         throw new Error(signupError?.message || 'Unknown error during signup');
       }
 
-      // Insert additional info into users table
-      const { error: insertError } = await supabase
-        .from('users')
-        .insert([
-          {
-            id: user.id,
-            email,
-            username,
-            fullname,
-            phone,
-            role,
-            profile_image: `https://api.dicebear.com/7.x/initials/svg?seed=${email}`
-          }
-        ]);
+      // Insert additional info into users table using RPC
+      const {error: insertError } = await supabase.rpc('signup_user', {
+        p_id : user.id,
+        p_email: formData.email,
+        p_username: formData.username,
+        p_fullname: formData.fullname,
+        p_phone: formData.phone,
+        p_role: formData.role
+      });
 
       if (insertError) {
         throw new Error(insertError.message);
+      }else{
+        
+      toast.success('Successfully signed up! Please check your email for verification.');
       }
 
-      toast.success('Successfully signed up! Please check your email for verification.');
       navigate('/');
     } catch (err) {
       toast.error(err.message || 'Failed to create an account. Please try again.');

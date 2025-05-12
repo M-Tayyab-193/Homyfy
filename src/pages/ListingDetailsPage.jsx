@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { FaStar, FaHeart, FaRegHeart, FaArrowLeft, FaMapMarkerAlt } from "react-icons/fa";
+import { FaStar, FaHeart, FaRegHeart, FaArrowLeft } from "react-icons/fa";
 import { useListings } from "../contexts/ListingsContext";
 import supabase from "../supabase/supabase";
 import Map from "../components/map/Map";
@@ -40,6 +40,51 @@ function ListingDetailsPage() {
   const [amenitiesByCategory, setAmenitiesByCategory] = useState({});
 
   useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setCurrentUser(user);
+
+      if (user) {
+        const [{ data: hasBookedData, error: bookedError }, { data: hasReviewedData, error: reviewedError }] =
+          await Promise.all([
+            supabase.rpc("has_booked_listing", {
+              guest_id: user.id,
+              listing_id: id,
+            }),
+            supabase.rpc("has_reviewed_listing", {
+              guest_id: user.id,
+              listing_id: id,
+            }),
+          ]);
+
+        if (bookedError) console.error("Error checking booking:", bookedError);
+        if (reviewedError) console.error("Error checking review:", reviewedError);
+
+        setHasBooked(hasBookedData ?? false);
+        setHasReviewed(hasReviewedData ?? false);
+      }
+    };
+    fetchUser();
+  }, [id]);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      const { data, error } = await supabase.rpc('get_reviews_for_listing', {
+        listing: id,
+      });
+
+      if (error) {
+        console.error('Error fetching reviews:', error);
+        return;
+      }
+      console.log("Reviews", data);
+      setReviews(data || []);
+    };
+
+    fetchReviews();
+  }, [id]);
+
+  useEffect(() => {
     if (showConfirmation) {
       document.body.classList.add("overflow-hidden");
     } else {
@@ -52,19 +97,10 @@ function ListingDetailsPage() {
   }, [showConfirmation]);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setCurrentUser(user);
-    };
-    fetchUser();
-  }, []);
-
-  useEffect(() => {
     const fetchBookedDates = async () => {
-      const { data, error } = await supabase
-        .from("bookings")
-        .select("start_date, end_date")
-        .eq("listing_id", id);
+      const { data, error } = await supabase.rpc('get_booked_date_ranges', {
+        listing: id,
+      });
 
       if (error) {
         console.error("Error fetching booked dates:", error);
@@ -94,42 +130,14 @@ function ListingDetailsPage() {
   useEffect(() => {
     const fetchListingDetails = async () => {
       try {
-        const { data: listingData, error: listingError } = await supabase
-          .from("listings")
-          .select(`
-            *,
-            users!listings_user_id_fkey (
-              id,
-              fullname,
-              email,
-              profile_image,
-              registeration_date
-            ),
-            listing_images (
-              image_url,
-              caption
-            ),
-            listing_amenities (
-              amenities (
-                id,
-                amenity_name,
-                amenity_categories (
-                  id,
-                  title
-                )
-              )
-            )
-          `)
-          .eq("id", id)
-          .single();
+        const { data, error } = await supabase.rpc('get_all_listing', { listing_id: id });
 
-        if (listingError) throw listingError;
+        if (error || !data) throw error;
+        
+        // Add console.log to debug the data
+        console.log('Listing details data:', data);
 
-        const amenitiesList = listingData.listing_amenities.map((item) => ({
-          id: item.amenities.id,
-          title: item.amenities.amenity_name,
-          category: item.amenities.amenity_categories.title,
-        }));
+        const amenitiesList = data.amenities || [];
 
         const grouped = amenitiesList.reduce((acc, amenity) => {
           if (!acc[amenity.category]) {
@@ -140,35 +148,39 @@ function ListingDetailsPage() {
         }, {});
 
         const transformedListing = {
-          ...listingData,
-          images: listingData.listing_images.map((img) => ({
-            url: img.image_url,
-            caption: img.caption,
-          })),
-          host: {
-            id: listingData.users.id,
-            name: listingData.users.fullname,
-            email: listingData.users.email,
-            avatar:
-              listingData.users.profile_image ||
-              `https://api.dicebear.com/7.x/initials/svg?seed=${listingData.users.email}`,
-            registrationDate: listingData.users.registeration_date,
-          },
+          id: data.id,
+          title: data.title,
+          description: data.description,
+          price_value: data.price_value,
+          location: data.location,
+          created_at: data.created_at,
+          images: data.images || [], // Ensure images is always an array
+          host: data.host,
+          latitude: data.latitude,
+          longitude: data.longitude,
+          rating_overall: data.rating_overall,
+          reviews_count: data.reviews_count,
+          bed_count: data.bed_count,
+          bathroom_count: data.bathroom_count,
+          guest_count: data.guest_count,
         };
+
+        // Add console.log to debug transformed listing
+        console.log('Transformed listing:', transformedListing);
 
         setListing(transformedListing);
         setAmenities(amenitiesList);
         setAmenitiesByCategory(grouped);
         document.title = transformedListing.title;
-      } catch (error) {
-        console.error("Error fetching listing details:", error);
+      } catch (err) {
+        console.error("Error fetching listing details:", err);
         navigate("/not-found");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchListingDetails();
+    if (id) fetchListingDetails();
   }, [id, navigate]);
 
   const handleBack = () => {
@@ -195,6 +207,11 @@ function ListingDetailsPage() {
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setShowConfirmation(true);
+  };
+
+  const handleBookingSuccess = () => {
+    setShowSuccess(true);
+    setHasBooked(true);
   };
 
   if (loading || !listing) {
@@ -298,6 +315,7 @@ function ListingDetailsPage() {
             currentUser={currentUser}
             hasBooked={hasBooked}
             hasReviewed={hasReviewed}
+            setHasReviewed={setHasReviewed}
             listingId={id}
           />
         </div>
@@ -319,10 +337,7 @@ function ListingDetailsPage() {
       {showConfirmation && (
         <ConfirmationModal
           onClose={() => setShowConfirmation(false)}
-          onConfirm={() => {
-            setShowConfirmation(false);
-            setShowSuccess(true);
-          }}
+          onSuccess={handleBookingSuccess}
           listing={listing}
           dateRange={dateRange}
         />

@@ -9,7 +9,7 @@ import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 
 function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams()
-  const { fetchListings, totalCount } = useListings()
+  const { fetchFilteredListings, totalCount } = useListings()
   const [currentListings, setCurrentListings] = useState([])
   const [loading, setLoading] = useState(true)
   const listingsPerPage = 12
@@ -41,7 +41,7 @@ function HomePage() {
         amenities: selectedAmenities.length ? selectedAmenities : undefined
       }
       try {
-        const listings = await fetchListings(currentPage, listingsPerPage, filters)
+        const listings = await fetchFilteredListings(currentPage, listingsPerPage, filters)
         setCurrentListings(Array.isArray(listings) ? listings : [])
       } catch (error) {
         console.error("Error fetching listings:", error)
@@ -50,7 +50,7 @@ function HomePage() {
       setLoading(false)
     }
     loadListings()
-  }, [currentPage, activeFilter, sortType, minPrice, maxPrice, selectedAmenities, fetchListings])
+  }, [currentPage, activeFilter, sortType, minPrice, maxPrice, selectedAmenities, fetchFilteredListings])
 
   const totalPages = Math.ceil(totalCount / listingsPerPage)
 

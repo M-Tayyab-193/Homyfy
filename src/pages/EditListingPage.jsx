@@ -1,10 +1,11 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 import { FaUpload, FaImage } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 import supabase from '../supabase/supabase'
 import useCurrentUser from '../hooks/useCurrentUser'
 import axios from 'axios'
+import LoadingSpinner from '../components/ui/LoadingSpinner'
 
 const PROPERTY_TYPES = [
   { id: 'Others', label: 'Others' },
@@ -31,10 +32,12 @@ const AMENITIES = [
   { id: 'cf67e14e-90ea-48e6-8b65-8c688f66234a', label: 'Parking Facility' }
 ]
 
-function AddPropertyPage() {
+function EditListingPage() {
+  const { id } = useParams()
   const { user } = useCurrentUser()
   const navigate = useNavigate()
   
+  const [loading, setLoading] = useState(true)
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -51,8 +54,57 @@ function AddPropertyPage() {
     amenities: [],
     images: []
   })
-  
-  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    const fetchListing = async () => {
+      try {
+       const { data: listing, error: listingError } = await supabase
+        .rpc('get_listing_details', {
+          p_listing_id: id,
+          p_user_id: user.id
+        })
+        .single();
+
+
+        if (listingError) throw listingError
+
+        if (listing.listing_user_id !== user?.id) {
+          toast.error('You do not have permission to edit this listing')
+          navigate('/hosting')
+          return
+        }
+
+        const [city, province, country] = listing.location.split(', ')
+
+        setFormData({
+          title: listing.title,
+          description: listing.description,
+          type: listing.property_type,
+          price: listing.price_value,
+          beds: listing.bed_count.toString(),
+          bathrooms: listing.bathroom_count.toString(),
+          maxGuests: listing.guest_count.toString(),
+          city,
+          province,
+          country,
+          latitude: listing.latitude,
+          longitude: listing.longitude,
+          amenities: listing.amenities,
+          images: listing.images
+        })
+      } catch (error) {
+        console.error('Error fetching listing:', error)
+        toast.error('Error loading listing details')
+        navigate('/hosting')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    if (user) {
+      fetchListing()
+    }
+  }, [id, user, navigate])
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -106,62 +158,62 @@ function AddPropertyPage() {
   }
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
+  e.preventDefault()
+  setLoading(true)
 
-    try {
-      // Create the listing
-     const { data: listing, error: listingError } = await supabase
-  .rpc('insert_listing', {
-    p_title: formData.title,
-    p_description: formData.description,
-    p_property_type: formData.type,
-    p_price_value: parseFloat(formData.price),
-    p_bed_count: parseInt(formData.beds),
-    p_bathroom_count: parseInt(formData.bathrooms),
-    p_guest_count: parseInt(formData.maxGuests),
-    p_location: `${formData.city}, ${formData.province}, ${formData.country}`,
-    p_latitude: formData.latitude,
-    p_longitude: formData.longitude,
-    p_user_id: user.id
-  })
+  try {
+    const location = `${formData.city}, ${formData.province}, ${formData.country}`
 
+    // 1. Call update_listing_details function
+    const { error: listingError } = await supabase.rpc('update_listing_details', {
+      p_listing_id: id,
+      p_user_id: user.id,
+      p_title: formData.title,
+      p_description: formData.description,
+      p_property_type: formData.type,
+      p_price_value: parseFloat(formData.price),
+      p_bed_count: parseInt(formData.beds),
+      p_bathroom_count: parseInt(formData.bathrooms),
+      p_guest_count: parseInt(formData.maxGuests),
+      p_location: location,
+      p_latitude: formData.latitude,
+      p_longitude: formData.longitude
+    })
+    if (listingError) throw listingError
 
-      if (listingError) throw listingError
+    // 2. Call update_listing_images function
+    const { error: imagesError } = await supabase.rpc('update_listing_images', {
+      p_listing_id: id,
+      p_user_id: user.id,
+      p_images: formData.images
+    })
+    if (imagesError) throw imagesError
 
-      // Add images
-      if (formData.images.length > 0) {
-  const { error: imagesError } = await supabase.rpc('insert_listing_images', {
-    p_listing_id: listing.id,
-    p_image_urls: formData.images
-  });
+    // 3. Call update_listing_amenities function
+    const { error: amenitiesError } = await supabase.rpc('update_listing_amenities', {
+      p_listing_id: id,
+      p_user_id: user.id,
+      p_amenities: formData.amenities
+    })
+    if (amenitiesError) throw amenitiesError
 
-  if (imagesError) throw imagesError;
+    toast.success('Listing updated successfully!')
+    navigate('/hosting')
+  } catch (error) {
+    console.error('Error updating listing:', error)
+    toast.error('Error updating listing: ' + error.message)
+  } finally {
+    setLoading(false)
+  }
 }
 
-      // Add amenities
-      if (formData.amenities.length > 0) {
-  const { error: amenitiesError } = await supabase.rpc('insert_listing_amenities', {
-    _listing_id: listing.id,
-    _amenity_ids: formData.amenities
-  });
-
-  if (amenitiesError) throw amenitiesError;
-}
-
-
-      toast.success('Listing created successfully!')
-      navigate('/hosting')
-    } catch (error) {
-      toast.error('Error creating listing: ' + error.message)
-    } finally {
-      setLoading(false)
-    }
+  if (loading) {
+    return <LoadingSpinner fullScreen />
   }
 
   return (
     <div className="container-custom py-8">
-      <h1 className="text-3xl font-bold mb-8">Add New Listing</h1>
+      <h1 className="text-3xl font-bold mb-8">Edit Listing</h1>
 
       <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
         <div className="bg-white rounded-xl shadow-card p-6 mb-6">
@@ -456,7 +508,7 @@ function AddPropertyPage() {
             className="btn-primary"
             disabled={loading}
           >
-            {loading ? 'Creating listing...' : 'Create Listing'}
+            {loading ? 'Updating listing...' : 'Update Listing'}
           </button>
         </div>
       </form>
@@ -464,4 +516,4 @@ function AddPropertyPage() {
   )
 }
 
-export default AddPropertyPage
+export default EditListingPage

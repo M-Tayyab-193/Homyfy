@@ -88,27 +88,34 @@ function ProfilePage() {
   const navigate = useNavigate()
 
   useEffect(() => {
+    console.log('ProfilePage: Starting to fetch user data')
     const fetchUser = async () => {
-      const { data: { user }, error } = await supabase.auth.getUser()
+      try {
+        const { data: { user: authUser }, error: authError } = await supabase.auth.getUser()
+        console.log('ProfilePage: Auth user data:', { authUser, authError })
 
-      if (error || !user) {
-        navigate('/login')
-        return
+        if (authError || !authUser) {
+          console.log('ProfilePage: No authenticated user, redirecting to login')
+          navigate('/login')
+          return
+        }
+
+        const { data: userData, error: userError } = await supabase
+          .rpc('get_user_by_id', { uid: authUser.id })
+        
+        console.log('ProfilePage: User data from RPC:', { userData, userError })
+
+        if (userError) {
+          console.error('ProfilePage: Error fetching user data:', userError)
+          return
+        }
+
+        console.log('ProfilePage: Setting user state with:', userData[0])
+        setUser(userData[0])
+        setName(userData[0]?.fullname || '')
+      } catch (error) {
+        console.error('ProfilePage: Unexpected error:', error)
       }
-
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', user.id)
-        .single()
-
-      if (userError) {
-        console.error('Error fetching user data:', userError)
-        return
-      }
-
-      setUser({ ...user, ...userData })
-      setName(userData.fullname || '')
     }
 
     fetchUser()
@@ -121,6 +128,7 @@ function ProfilePage() {
   const handleDeleteAccount = useCallback(async () => {
     try {
       setLoading(true)
+      console.log('ProfilePage: Starting account deletion process')
 
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email: user.email,
@@ -128,6 +136,7 @@ function ProfilePage() {
       })
 
       if (signInError) {
+        console.error('ProfilePage: Sign in error during deletion:', signInError)
         toast.error('Incorrect password')
         return
       }
@@ -138,35 +147,35 @@ function ProfilePage() {
       } = await supabase.auth.getSession()
 
       if (sessionError || !session) {
+        console.error('ProfilePage: Session error during deletion:', sessionError)
         throw new Error('Failed to retrieve access token')
       }
 
-      const access_token = session.access_token
-
+      console.log('ProfilePage: Making delete user request')
       const response = await fetch('https://sxkihvmmokprqrrklnxp.supabase.co/functions/v1/delete-user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${access_token}`,
+          'Authorization': `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({ userId: user.id }),
         mode: 'cors',
       })
 
       const result = await response.json()
+      console.log('ProfilePage: Delete user response:', result)
 
       if (!response.ok) {
-        console.error('Error:', result.error)
+        console.error('ProfilePage: Delete user error:', result.error)
         throw new Error(result.error || 'Failed to delete account')
       }
 
-      const { error: deleteUserError } = await supabase
-        .from('users')
-        .delete()
-        .eq('id', user.id)
+      const { error: deleteUserError } = await supabase.rpc('delete_user_data', {
+        user_id: user.id
+      })
 
       if (deleteUserError) {
-        console.error('Error deleting from custom users table:', deleteUserError)
+        console.error('ProfilePage: Error deleting from custom users table:', deleteUserError)
         throw new Error('Failed to delete user from custom table')
       }
 
@@ -174,6 +183,7 @@ function ProfilePage() {
       toast.success('Account deleted successfully')
       window.location.href = '/'
     } catch (error) {
+      console.error('ProfilePage: Delete account error:', error)
       toast.error('Error deleting account: ' + error.message)
     } finally {
       setLoading(false)
@@ -183,10 +193,14 @@ function ProfilePage() {
   
   const handleImageUpload = async (e) => {
     const file = e.target.files?.[0]
-    if (!file) return
+    if (!file) {
+      console.log('ProfilePage: No file selected for upload')
+      return
+    }
 
     try {
       setLoading(true)
+      console.log('ProfilePage: Starting image upload')
 
       const formData = new FormData()
       formData.append('file', file)
@@ -198,18 +212,24 @@ function ProfilePage() {
         formData
       )
 
+      console.log('ProfilePage: Cloudinary response:', cloudinaryRes.data)
       const imageUrl = cloudinaryRes.data.secure_url
 
-      const { error: updateError } = await supabase
-        .from('users')
-        .update({ profile_image: imageUrl })
-        .eq('id', user.id)
+      const { error: updateError } = await supabase.rpc('update_profile_image', {
+        user_id: user.id,
+        new_image_url: imageUrl
+      })
 
-      if (updateError) throw updateError
+      if (updateError) {
+        console.error('ProfilePage: Error updating profile image:', updateError)
+        throw updateError
+      }
 
+      console.log('ProfilePage: Profile image updated successfully')
       setUser(prev => ({ ...prev, profile_image: imageUrl }))
       toast.success('Profile picture updated successfully!')
     } catch (error) {
+      console.error('ProfilePage: Image upload error:', error)
       toast.error('Error uploading image: ' + error.message)
     } finally {
       setLoading(false)
@@ -219,18 +239,24 @@ function ProfilePage() {
   const handleNameUpdate = async () => {
     try {
       setLoading(true)
+      console.log('ProfilePage: Starting name update')
 
-      const { error: updateError } = await supabase
-        .from('users')
-        .update({ fullname: name })
-        .eq('id', user.id)
+      const { error: updateError } = await supabase.rpc('update_fullname', {
+        user_id: user.id,
+        new_name: name
+      })
 
-      if (updateError) throw updateError
+      if (updateError) {
+        console.error('ProfilePage: Error updating name:', updateError)
+        throw updateError
+      }
 
+      console.log('ProfilePage: Name updated successfully')
       setUser(prev => ({ ...prev, fullname: name }))
       setEditing(false)
       toast.success('Name updated successfully!')
     } catch (error) {
+      console.error('ProfilePage: Name update error:', error)
       toast.error('Error updating name: ' + error.message)
     } finally {
       setLoading(false)
@@ -239,23 +265,30 @@ function ProfilePage() {
 
   const handlePasswordUpdate = async () => {
     if (passwords.new !== passwords.confirm) {
+      console.log('ProfilePage: Password mismatch')
       toast.error('New passwords do not match')
       return
     }
 
     try {
       setLoading(true)
+      console.log('ProfilePage: Starting password update')
 
       const { error } = await supabase.auth.updateUser({
         password: passwords.new
       })
 
-      if (error) throw error
+      if (error) {
+        console.error('ProfilePage: Password update error:', error)
+        throw error
+      }
 
+      console.log('ProfilePage: Password updated successfully')
       setShowPasswordModal(false)
       setPasswords({ current: '', new: '', confirm: '' })
       toast.success('Password updated successfully!')
     } catch (error) {
+      console.error('ProfilePage: Password update error:', error)
       toast.error('Error updating password: ' + error.message)
     } finally {
       setLoading(false)
@@ -264,15 +297,20 @@ function ProfilePage() {
 
   const handleLogout = async () => {
     try {
+      console.log('ProfilePage: Starting logout')
       await supabase.auth.signOut()
       toast.success('Logged out successfully!')
       window.location.reload()
     } catch (error) {
+      console.error('ProfilePage: Logout error:', error)
       toast.error('Error logging out: ' + error.message)
     }
   }
 
-  if (!user) return null
+  if (!user) {
+    console.log('ProfilePage: No user data, rendering null')
+    return null
+  }
 
   return (
     <div className="container-custom py-8">
@@ -338,6 +376,11 @@ function ProfilePage() {
                 </h2>
 
                 <div className="space-y-4">
+                  <div>
+                    <p className="text-sm text-airbnb-light">Username</p>
+                    <p className="font-medium">{user.username}</p>
+                  </div>
+
                   <div>
                     <p className="text-sm text-airbnb-light">Name</p>
                     {editing ? (

@@ -110,7 +110,7 @@ function HostingPage() {
                 <p className="text-airbnb-light text-sm mb-2">
                   {listing.location}
                 </p>
-                <p className="font-semibold">${listing.price_value} per night</p>
+                <p className="font-semibold">Rs. {listing.price_value} per night</p>
               </div>
             </div>
           ))}

@@ -83,7 +83,7 @@ function ListingCard({ listing }) {
           </div>
 
           <p className="mt-2">
-            <span className="font-semibold">${listing.price}</span>
+            <span className="font-semibold">Rs. {listing.price}</span>
             <span className="text-airbnb-light"> night</span>
           </p>
         </div>

@@ -101,7 +101,7 @@ function BookingsPage() {
 
                   <div className="mt-4 flex justify-between items-center">
                     <div>
-                      <span className="font-semibold">${booking.total_amount}</span>
+                      <span className="font-semibold">Rs. {booking.total_amount}</span>
                       <span className="text-airbnb-light"> total</span>
                     </div>
 

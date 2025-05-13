@@ -12,7 +12,7 @@ function ConfirmationModal({ onClose, listing, dateRange, onSuccess }) {
     (dateRange.endDate - dateRange.startDate) / (1000 * 60 * 60 * 24)
   );
   const subtotal = listing.price_value * numberOfNights;
-  const serviceFee = Math.round(subtotal * 0.15);
+  const serviceFee = Math.round(subtotal * 0.05);
   const total = subtotal + serviceFee;
 
   const validatePaymentNumber = (number) => {
@@ -115,17 +115,17 @@ function ConfirmationModal({ onClose, listing, dateRange, onSuccess }) {
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span>
-                  ${listing.price_value} × {numberOfNights} nights
+                  Rs. {listing.price_value} × {numberOfNights} nights
                 </span>
-                <span>${subtotal}</span>
+                <span>Rs. {subtotal}</span>
               </div>
               <div className="flex justify-between">
                 <span>Service fee</span>
-                <span>${serviceFee}</span>
+                <span>Rs. {serviceFee}</span>
               </div>
               <div className="flex justify-between font-semibold">
                 <span>Total</span>
-                <span>${total}</span>
+                <span>Rs. {total}</span>
               </div>
             </div>
           </div>

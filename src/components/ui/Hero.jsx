@@ -54,7 +54,7 @@ function Hero() {
           Find your next adventure
         </h1>
         <p className="text-xl md:text-2xl text-center mb-10 max-w-xl">
-          Discover the perfect place to stay, anywhere in the world
+          Discover the perfect place to stay, anywhere in Pakistan
         </p>
         
         <div className="w-full max-w-4xl">

@@ -142,8 +142,8 @@ function AddPropertyPage() {
       // Add amenities
       if (formData.amenities.length > 0) {
   const { error: amenitiesError } = await supabase.rpc('insert_listing_amenities', {
-    _listing_id: listing.id,
-    _amenity_ids: formData.amenities
+    p_listing_id: listing.id,
+    p_amenity_ids: formData.amenities
   });
 
   if (amenitiesError) throw amenitiesError;
@@ -346,7 +346,7 @@ function AddPropertyPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Price per night ($)
+                  Price per night (Rs.)
                 </label>
                 <input
                   type="number"

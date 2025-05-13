@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
-import { FaAirbnb, FaFacebook, FaGoogle, FaApple, FaEnvelope } from 'react-icons/fa'
+import { FaHome, FaFacebook, FaGoogle, FaApple, FaEnvelope } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 import supabase from '../supabase/supabase'
 import { signInWithGoogle } from '../supabase/supabase'
@@ -85,7 +85,7 @@ const handleSubmit = async (e) => {
 }
 
 
-const handleResetPassword = async (e) => {
+  const handleResetPassword = async (e) => {
   e.preventDefault();
 
   if (!resetEmail) {
@@ -129,9 +129,9 @@ const handleResetPassword = async (e) => {
     <div className="flex justify-center items-center min-h-[80vh] px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <FaAirbnb className="text-airbnb-primary text-5xl mx-auto mb-4" />
+          <FaHome className="text-airbnb-primary text-4xl mx-auto mb-4" />
           <h1 className="text-2xl font-bold">
-            {showResetPassword ? 'Reset Password' : 'Log in to Airbnb'}
+            {showResetPassword ? 'Reset Password' : 'Log in to Homyfy'}
           </h1>
         </div>
 

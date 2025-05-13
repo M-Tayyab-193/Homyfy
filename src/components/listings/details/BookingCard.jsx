@@ -15,23 +15,19 @@ function BookingCard({
     (dateRange.endDate - dateRange.startDate) / (1000 * 60 * 60 * 24)
   );
   const subtotal = listing.price_value * numberOfNights;
-  const serviceFee = Math.round(subtotal * 0.15);
+  const serviceFee = Math.round(subtotal * 0.05);
   const total = subtotal + serviceFee;
 
   return (
     <div className="sticky top-24 bg-white rounded-xl border border-gray-200 shadow-card p-6">
       <div className="flex justify-between items-start mb-4">
         <div>
-          <span className="text-xl font-semibold">${listing.price_value}</span>
+          <span className="text-xl font-semibold">Rs. {listing.price_value}</span>
           <span className="text-airbnb-light"> night</span>
         </div>
         <div className="flex items-center">
           <FaStar className="text-airbnb-primary mr-1" />
           <span className="font-medium">{listing.rating_overall}</span>
-          <span className="mx-1 text-airbnb-light">·</span>
-          <span className="text-airbnb-light underline">
-            {listing.reviews_count} reviews
-          </span>
         </div>
       </div>
 
@@ -78,20 +74,16 @@ function BookingCard({
       </p>
 
       <div className="space-y-3">
-        <div className="flex justify-between">
+        <div className="flex justify-center">
           <span className="underline">
-            ${listing.price_value} × {numberOfNights} nights
+            Rs. {listing.price_value} × {numberOfNights} nights
           </span>
-          <span>${subtotal}</span>
         </div>
-        <div className="flex justify-between">
-          <span className="underline">Service fee</span>
-          <span>${serviceFee}</span>
+        <div className="flex justify-between pt-3 border-t border-gray-200 font-bold text-[18px]">
+          <span>Rent </span>
+          <span>Rs. {subtotal}</span>
         </div>
-        <div className="flex justify-between pt-3 border-t border-gray-200 font-bold">
-          <span>Total before taxes</span>
-          <span>${total}</span>
-        </div>
+        <div className="flex justify-center ">(Exclusive of service fee)</div>
       </div>
     </div>
   );

@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback, memo } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { FaAirbnb, FaGlobe, FaBars } from "react-icons/fa";
+import { FaHome, FaGlobe, FaBars } from "react-icons/fa";
 import supabase from "../../supabase/supabase";
 import UserMenu from "../ui/UserMenu";
 import { fetchProfileImageById } from "../../utils/fetchProfileImage";
+import logo from "../../assets/logo.svg";
 
 // Memoize the UserMenu component
 const MemoizedUserMenu = memo(UserMenu);
@@ -96,13 +97,14 @@ function Navbar() {
     >
       <div className="container-custom py-4 flex items-center justify-between">
         {/* Logo */}
-        <Link
-          to="/"
-          className="flex items-center text-airbnb-primary transition-transform hover:scale-105"
-        >
-          <FaAirbnb className="text-3xl mr-1" />
-          <span className="text-xl font-bold hidden sm:block">airbnb</span>
-        </Link>
+<Link
+  to="/"
+  className="flex items-center space-x-2 text-airbnb-primary transition-transform hover:scale-105"
+>
+  <FaHome className="h-5 w-5 sm:h-7 sm:w-7 md:h-9 md:w-9" />
+  <span className="text-lg sm:text-xl md:text-2xl font-bold">Homyfy</span>
+</Link>
+
 
         {/* Right Section */}
         <div className="flex items-center space-x-4">
@@ -122,10 +124,6 @@ function Navbar() {
               </Link>
             </>
           )}
-
-          <button className="p-3 rounded-full hover:bg-gray-100 transition-colors">
-            <FaGlobe className="text-airbnb-dark" />
-          </button>
 
           <div className="relative">
             <button

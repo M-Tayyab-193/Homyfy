@@ -129,13 +129,17 @@ function ListingDetailsPage() {
 
   useEffect(() => {
     const fetchListingDetails = async () => {
+      
       try {
+        console.log("Data:", id);
         const { data, error } = await supabase.rpc('get_all_listing', { listing_id: id });
 
-        if (error || !data) throw error;
+
+        if (error) throw error;
+if (!data) throw new Error("No data returned from Supabase RPC.");
+
         
         // Add console.log to debug the data
-        console.log('Listing details data:', data);
 
         const amenitiesList = data.amenities || [];
 

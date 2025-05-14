@@ -1,7 +1,14 @@
 import { useState, useRef } from 'react';
-import { FaTimes } from 'react-icons/fa';
+import { FaTimes, FaMoneyBillWave, FaCreditCard, FaMobile, FaWallet } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import supabase from '../../../supabase/supabase';
+
+const PAYMENT_METHODS = [
+  { id: 'jazzcash', label: 'JazzCash', icon: FaMobile },
+  { id: 'easypaisa', label: 'EasyPaisa', icon: FaWallet },
+  { id: 'card', label: 'Card', icon: FaCreditCard },
+  { id: 'arrival', label: 'Pay upon arrival', icon: FaMoneyBillWave },
+];
 
 function ConfirmationModal({ onClose, listing, dateRange, onSuccess }) {
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -79,7 +86,7 @@ function ConfirmationModal({ onClose, listing, dateRange, onSuccess }) {
 
       toast.success("Booking confirmed successfully!");
       onClose();
-      onSuccess(); // Call onSuccess to show the SuccessModal
+      onSuccess();
 
     } catch (error) {
       console.error("Booking error:", error);
@@ -96,7 +103,7 @@ function ConfirmationModal({ onClose, listing, dateRange, onSuccess }) {
           <h2 className="text-xl font-semibold">Confirm Booking</h2>
           <button
             onClick={onClose}
-            className="text-gray-500"
+            className="text-gray-500 hover:text-gray-700"
           >
             <FaTimes />
           </button>
@@ -132,24 +139,36 @@ function ConfirmationModal({ onClose, listing, dateRange, onSuccess }) {
 
           <div>
             <h3 className="font-medium mb-2">Payment Method</h3>
-            <select
-              value={paymentMethod}
-              onChange={(e) => setPaymentMethod(e.target.value)}
-              className="w-full p-2 border rounded-lg mb-2"
-            >
-              <option value="">Select payment method</option>
-              <option value="jazzcash">JazzCash</option>
-              <option value="easypaisa">EasyPaisa</option>
-              <option value="card">Card</option>
-              <option value="arrival">Pay upon arrival</option>
-            </select>
+            <div className="space-y-2">
+              {PAYMENT_METHODS.map(({ id, label, icon: Icon }) => (
+                <label
+                  key={id}
+                  className={`flex items-center p-3 border rounded-lg cursor-pointer transition-colors ${
+                    paymentMethod === id
+                      ? 'border-airbnb-primary bg-red-50'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value={id}
+                    checked={paymentMethod === id}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="sr-only"
+                  />
+                  <Icon className="text-xl text-airbnb-primary mr-3" />
+                  <span>{label}</span>
+                </label>
+              ))}
+            </div>
 
             {paymentMethod && paymentMethod !== "arrival" && (
               <input
                 type="text"
                 ref={paymentNumberRef}
                 placeholder="Enter 11-digit number"
-                className="w-full p-2 border rounded-lg"
+                className="w-full mt-4 p-3 border rounded-lg"
                 maxLength="11"
               />
             )}

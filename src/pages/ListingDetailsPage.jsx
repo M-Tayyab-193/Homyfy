@@ -326,6 +326,32 @@ function ListingDetailsPage() {
             </p>
           </div>
 
+          {/* Amenities Section */}
+          <div className="py-6 border-b border-gray-200">
+            <h2 className="text-xl font-semibold mb-4">What this place offers</h2>
+            <div className="grid grid-cols-2 gap-4">
+              {Object.entries(amenitiesByCategory).slice(0, 2).map(([category, items]) => (
+                <div key={category}>
+                  <h3 className="font-medium mb-2">{category}</h3>
+                  {items.slice(0, 3).map((amenity) => (
+                    <div key={amenity.id} className="flex items-center mb-2">
+                      <span className="mr-2">✓</span>
+                      <span>{amenity.title}</span>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+            {Object.keys(amenitiesByCategory).length > 0 && (
+              <button
+                onClick={() => setShowAllAmenities(true)}
+                className="mt-4 px-6 py-3 bg-white text-black border border-black rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                Show all amenities
+              </button>
+            )}
+          </div>
+
           <div className="py-6">
             <h2 className="text-xl font-semibold mb-4">Where you'll be</h2>
             <p className="mb-4">{listing.location}</p>

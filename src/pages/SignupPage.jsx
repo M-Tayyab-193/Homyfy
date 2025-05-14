@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { FaAirbnb, FaFacebook, FaGoogle, FaApple } from 'react-icons/fa';
+import { FaHome, FaAirbnb, FaFacebook, FaGoogle, FaApple } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import supabase from '../supabase/supabase';
 import { signInWithGoogle } from '../supabase/supabase';
@@ -90,8 +90,8 @@ function SignupPage() {
     <div className="flex justify-center items-center min-h-[80vh] px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <FaAirbnb className="text-airbnb-primary text-5xl mx-auto mb-4" />
-          <h1 className="text-2xl font-bold">Sign up for Airbnb</h1>
+          <FaHome className="text-airbnb-primary text-4xl mx-auto mb-4" />
+          <h1 className="text-2xl font-bold">Sign up for Homyfy</h1>
         </div>
         
         <div className="bg-white rounded-xl shadow-card p-6 mb-6">

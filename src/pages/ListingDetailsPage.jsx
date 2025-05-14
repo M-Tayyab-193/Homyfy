@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { FaStar, FaHeart, FaRegHeart, FaArrowLeft } from "react-icons/fa";
+import { FaStar, FaHeart, FaRegHeart, FaArrowLeft, FaWhatsapp, FaEnvelope } from "react-icons/fa";
 import { useListings } from "../contexts/ListingsContext";
 import supabase from "../supabase/supabase";
 import Map from "../components/map/Map";
@@ -38,6 +38,7 @@ function ListingDetailsPage() {
   const [hasReviewed, setHasReviewed] = useState(false);
   const [amenities, setAmenities] = useState([]);
   const [amenitiesByCategory, setAmenitiesByCategory] = useState({});
+  const [showContactInfo, setShowContactInfo] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -129,17 +130,12 @@ function ListingDetailsPage() {
 
   useEffect(() => {
     const fetchListingDetails = async () => {
-      
       try {
-        console.log("Data:", id);
         const { data, error } = await supabase.rpc('get_all_listing', { listing_id: id });
 
-
-        if (error) throw error;
-if (!data) throw new Error("No data returned from Supabase RPC.");
-
+        if (error || !data) throw error;
         
-        // Add console.log to debug the data
+        console.log('Listing details data:', data);
 
         const amenitiesList = data.amenities || [];
 
@@ -158,7 +154,7 @@ if (!data) throw new Error("No data returned from Supabase RPC.");
           price_value: data.price_value,
           location: data.location,
           created_at: data.created_at,
-          images: data.images || [], // Ensure images is always an array
+          images: data.images || [],
           host: data.host,
           latitude: data.latitude,
           longitude: data.longitude,
@@ -169,7 +165,6 @@ if (!data) throw new Error("No data returned from Supabase RPC.");
           guest_count: data.guest_count,
         };
 
-        // Add console.log to debug transformed listing
         console.log('Transformed listing:', transformedListing);
 
         setListing(transformedListing);
@@ -244,7 +239,7 @@ if (!data) throw new Error("No data returned from Supabase RPC.");
               <FaStar className="text-airbnb-primary mr-1" />
               <span className="font-medium">{listing.rating_overall}</span>
               <span className="mx-1">·</span>
-              <span className="underline">{listing.reviews_count} reviews</span>
+              <span className="underline">{reviews.length} reviews</span>
             </div>
             <span>{listing.location}</span>
           </div>
@@ -284,6 +279,37 @@ if (!data) throw new Error("No data returned from Supabase RPC.");
                 {listing.guest_count} guests · {listing.bed_count} beds ·{" "}
                 {listing.bathroom_count} baths
               </p>
+              <button 
+                onClick={() => setShowContactInfo(!showContactInfo)}
+                className="mt-4 px-6 py-3 bg-airbnb-primary text-white rounded-lg hover:bg-opacity-90 transition-colors flex items-center space-x-2"
+              >
+                <span>{showContactInfo ? 'Hide Contact Info' : 'Show Contact Info'}</span>
+              </button>
+              
+              {showContactInfo && (
+                <div className="mt-4 p-4 bg-gray-50 rounded-lg space-y-2">
+                  <div className="flex items-center space-x-3">
+                    <FaWhatsapp className="text-green-500 text-xl" />
+                    <a 
+                      href={`https://wa.me/${listing.host.phone}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:text-airbnb-primary transition-colors"
+                    >
+                      {listing.host.phone}
+                    </a>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <FaEnvelope className="text-gray-600 text-xl" />
+                    <a 
+                      href={`mailto:${listing.host.email}`}
+                      className="hover:text-airbnb-primary transition-colors"
+                    >
+                      {listing.host.email}
+                    </a>
+                  </div>
+                </div>
+              )}
             </div>
             <div className="flex flex-col items-center">
               <img

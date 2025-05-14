@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { FaHome, FaAirbnb, FaFacebook, FaGoogle, FaApple } from 'react-icons/fa';
+import { FaHome, FaAirbnb, FaFacebookF, FaGoogle, FaApple, FaUser, FaBuilding } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import supabase from '../supabase/supabase';
 import { signInWithGoogle } from '../supabase/supabase';
@@ -41,7 +41,6 @@ function SignupPage() {
     setLoading(true);
 
     try {
-      // Sign up using Supabase Auth
       const { data, error: signupError } = await supabase.auth.signUp({
         email,
         password,
@@ -54,13 +53,14 @@ function SignupPage() {
         }
       });
 
+      
+
       const user = data?.user;
 
       if (signupError || !user) {
         throw new Error(signupError?.message || 'Unknown error during signup');
       }
 
-      // Insert additional info into users table using RPC
       const {error: insertError } = await supabase.rpc('signup_user', {
         p_id : user.id,
         p_email: formData.email,
@@ -72,11 +72,9 @@ function SignupPage() {
 
       if (insertError) {
         throw new Error(insertError.message);
-      }else{
-        
-      toast.success('Successfully signed up! Please check your email for verification.');
       }
 
+      toast.success('Successfully signed up! Please check your email for verification.');
       navigate('/');
     } catch (err) {
       toast.error(err.message || 'Failed to create an account. Please try again.');
@@ -173,31 +171,52 @@ function SignupPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-gray-700 mb-3">
                 Account Type
               </label>
-              <div className="flex space-x-4">
-                <label className="flex items-center">
+              <div className="grid grid-cols-2 gap-4">
+                <label
+                  className={`flex flex-col items-center justify-center p-4 border rounded-lg cursor-pointer transition-all ${
+                    formData.role === 'guest'
+                      ? 'border-airbnb-primary bg-red-50'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
                   <input
                     type="radio"
                     name="role"
                     value="guest"
                     checked={formData.role === 'guest'}
                     onChange={handleInputChange}
-                    className="mr-2"
+                    className="sr-only"
                   />
-                  Guest
+                  <FaUser className="text-2xl mb-2 text-airbnb-primary" />
+                  <span className="font-medium">Guest</span>
+                  <span className="text-sm text-gray-500 text-center mt-1">
+                    Book and experience stays
+                  </span>
                 </label>
-                <label className="flex items-center">
+
+                <label
+                  className={`flex flex-col items-center justify-center p-4 border rounded-lg cursor-pointer transition-all ${
+                    formData.role === 'host'
+                      ? 'border-airbnb-primary bg-red-50'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
                   <input
                     type="radio"
                     name="role"
                     value="host"
                     checked={formData.role === 'host'}
                     onChange={handleInputChange}
-                    className="mr-2"
+                    className="sr-only"
                   />
-                  Host
+                  <FaBuilding className="text-2xl mb-2 text-airbnb-primary" />
+                  <span className="font-medium">Host</span>
+                  <span className="text-sm text-gray-500 text-center mt-1">
+                    List and manage properties
+                  </span>
                 </label>
               </div>
             </div>
@@ -219,7 +238,7 @@ function SignupPage() {
           
           <div className="space-y-3">
             <button className="w-full flex items-center justify-center py-3 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-              <FaFacebook className="text-blue-600 mr-3" />
+              <FaFacebookF className="text-blue-600 mr-3" />
               <span>Continue with Facebook</span>
             </button>
             

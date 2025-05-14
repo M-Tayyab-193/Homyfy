@@ -16,6 +16,7 @@ function ImageGallery({ images = [], selectedImage, setSelectedImage, showAllIma
               className="w-full h-full object-cover cursor-pointer hover:opacity-95 transition-opacity"
               onClick={() => setSelectedImage(0)}
             />
+            <p>images[0].caption</p>
           </div>
         )}
 
@@ -69,6 +70,7 @@ function ImageGallery({ images = [], selectedImage, setSelectedImage, showAllIma
                       className="w-full rounded-lg"
                       loading="lazy"
                     />
+                    <p>{image.caption}</p>
                   </div>
                 ) : null
               )}

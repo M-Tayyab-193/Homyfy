@@ -29,7 +29,7 @@ function SearchResultsPage() {
   }, [amenitiesParam])
 
   useEffect(() => {
-    document.title = `${location || 'All locations'} - Airbnb Clone`
+    document.title = `${location || 'All locations'} - Homyfy`
     fetchListings()
   }, [location, guests, activeFilter, currentPage, sortType, minPrice, maxPrice, selectedAmenities])
 

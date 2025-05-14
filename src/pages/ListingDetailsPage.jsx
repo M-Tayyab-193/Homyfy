@@ -171,6 +171,7 @@ function ListingDetailsPage() {
         setAmenities(amenitiesList);
         setAmenitiesByCategory(grouped);
         document.title = transformedListing.title;
+    
       } catch (err) {
         console.error("Error fetching listing details:", err);
         navigate("/not-found");

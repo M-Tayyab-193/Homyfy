@@ -20,10 +20,6 @@ function HomePage() {
   const sortType = searchParams.get('sort') || ''
   const minPrice = searchParams.get('minPrice') || ''
   const maxPrice = searchParams.get('maxPrice') || ''
-
-  useEffect(() => {
-    document.title = 'Airbnb Clone | Vacation rentals, cabins, beach houses & more'
-  }, [])
   
   const amenitiesParam = searchParams.get('amenities')
   const selectedAmenities = useMemo(() => {

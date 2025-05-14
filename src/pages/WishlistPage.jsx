@@ -12,7 +12,7 @@ function WishlistPage() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    document.title = 'Wishlist - Airbnb Clone'
+    document.title = 'Wishlist - Homyfy'
     fetchWishlistItems()
   }, [])
 

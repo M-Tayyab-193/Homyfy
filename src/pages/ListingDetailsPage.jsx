@@ -345,7 +345,7 @@ function ListingDetailsPage() {
             {Object.keys(amenitiesByCategory).length > 0 && (
               <button
                 onClick={() => setShowAllAmenities(true)}
-                className="mt-4 px-6 py-3 bg-white text-black border border-black rounded-lg hover:bg-gray-100 transition-colors"
+                className="mt-4 px-6 py-3 bg-airbnb-primary text-white rounded-lg hover:bg-opacity-90 transition-colors flex items-center space-x-2"
               >
                 Show all amenities
               </button>

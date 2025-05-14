@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
-import { FaHome, FaFacebook, FaGoogle, FaApple, FaEnvelope } from 'react-icons/fa'
+import { FaHome, FaFacebook, FaGoogle, FaApple, FaEnvelope, FaUser, FaBuilding } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 import supabase from '../supabase/supabase'
 import { signInWithGoogle } from '../supabase/supabase'
@@ -28,102 +28,92 @@ function AuthPage() {
     }));
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault()
-  setError('')
-  
-  if (!formData.email || !formData.password) {
-    toast.error('Please fill in all fields')
-    return
-  }
-  
-  setLoading(true)
-  try {
-    const { data, error: loginError } = await supabase.auth.signInWithPassword({
-      email: formData.email,
-      password: formData.password,
-    })
-
-    console.log('Login response:', data);  // Debug: Log the response data
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setError('')
     
-    if (loginError) {
-      if (loginError.message === 'Invalid login credentials') {
-        toast.error('Incorrect email or password. Please try again.')
-      } else if (loginError.message === 'Email not confirmed') {
-        toast.error('Please confirm your email before logging in.')
-      } else {
-        toast.error('Authentication failed. Please try again later.')
+    if (!formData.email || !formData.password) {
+      toast.error('Please fill in all fields')
+      return
+    }
+    
+    setLoading(true)
+    try {
+      const { data, error: loginError } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
+      })
+
+      if (loginError) {
+        if (loginError.message === 'Invalid login credentials') {
+          toast.error('Incorrect email or password. Please try again.')
+        } else if (loginError.message === 'Email not confirmed') {
+          toast.error('Please confirm your email before logging in.')
+        } else {
+          toast.error('Authentication failed. Please try again later.')
+        }
+        setError(loginError.message)
+        return
       }
-      setError(loginError.message)
-      return
+
+      const { data: userRoleData, error: roleError } = await supabase.rpc('login_user', {
+        input_email: formData.email,
+        expected_role: formData.role,
+      })
+
+      if (roleError) {
+        await supabase.auth.signOut()
+        toast.error(roleError.message)
+        return
+      }
+
+      toast.success('Successfully logged in!')
+      navigate(redirectPath)
+    } catch (err) {
+      toast.error(err.message || 'Authentication failed. Please try again.')
+      setError(err.message || 'Authentication failed. Please try again.')
+    } finally {
+      setLoading(false)
     }
-
-    console.log('Authenticated user:', data.user);  // Debug: Log the authenticated user
-
-    const { data: userRoleData, error: roleError } = await supabase.rpc('login_user', {
-      input_email: formData.email,
-      expected_role: formData.role,
-    })
-
-    console.log('Role check response:', userRoleData);  // Debug: Log the role data
-
-    if (roleError) {
-      await supabase.auth.signOut()
-      toast.error(roleError.message)
-      return
-    }
-
-    toast.success('Successfully logged in!')
-    navigate(redirectPath)
-  } catch (err) {
-    console.error('Error:', err);  // Debug: Log the error
-    toast.error(err.message || 'Authentication failed. Please try again.')
-    setError(err.message || 'Authentication failed. Please try again.')
-  } finally {
-    setLoading(false)
   }
-}
-
 
   const handleResetPassword = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!resetEmail) {
-    toast.error('Please enter your email address');
-    return;
-  }
-
-  setLoading(true); // Set loading only once at the beginning
-
-  try {
-    // Step 1: Check if user exists
-    const { data: exists, error: checkError } = await supabase.rpc('check_user_exists', {
-      email_input: resetEmail,
-    });
-
-    if (checkError) throw checkError;
-
-    if (!exists) {
-      toast.error('No account found with this email. Please sign up first.');
+    if (!resetEmail) {
+      toast.error('Please enter your email address');
       return;
     }
 
-    // Step 2: Proceed with reset
-    const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
+    setLoading(true);
 
-    if (error) throw error;
+    try {
+      const { data: exists, error: checkError } = await supabase.rpc('check_user_exists', {
+        email_input: resetEmail,
+      });
 
-    toast.success('Password reset link sent to your email!');
-    setShowResetPassword(false);
-    setResetEmail('');
-  } catch (err) {
-    toast.error(err.message || 'Failed to send reset password email');
-  } finally {
-    setLoading(false); // Loading stops whether it fails or succeeds
-  }
-};
+      if (checkError) throw checkError;
+
+      if (!exists) {
+        toast.error('No account found with this email. Please sign up first.');
+        return;
+      }
+
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) throw error;
+
+      toast.success('Password reset link sent to your email!');
+      setShowResetPassword(false);
+      setResetEmail('');
+    } catch (err) {
+      toast.error(err.message || 'Failed to send reset password email');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex justify-center items-center min-h-[80vh] px-4">
@@ -205,31 +195,52 @@ const handleSubmit = async (e) => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
                     Account Type
                   </label>
-                  <div className="flex space-x-4">
-                    <label className="flex items-center">
+                  <div className="grid grid-cols-2 gap-4">
+                    <label
+                      className={`flex flex-col items-center justify-center p-4 border rounded-lg cursor-pointer transition-all ${
+                        formData.role === 'guest'
+                          ? 'border-airbnb-primary bg-red-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
                       <input
                         type="radio"
                         name="role"
                         value="guest"
                         checked={formData.role === 'guest'}
                         onChange={handleInputChange}
-                        className="mr-2"
+                        className="sr-only"
                       />
-                      Guest
+                      <FaUser className="text-2xl mb-2 text-airbnb-primary" />
+                      <span className="font-medium">Guest</span>
+                      <span className="text-sm text-gray-500 text-center mt-1">
+                        Book and experience stays
+                      </span>
                     </label>
-                    <label className="flex items-center">
+
+                    <label
+                      className={`flex flex-col items-center justify-center p-4 border rounded-lg cursor-pointer transition-all ${
+                        formData.role === 'host'
+                          ? 'border-airbnb-primary bg-red-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
                       <input
                         type="radio"
                         name="role"
                         value="host"
                         checked={formData.role === 'host'}
                         onChange={handleInputChange}
-                        className="mr-2"
+                        className="sr-only"
                       />
-                      Host
+                      <FaBuilding className="text-2xl mb-2 text-airbnb-primary" />
+                      <span className="font-medium">Host</span>
+                      <span className="text-sm text-gray-500 text-center mt-1">
+                        List and manage properties
+                      </span>
                     </label>
                   </div>
                 </div>
@@ -287,7 +298,7 @@ const handleSubmit = async (e) => {
         </p>
       </div>
     </div>
-  )
+  );
 }
 
-export default AuthPage
+export default AuthPage;

@@ -15,9 +15,11 @@ function ConfirmationModal({ onClose, listing, dateRange, onSuccess }) {
   const paymentNumberRef = useRef(null);
   const [loading, setLoading] = useState(false);
 
-  const numberOfNights = Math.round(
-    (dateRange.endDate - dateRange.startDate) / (1000 * 60 * 60 * 24)
-  );
+ const numberOfNights = Math.max(
+  1,
+  Math.round((dateRange.endDate - dateRange.startDate) / (1000 * 60 * 60 * 24))
+);
+
   const subtotal = listing.price_value * numberOfNights;
   const serviceFee = Math.round(subtotal * 0.05);
   const total = subtotal + serviceFee;

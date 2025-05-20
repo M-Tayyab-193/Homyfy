@@ -51,7 +51,26 @@ function BookingCard({
         <div className="absolute left-0 right-0 mt-1 bg-white rounded-2xl shadow-lg z-10 border border-gray-200">
           <DateRangePicker
             ranges={[dateRange]}
-            onChange={(item) => setDateRange(item.selection)}
+            onChange={(item) => {
+    const start = item.selection.startDate;
+    const end = item.selection.endDate;
+
+    // Enforce at least 1-day difference
+    if (start && end) {
+      const timeDiff = end.getTime() - start.getTime();
+      const dayDiff = timeDiff / (1000 * 60 * 60 * 24);
+
+      if (dayDiff >= 1) {
+        setDateRange(item.selection);
+      } else {
+        // Optionally, auto-correct endDate to +1 day
+        setDateRange({
+          ...item.selection,
+          endDate: new Date(start.getTime() + 24 * 60 * 60 * 1000),
+        });
+      }
+    }
+  }}
             onClose={() => setIsDatePickerOpen(false)}
             disabledDates={bookedDates}
           />

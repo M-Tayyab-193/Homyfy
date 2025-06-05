@@ -147,7 +147,7 @@ function ConfirmationModal({ onClose, listing, dateRange, onSuccess }) {
                   key={id}
                   className={`flex items-center p-3 border rounded-lg cursor-pointer transition-colors ${
                     paymentMethod === id
-                      ? 'border-green-500 bg-red-50 hover:bg-green-100'
+                      ? 'border-red-500 bg-red-50 hover:bg-red-100'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >

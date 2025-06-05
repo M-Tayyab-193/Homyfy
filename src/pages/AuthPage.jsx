@@ -127,7 +127,7 @@ function AuthPage() {
 
         <div className="bg-white rounded-xl shadow-card p-6 mb-6">
           {error && (
-            <div className="bg-red-50 text-green-700 p-3 rounded-lg mb-4">
+            <div className="bg-red-50 text-red-700 p-3 rounded-lg mb-4">
               {error}
             </div>
           )}
@@ -202,7 +202,7 @@ function AuthPage() {
                     <label
                       className={`flex flex-col items-center justify-center p-4 border rounded-lg cursor-pointer transition-all ${
                         formData.role === 'guest'
-                          ? 'border-green-500 bg-red-50'
+                          ? 'border-red-500 bg-red-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
@@ -224,7 +224,7 @@ function AuthPage() {
                     <label
                       className={`flex flex-col items-center justify-center p-4 border rounded-lg cursor-pointer transition-all ${
                         formData.role === 'host'
-                          ? 'border-green-500 bg-red-50'
+                          ? 'border-red-500 bg-red-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >

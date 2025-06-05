@@ -224,7 +224,7 @@ function ListingDetailsPage() {
     <div className="container-custom py-6">
       <button
         onClick={handleBack}
-        className="flex items-center text-airbnb-dark hover:text-airbnb-primary transition-colors mb-4"
+        className="flex items-center text-airbnb-dark hover:text-green-500 transition-colors mb-4"
       >
         <FaArrowLeft className="mr-2" />
         <span>Back to search</span>
@@ -237,7 +237,7 @@ function ListingDetailsPage() {
         <div className="flex flex-wrap items-center justify-between">
           <div className="flex items-center flex-wrap">
             <div className="flex items-center mr-3">
-              <FaStar className="text-airbnb-primary mr-1" />
+              <FaStar className="text-green-500 mr-1" />
               <span className="font-medium">{listing.rating_overall}</span>
               <span className="mx-1">·</span>
               <span className="underline">{reviews.length} reviews</span>
@@ -251,7 +251,7 @@ function ListingDetailsPage() {
               onClick={handleWishlistToggle}
             >
               {isWishlisted ? (
-                <FaHeart className="mr-1 text-airbnb-primary" />
+                <FaHeart className="mr-1 text-green-500" />
               ) : (
                 <FaRegHeart className="mr-1" />
               )}
@@ -282,7 +282,7 @@ function ListingDetailsPage() {
               </p>
               <button 
                 onClick={() => setShowContactInfo(!showContactInfo)}
-                className="mt-4 px-6 py-3 bg-airbnb-primary text-white rounded-lg hover:bg-opacity-90 transition-colors flex items-center space-x-2"
+                className="mt-4 px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-opacity-90 transition-colors flex items-center space-x-2"
               >
                 <span>{showContactInfo ? 'Hide Contact Info' : 'Show Contact Info'}</span>
               </button>
@@ -295,7 +295,7 @@ function ListingDetailsPage() {
                       href={`https://wa.me/${listing.host.phone}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hover:text-airbnb-primary transition-colors"
+                      className="hover:text-green-500 transition-colors"
                     >
                       {listing.host.phone}
                     </a>
@@ -304,7 +304,7 @@ function ListingDetailsPage() {
                     <FaEnvelope className="text-gray-600 text-xl" />
                     <a 
                       href={`mailto:${listing.host.email}`}
-                      className="hover:text-airbnb-primary transition-colors"
+                      className="hover:text-green-500 transition-colors"
                     >
                       {listing.host.email}
                     </a>
@@ -346,7 +346,7 @@ function ListingDetailsPage() {
             {Object.keys(amenitiesByCategory).length > 0 && (
               <button
                 onClick={() => setShowAllAmenities(true)}
-                className="mt-4 px-6 py-3 bg-airbnb-primary text-white rounded-lg hover:bg-opacity-90 transition-colors flex items-center space-x-2"
+                className="mt-4 px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-opacity-90 transition-colors flex items-center space-x-2"
               >
                 Show all amenities
               </button>

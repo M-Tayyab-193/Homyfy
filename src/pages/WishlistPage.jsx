@@ -72,7 +72,7 @@ function WishlistPage() {
       {wishlistItems.length === 0 ? (
         <div className="bg-white rounded-xl shadow-card p-8 text-center">
           <div className="flex justify-center mb-4">
-            <FaHeart className="text-5xl text-airbnb-primary" />
+            <FaHeart className="text-5xl text-green-500" />
           </div>
           <h2 className="text-2xl font-semibold mb-2">No saved places yet</h2>
           <p className="text-airbnb-light mb-6">
@@ -94,7 +94,7 @@ function WishlistPage() {
                     />
                     <button
                       onClick={(e) => handleRemoveFromWishlist(e, listing.id)}
-                      className="absolute top-3 right-3 bg-white rounded-full p-2 shadow-md text-airbnb-primary hover:text-red-700 transition-colors"
+                      className="absolute top-3 right-3 bg-white rounded-full p-2 shadow-md text-green-500 hover:text-green-700 transition-colors"
                       aria-label="Remove from wishlist"
                     >
                       <FaTrash size={12} />

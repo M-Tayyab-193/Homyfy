@@ -179,7 +179,7 @@ function PropertyFilters({
                   key={amenity.id}
                   className={`flex items-center p-3 border rounded-lg cursor-pointer ${
                     selectedAmenities.includes(amenity.id)
-                      ? 'border-airbnb-primary bg-red-50'
+                      ? 'border-green-500 bg-red-50'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
@@ -197,7 +197,7 @@ function PropertyFilters({
 
           <button
             onClick={handlePriceSubmit}
-            className="w-full bg-airbnb-primary text-white py-2 rounded-lg"
+            className="w-full bg-green-500 text-white py-2 rounded-lg"
           >
             Apply Filters
           </button>

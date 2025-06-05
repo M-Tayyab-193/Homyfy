@@ -16,8 +16,8 @@ function UserMenu({ onClose }) {
       onClose()
       toast.success('Logged out successfully!')
       setTimeout(() => {
-        window.location.reload()
-      }, 300)
+      navigate('/') 
+    }, 300)
     } catch (error) {
       toast.error('Error logging out: ' + error.message)
     }

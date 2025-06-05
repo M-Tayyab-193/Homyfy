@@ -44,7 +44,7 @@ function Footer() {
               <li>
                 <Link
                   to="/about"
-                  className="text-airbnb-light hover:text-airbnb-primary"
+                  className="text-airbnb-light hover:text-green-500"
                 >
                   About Us
                 </Link>
@@ -52,7 +52,7 @@ function Footer() {
               <li>
                 <Link
                   to="/host"
-                  className="text-airbnb-light hover:text-airbnb-primary"
+                  className="text-airbnb-light hover:text-green-500"
                 >
                   Become a Host
                 </Link>
@@ -60,7 +60,7 @@ function Footer() {
               <li>
                 <Link
                   to="/help"
-                  className="text-airbnb-light hover:text-airbnb-primary"
+                  className="text-airbnb-light hover:text-green-500"
                 >
                   Help Center
                 </Link>
@@ -68,7 +68,7 @@ function Footer() {
               <li>
                 <Link
                   to="/careers"
-                  className="text-airbnb-light hover:text-airbnb-primary"
+                  className="text-airbnb-light hover:text-green-500"
                 >
                   Careers
                 </Link>
@@ -83,7 +83,7 @@ function Footer() {
               <li>
                 <Link
                   to="/privacy"
-                  className="text-airbnb-light hover:text-airbnb-primary"
+                  className="text-airbnb-light hover:text-green-500"
                 >
                   Privacy Policy
                 </Link>
@@ -91,7 +91,7 @@ function Footer() {
               <li>
                 <Link
                   to="/terms"
-                  className="text-airbnb-light hover:text-airbnb-primary"
+                  className="text-airbnb-light hover:text-green-500"
                 >
                   Terms of Service
                 </Link>
@@ -99,7 +99,7 @@ function Footer() {
               <li>
                 <Link
                   to="/cancellation"
-                  className="text-airbnb-light hover:text-airbnb-primary"
+                  className="text-airbnb-light hover:text-green-500"
                 >
                   Cancellation Policy
                 </Link>
@@ -107,7 +107,7 @@ function Footer() {
               <li>
                 <Link
                   to="/safety"
-                  className="text-airbnb-light hover:text-airbnb-primary"
+                  className="text-airbnb-light hover:text-green-500"
                 >
                   Trust & Safety
                 </Link>
@@ -125,9 +125,9 @@ function Footer() {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:border-airbnb-primary"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:border-green-500"
               />
-              <button className="px-4 py-2 bg-airbnb-primary text-white rounded-r-lg hover:bg-opacity-90 transition-colors">
+              <button className="px-4 py-2 bg-green-500 text-white rounded-r-lg hover:bg-opacity-90 transition-colors">
                 Subscribe
               </button>
             </div>
@@ -139,10 +139,10 @@ function Footer() {
           <div className="flex flex-col-reverse md:flex-row justify-between items-center text-center space-y-4 md:space-y-0">
             {/* Left: Language and Currency */}
             <div className="flex items-center space-x-4 ">
-              <button className="flex items-center text-airbnb-dark font-bold  hover:text-airbnb-primary">
+              <button className="flex items-center text-airbnb-dark font-bold  hover:text-green-500">
                 <span>English (US)</span>
               </button>
-              <button className=" hover:text-airbnb-primary font-bold ">
+              <button className=" hover:text-green-500 font-bold ">
                 PKR - Rs.
               </button>
             </div>
@@ -158,19 +158,19 @@ function Footer() {
             <div className="flex items-center space-x-6">
               <a
                 href="#"
-                className="text-airbnb-dark hover:text-airbnb-primary"
+                className="text-airbnb-dark hover:text-green-500"
               >
                 <FaFacebookF size={20} />
               </a>
               <a
                 href="#"
-                className="text-airbnb-dark hover:text-airbnb-primary"
+                className="text-airbnb-dark hover:text-green-500"
               >
                 <FaTwitter size={20} />
               </a>
               <a
                 href="#"
-                className="text-airbnb-dark hover:text-airbnb-primary"
+                className="text-airbnb-dark hover:text-green-500"
               >
                 <FaInstagram size={20} />
               </a>

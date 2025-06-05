@@ -37,7 +37,7 @@ const DeleteAccountModal = memo(({
         </button>
         <button
           onClick={onDelete}
-          className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+          className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
           disabled={loading}
         >
           {loading ? 'Deleting...' : 'Delete Account'}
@@ -315,7 +315,7 @@ function ProfilePage() {
   return (
     <div className="container-custom py-8">
       <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-card overflow-hidden">
-        <div className="bg-airbnb-primary text-white p-6 relative">
+        <div className="bg text-white p-6 relative">
           <h1 className="text-2xl font-bold">Your Profile</h1>
           <p>Manage your personal information</p>
         </div>
@@ -336,7 +336,7 @@ function ProfilePage() {
                 </div>
                 <button 
                   onClick={() => fileInputRef.current?.click()}
-                  className="absolute bottom-4 right-0 bg-white rounded-full p-2 shadow-md text-airbnb-primary hover:text-airbnb-secondary transition-colors"
+                  className="absolute bottom-4 right-0 bg-white rounded-full p-2 shadow-md text hover:text-airbnb-secondary transition-colors"
                   disabled={loading}
                 >
                   <FaCamera />
@@ -353,14 +353,14 @@ function ProfilePage() {
               <div className="space-y-2 w-full max-w-xs">
                 <button
                   onClick={() => setShowDeleteModal(true)}
-                  className="w-full flex items-center justify-center py-2 px-4 border border-gray-300 rounded-lg hover:border-gray-500 transition-colors text-red-500"
+                  className="w-full flex items-center justify-center py-2 px-4 border border-gray-300 rounded-lg hover:border-gray-500 transition-colors text-green-500"
                 >
                   <FaTrash className="mr-2" />
                   <span>Delete Account</span>
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center justify-center py-2 px-4 border border-gray-300 rounded-lg hover:border-gray-500 transition-colors text-red-500"
+                  className="w-full flex items-center justify-center py-2 px-4 border border-gray-300 rounded-lg hover:border-gray-500 transition-colors text-green-500"
                 >
                   <FaSignOutAlt className="mr-2" />
                   <span>Log out</span>
@@ -371,7 +371,7 @@ function ProfilePage() {
             <div className="md:w-2/3 md:pl-8">
               <div className="border-b border-gray-200 pb-4 mb-4">
                 <h2 className="text-xl font-semibold mb-4 flex items-center">
-                  <FaUser className="mr-2 text-airbnb-primary" />
+                  <FaUser className="mr-2 text" />
                   Personal Information
                 </h2>
 
@@ -394,7 +394,7 @@ function ProfilePage() {
                         />
                         <button
                           onClick={handleNameUpdate}
-                          className="px-4 py-2 bg-airbnb-primary text-white rounded-lg hover:bg-opacity-90"
+                          className="px-4 py-2 bg text-white rounded-lg hover:bg-opacity-90"
                           disabled={loading}
                         >
                           Save
@@ -415,7 +415,7 @@ function ProfilePage() {
                         <p className="font-medium">{user.fullname}</p>
                         <button
                           onClick={() => setEditing(true)}
-                          className="text-airbnb-primary hover:underline"
+                          className="text hover:underline"
                         >
                           Edit
                         </button>
@@ -432,13 +432,13 @@ function ProfilePage() {
 
               <div>
                 <h3 className="text-lg font-semibold mb-4 flex items-center">
-                  <FaLock className="mr-2 text-airbnb-primary" />
+                  <FaLock className="mr-2 text" />
                   Password
                 </h3>
 
                 <button
                   onClick={() => setShowPasswordModal(true)}
-                  className="text-airbnb-primary hover:underline"
+                  className="text hover:underline"
                 >
                   Change password
                 </button>
@@ -489,7 +489,7 @@ function ProfilePage() {
                 </button>
                 <button
                   onClick={handlePasswordUpdate}
-                  className="px-4 py-2 bg-airbnb-primary text-white rounded-lg hover:bg-opacity-90"
+                  className="px-4 py-2 bg text-white rounded-lg hover:bg-opacity-90"
                   disabled={loading}
                 >
                   Update Password

@@ -44,7 +44,7 @@ function SearchBar({ onSearch }) {
             onChange={(e) => setLocation(e.target.value)}
             className="w-full px-8 py-3 focus:outline-none text-sm md:text-base text-black"
           />
-          <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-airbnb-primary" />
+          <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-500" />
         </div>
         
         {/* Guests */}
@@ -62,7 +62,7 @@ function SearchBar({ onSearch }) {
           
           <button
             type="submit"
-            className="bg-airbnb-primary text-white p-3 rounded-full mx-2 hover:bg-opacity-90 transition-all"
+            className="bg-green-500 text-white p-3 rounded-full mx-2 hover:bg-opacity-90 transition-all"
             aria-label="Search"
           >
             <FaSearch />

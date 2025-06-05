@@ -269,7 +269,7 @@ function SearchResultsPage() {
                     onClick={() => handlePageChange(page)}
                     className={`w-8 h-8 rounded-full flex items-center justify-center ${
                       currentPage === page
-                        ? 'bg-airbnb-primary text-white'
+                        ? 'bg-green-500 text-white'
                         : 'text-airbnb-dark hover:bg-gray-100'
                     }`}
                   >

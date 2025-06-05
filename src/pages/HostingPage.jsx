@@ -100,7 +100,7 @@ function HostingPage() {
                     onClick={() => handleDelete(listing.id)}
                     className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors"
                   >
-                    <FaTrash className="text-red-500" />
+                    <FaTrash className="text-green-500" />
                   </button>
                 </div>
               </div>

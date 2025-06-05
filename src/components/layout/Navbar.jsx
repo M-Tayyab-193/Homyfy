@@ -99,7 +99,7 @@ function Navbar() {
         {/* Logo */}
 <Link
   to="/"
-  className="flex items-center space-x-2 text-airbnb-primary transition-transform hover:scale-105"
+  className="flex items-center space-x-2 text-green-500 transition-transform hover:scale-105"
 >
   <FaHome className="h-5 w-5 sm:h-7 sm:w-7 md:h-9 md:w-9" />
   <span className="text-lg sm:text-xl md:text-2xl font-bold">Homyfy</span>
@@ -118,7 +118,7 @@ function Navbar() {
               </Link>
               <Link
                 to="/login"
-                className="hidden md:block px-4 py-2 rounded-full bg-airbnb-primary text-white hover:bg-opacity-90 transition-colors font-medium"
+                className="hidden md:block px-4 py-2 rounded-full bg-green-500 text-white hover:bg-opacity-90 transition-colors font-medium"
               >
                 Log in
               </Link>

@@ -76,7 +76,7 @@ if (reviewsError) {
       {currentUser && !hasReviewed && hasBooked && (
         <button
           onClick={() => setShowReviewForm(!showReviewForm)}
-          className="mb-4 px-4 py-2 bg-airbnb-primary text-white rounded-lg hover:bg-opacity-90"
+          className="mb-4 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-opacity-90"
         >
           Leave a Review
         </button>
@@ -132,7 +132,7 @@ if (reviewsError) {
 
           <button
             type="submit"
-            className="px-4 py-2 bg-airbnb-primary text-white rounded-lg hover:bg-opacity-90"
+            className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-opacity-90"
           >
             Submit Review
           </button>
@@ -141,7 +141,7 @@ if (reviewsError) {
 
       <div className="space-y-4">
         {reviews.map((review) => (
-          <div key={review.id} className="border-b border-gray-200 pb-4">
+          <div key={review.id} className=" border-gray-200 pb-4">
             <div className="flex items-center mb-2">
               <img
                 src={review.profile_image || `https://api.dicebear.com/7.x/initials/svg?seed=${review.fullname}`}

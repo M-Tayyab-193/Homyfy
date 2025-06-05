@@ -142,7 +142,7 @@ function HomePage() {
                 onClick={() => updateSearchParams({ page: number.toString() })}
                 className={`w-8 h-8 rounded-full ${
                   currentPage === number
-                    ? 'bg-airbnb-primary text-white'
+                    ? 'bg-green-500 text-white'
                     : 'text-airbnb-dark hover:bg-gray-100'
                 }`}
               >

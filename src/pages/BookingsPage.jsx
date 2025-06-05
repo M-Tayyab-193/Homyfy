@@ -49,7 +49,7 @@ function BookingsPage() {
 
       {bookings.length === 0 ? (
         <div className="bg-white rounded-xl shadow-card p-8 text-center">
-          <FaCalendar className="text-5xl text-airbnb-primary mx-auto mb-4" />
+          <FaCalendar className="text-5xl text-green-500 mx-auto mb-4" />
           <h2 className="text-2xl font-semibold mb-4">No bookings yet</h2>
           <p className="text-airbnb-light mb-6">
             Start exploring and book your next stay!

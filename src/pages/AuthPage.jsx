@@ -119,7 +119,7 @@ function AuthPage() {
     <div className="flex justify-center items-center min-h-[80vh] px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <FaHome className="text-airbnb-primary text-4xl mx-auto mb-4" />
+          <FaHome className="text-green-500 text-4xl mx-auto mb-4" />
           <h1 className="text-2xl font-bold">
             {showResetPassword ? 'Reset Password' : 'Log in to Homyfy'}
           </h1>
@@ -127,7 +127,7 @@ function AuthPage() {
 
         <div className="bg-white rounded-xl shadow-card p-6 mb-6">
           {error && (
-            <div className="bg-red-50 text-red-700 p-3 rounded-lg mb-4">
+            <div className="bg-green-50 text-green-700 p-3 rounded-lg mb-4">
               {error}
             </div>
           )}
@@ -158,7 +158,7 @@ function AuthPage() {
               <button
                 type="button"
                 onClick={() => setShowResetPassword(false)}
-                className="w-full text-airbnb-primary hover:underline"
+                className="w-full text-green-500 hover:underline"
               >
                 Back to Login
               </button>
@@ -202,7 +202,7 @@ function AuthPage() {
                     <label
                       className={`flex flex-col items-center justify-center p-4 border rounded-lg cursor-pointer transition-all ${
                         formData.role === 'guest'
-                          ? 'border-airbnb-primary bg-red-50'
+                          ? 'border-green-500 bg-green-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
@@ -214,7 +214,7 @@ function AuthPage() {
                         onChange={handleInputChange}
                         className="sr-only"
                       />
-                      <FaUser className="text-2xl mb-2 text-airbnb-primary" />
+                      <FaUser className="text-2xl mb-2 text-green-500" />
                       <span className="font-medium">Guest</span>
                       <span className="text-sm text-gray-500 text-center mt-1">
                         Book and experience stays
@@ -224,7 +224,7 @@ function AuthPage() {
                     <label
                       className={`flex flex-col items-center justify-center p-4 border rounded-lg cursor-pointer transition-all ${
                         formData.role === 'host'
-                          ? 'border-airbnb-primary bg-red-50'
+                          ? 'border-green-500 bg-green-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
@@ -236,7 +236,7 @@ function AuthPage() {
                         onChange={handleInputChange}
                         className="sr-only"
                       />
-                      <FaBuilding className="text-2xl mb-2 text-airbnb-primary" />
+                      <FaBuilding className="text-2xl mb-2 text-green-500" />
                       <span className="font-medium">Host</span>
                       <span className="text-sm text-gray-500 text-center mt-1">
                         List and manage properties
@@ -248,7 +248,7 @@ function AuthPage() {
                 <button
                   type="button"
                   onClick={() => setShowResetPassword(true)}
-                  className="text-airbnb-primary hover:underline text-sm"
+                  className="text-green-500 hover:underline text-sm"
                 >
                   Forgot password?
                 </button>
@@ -274,7 +274,7 @@ function AuthPage() {
                   <span>Continue with Facebook</span>
                 </button>
                 <button className="w-full flex items-center justify-center py-3 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors" onClick={signInWithGoogle}>
-                  <FaGoogle className="text-red-500 mr-3" />
+                  <FaGoogle className="text-green-500 mr-3" />
                   <span>Continue with Google</span>
                 </button>
                 <button className="w-full flex items-center justify-center py-3 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
@@ -292,7 +292,7 @@ function AuthPage() {
 
         <p className="text-center">
           Don't have an account?{' '}
-          <Link to="/signup" className="text-airbnb-primary hover:underline font-medium">
+          <Link to="/signup" className="text-green-500 hover:underline font-medium">
             Sign up
           </Link>
         </p>

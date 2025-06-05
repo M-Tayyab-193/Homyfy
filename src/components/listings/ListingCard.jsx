@@ -48,7 +48,7 @@ function ListingCard({ listing }) {
             aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
           >
             {isWishlisted ? (
-              <FaHeart className="text-airbnb-primary drop-shadow-lg" />
+              <FaHeart className="text-green-500 drop-shadow-lg" />
             ) : (
               <FaRegHeart className="text-white drop-shadow-lg hover:scale-110 transition-transform" />
             )}
@@ -59,7 +59,7 @@ function ListingCard({ listing }) {
           <div className="flex justify-between items-start">
             <h3 className="font-medium text-lg truncate">{listing.title || 'Untitled Listing'}</h3>
             <div className="flex items-center ml-2">
-              <FaStar className="text-airbnb-primary mr-1" />
+              <FaStar className="text-green-500 mr-1" />
               <span>{listing.rating || '4.5'}</span>
             </div>
           </div>

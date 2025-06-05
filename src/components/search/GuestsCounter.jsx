@@ -35,7 +35,7 @@ function GuestsCounter({ guests, onChange, onClose }) {
       <div className="flex justify-end mt-4">
         <button
           onClick={onClose}
-          className="px-4 py-2 bg-airbnb-primary text-white rounded-lg hover:bg-opacity-90 transition-colors"
+          className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-opacity-90 transition-colors"
         >
           Done
         </button>

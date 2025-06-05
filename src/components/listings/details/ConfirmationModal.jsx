@@ -147,7 +147,7 @@ function ConfirmationModal({ onClose, listing, dateRange, onSuccess }) {
                   key={id}
                   className={`flex items-center p-3 border rounded-lg cursor-pointer transition-colors ${
                     paymentMethod === id
-                      ? 'border-airbnb-primary bg-red-50'
+                      ? 'border-green-500 bg-green-50 hover:bg-green-100'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
@@ -159,7 +159,7 @@ function ConfirmationModal({ onClose, listing, dateRange, onSuccess }) {
                     onChange={(e) => setPaymentMethod(e.target.value)}
                     className="sr-only"
                   />
-                  <Icon className="text-xl text-airbnb-primary mr-3" />
+                  <Icon className="text-xl text-green-500 mr-3" />
                   <span>{label}</span>
                 </label>
               ))}

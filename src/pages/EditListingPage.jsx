@@ -424,7 +424,7 @@ function EditListingPage() {
                   key={amenity.id}
                   className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${
                     formData.amenities.includes(amenity.id)
-                      ? 'border-green-500 bg-green-50'
+                      ? 'border-green-500 bg-red-50'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >

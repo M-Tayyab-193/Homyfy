@@ -112,7 +112,7 @@ function HostAuthPage({ mode = 'login' }) {
 
         <div className="bg-white rounded-xl shadow-card p-6 mb-6">
           {error && (
-            <div className="bg-green-50 text-green-700 p-3 rounded-lg mb-4">
+            <div className="bg-red-50 text-green-700 p-3 rounded-lg mb-4">
               {error}
             </div>
           )}

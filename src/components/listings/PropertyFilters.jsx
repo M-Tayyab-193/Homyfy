@@ -179,7 +179,7 @@ function PropertyFilters({
                   key={amenity.id}
                   className={`flex items-center p-3 border rounded-lg cursor-pointer ${
                     selectedAmenities.includes(amenity.id)
-                      ? 'border-red-500 bg-red-50'
+                      ? 'border-green-500 bg-green-50'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >

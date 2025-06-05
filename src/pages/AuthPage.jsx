@@ -202,7 +202,7 @@ function AuthPage() {
                     <label
                       className={`flex flex-col items-center justify-center p-4 border rounded-lg cursor-pointer transition-all ${
                         formData.role === 'guest'
-                          ? 'border-red-500 bg-red-50'
+                          ? 'border-green-500 bg-green-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
@@ -224,7 +224,7 @@ function AuthPage() {
                     <label
                       className={`flex flex-col items-center justify-center p-4 border rounded-lg cursor-pointer transition-all ${
                         formData.role === 'host'
-                          ? 'border-red-500 bg-red-50'
+                          ? 'border-green-500 bg-green-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >

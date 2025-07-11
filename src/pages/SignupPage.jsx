@@ -1,40 +1,47 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { FaHome, FaAirbnb, FaFacebookF, FaGoogle, FaApple, FaUser, FaBuilding } from 'react-icons/fa';
-import { toast } from 'react-toastify';
-import supabase from '../supabase/supabase';
-import { signInWithGoogle } from '../supabase/supabase';
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import {
+  FaHome,
+  FaAirbnb,
+  FaFacebookF,
+  FaGoogle,
+  FaApple,
+  FaUser,
+  FaBuilding,
+} from "react-icons/fa";
+import { toast } from "react-toastify";
+import supabase, { signInWithGoogle } from "../supabase/supabase";
 
 function SignupPage() {
   const [formData, setFormData] = useState({
-    email: '',
-    username: '',
-    fullname: '',
-    phone: '',
-    password: '',
-    role: 'guest'
+    email: "",
+    username: "",
+    fullname: "",
+    phone: "",
+    password: "",
+    role: "guest",
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  
+
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    
+    setError("");
+
     const { email, username, fullname, phone, password, role } = formData;
-    
+
     if (!email || !username || !fullname || !phone || !password) {
-      toast.error('Please fill in all fields');
+      toast.error("Please fill in all fields");
       return;
     }
 
@@ -49,36 +56,38 @@ function SignupPage() {
             username,
             fullname,
             role,
-          }
-        }
+          },
+        },
       });
-
-      
 
       const user = data?.user;
 
       if (signupError || !user) {
-        throw new Error(signupError?.message || 'Unknown error during signup');
+        throw new Error(signupError?.message || "Unknown error during signup");
       }
 
-      const {error: insertError } = await supabase.rpc('signup_user', {
-        p_id : user.id,
+      const { error: insertError } = await supabase.rpc("signup_user", {
+        p_id: user.id,
         p_email: formData.email,
         p_username: formData.username,
         p_fullname: formData.fullname,
         p_phone: formData.phone,
-        p_role: formData.role
+        p_role: formData.role,
       });
 
       if (insertError) {
         throw new Error(insertError.message);
       }
 
-      toast.success('Successfully signed up! Please check your email for verification.');
-      navigate('/');
+      toast.success(
+        "Successfully signed up! Please check your email for verification."
+      );
+      navigate("/");
     } catch (err) {
-      toast.error(err.message || 'Failed to create an account. Please try again.');
-      setError(err.message || 'Failed to create an account. Please try again.');
+      toast.error(
+        err.message || "Failed to create an account. Please try again."
+      );
+      setError(err.message || "Failed to create an account. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -91,15 +100,16 @@ function SignupPage() {
           <FaHome className="text-green-500 text-4xl mx-auto mb-4" />
           <h1 className="text-2xl font-bold">Sign up for Homyfy</h1>
         </div>
-        
+
         <div className="bg-white rounded-xl shadow-card p-6 mb-6">
           {error && (
             <div className="bg-red-50 text-red-700 p-3 rounded-lg mb-4">
               {error}
             </div>
           )}
-          
+
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Email */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Email
@@ -114,6 +124,7 @@ function SignupPage() {
               />
             </div>
 
+            {/* Username */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Username
@@ -127,7 +138,8 @@ function SignupPage() {
                 placeholder="Choose a username"
               />
             </div>
-            
+
+            {/* Full Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Full Name
@@ -142,6 +154,7 @@ function SignupPage() {
               />
             </div>
 
+            {/* Mobile Number */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Mobile Number
@@ -155,7 +168,8 @@ function SignupPage() {
                 placeholder="Enter your mobile number"
               />
             </div>
-            
+
+            {/* Password */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Password
@@ -170,23 +184,25 @@ function SignupPage() {
               />
             </div>
 
+            {/* Account Type */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 Account Type
               </label>
               <div className="grid grid-cols-2 gap-4">
+                {/* Guest */}
                 <label
                   className={`flex flex-col items-center justify-center p-4 border rounded-lg cursor-pointer transition-all ${
-                    formData.role === 'guest'
-                      ? 'border-green-500 bg-green-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                    formData.role === "guest"
+                      ? "border-green-500 bg-green-50"
+                      : "border-gray-200 hover:border-gray-300"
                   }`}
                 >
                   <input
                     type="radio"
                     name="role"
                     value="guest"
-                    checked={formData.role === 'guest'}
+                    checked={formData.role === "guest"}
                     onChange={handleInputChange}
                     className="sr-only"
                   />
@@ -197,18 +213,19 @@ function SignupPage() {
                   </span>
                 </label>
 
+                {/* Host */}
                 <label
                   className={`flex flex-col items-center justify-center p-4 border rounded-lg cursor-pointer transition-all ${
-                    formData.role === 'host'
-                      ? 'border-green-500 bg-green-50'
-                      : 'border-gray-200 hover:border-gray-300'
+                    formData.role === "host"
+                      ? "border-green-500 bg-green-50"
+                      : "border-gray-200 hover:border-gray-300"
                   }`}
                 >
                   <input
                     type="radio"
                     name="role"
                     value="host"
-                    checked={formData.role === 'host'}
+                    checked={formData.role === "host"}
                     onChange={handleInputChange}
                     className="sr-only"
                   />
@@ -220,43 +237,43 @@ function SignupPage() {
                 </label>
               </div>
             </div>
-            
+
+            {/* Submit */}
             <button
               type="submit"
               className="w-full btn-primary"
               disabled={loading}
             >
-              {loading ? 'Creating account...' : 'Sign up'}
+              {loading ? "Creating account..." : "Sign up"}
             </button>
           </form>
-          
+
+          {/* Divider */}
           <div className="flex items-center my-4">
-            <div className="flex-grow border-t border-gray-200"></div>
+            <div className="flex-grow border-t border-gray-200" />
             <div className="px-3 text-gray-500 text-sm">or</div>
-            <div className="flex-grow border-t border-gray-200"></div>
+            <div className="flex-grow border-t border-gray-200" />
           </div>
-          
+
+          {/* OAuth */}
           <div className="space-y-3">
-            <button className="w-full flex items-center justify-center py-3 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-              <FaFacebookF className="text-blue-600 mr-3" />
-              <span>Continue with Facebook</span>
-            </button>
-            
-            <button className="w-full flex items-center justify-center py-3 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors" onClick={signInWithGoogle}>
+            <button
+              className="w-full flex items-center justify-center py-3 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              onClick={signInWithGoogle}
+            >
               <FaGoogle className="text-green-500 mr-3" />
               <span>Continue with Google</span>
             </button>
-            
-            <button className="w-full flex items-center justify-center py-3 px-4 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-              <FaApple className="mr-3" />
-              <span>Continue with Apple</span>
-            </button>
           </div>
         </div>
-        
+
+        {/* Footer */}
         <p className="text-center">
-          Already have an account?{' '}
-          <Link to="/login" className="text-green-500 hover:underline font-medium">
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="text-green-500 hover:underline font-medium"
+          >
             Log in
           </Link>
         </p>

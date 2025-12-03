@@ -1,8 +1,10 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { motion } from 'framer-motion'
 import supabase from '../../supabase/supabase'
 import useCurrentUser from '../../hooks/useCurrentUser'
-import { FaCalendar } from 'react-icons/fa'
+import NotificationBadge from './NotificationBadge'
+import { FaCalendar, FaHeart, FaUser, FaHome, FaSignOutAlt, FaQuestionCircle, FaCrown } from 'react-icons/fa'
 
 function UserMenu({ onClose }) {
   const { user: currentUser, loading } = useCurrentUser()
@@ -16,8 +18,8 @@ function UserMenu({ onClose }) {
       onClose()
       toast.success('Logged out successfully!')
       setTimeout(() => {
-      navigate('/') 
-    }, 300)
+        navigate('/') 
+      }, 300)
     } catch (error) {
       toast.error('Error logging out: ' + error.message)
     }
@@ -28,98 +30,156 @@ function UserMenu({ onClose }) {
     navigate(path)
   }
 
+  const menuVariants = {
+    hidden: { opacity: 0, y: -10 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.2,
+        staggerChildren: 0.05
+      }
+    }
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, x: -10 },
+    visible: { opacity: 1, x: 0 }
+  }
+
   return (
-    <div 
-      className="absolute right-0 top-12 w-64 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden z-50"
+    <motion.div 
+      className="absolute right-0 top-12 w-72 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden z-50"
       onClick={(e) => e.stopPropagation()}
+      variants={menuVariants}
+      initial="hidden"
+      animate="visible"
     >
       <div className="py-2">
         {currentUser && (
   <>
-    <div className="px-4 py-2 border-b border-gray-200">
+    <motion.div 
+      className="bg-gradient-to-br from-blue-500 to-blue-600 px-5 py-4"
+      variants={itemVariants}
+    >
       <div className="flex items-center space-x-3">
-        <div>
-          <p className="font-medium">{currentUser.email}</p>
-          <p className="text-sm text-airbnb-light">
-            {currentUser.user_metadata?.role === 'host' ? 'Host' : 'Guest'}
-          </p>
+        <motion.div 
+          className="relative"
+          whileHover={{ scale: 1.1, rotate: 5 }}
+        >
+          <div className="absolute inset-0 bg-white rounded-full blur-md opacity-30"></div>
+          <div className="relative w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-lg">
+            <FaUser className="text-blue-500 text-lg" />
+          </div>
+        </motion.div>
+        <div className="flex-1">
+          <p className="font-semibold text-white truncate">{currentUser.email}</p>
+          <div className="flex items-center gap-1.5 mt-1">
+            {currentUser.user_metadata?.role === 'host' ? (
+              <>
+                <FaCrown className="text-yellow-300 text-xs" />
+                <span className="text-xs text-blue-100 font-medium">Host Account</span>
+              </>
+            ) : (
+              <span className="text-xs text-blue-100 font-medium">Guest Account</span>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </motion.div>
 
-    {currentUser.user_metadata?.role === 'host' ? (
-      <>
-        <Link 
-          to="/hosting" 
-          className="block w-full text-left px-4 py-3 hover:bg-gray-100"
-          onClick={onClose}
-        >
-          Manage Listings
-        </Link>
-        <Link 
-          to="/profile" 
-          className="block w-full text-left px-4 py-3 hover:bg-gray-100"
-          onClick={onClose}
-        >
-          Profile
-        </Link>
-      </>
-    ) : (
-      <Link 
-        to="/profile" 
-        className="block w-full text-left px-4 py-3 hover:bg-gray-100"
-        onClick={onClose}
-      >
-        Profile
-      </Link>
-    )}
+    <div className="py-2">
+      {currentUser.user_metadata?.role === 'host' ? (
+        <>
+          <motion.div variants={itemVariants}>
+            <Link 
+              to="/hosting" 
+              className="flex items-center gap-3 w-full text-left px-5 py-3 hover:bg-blue-50 transition-colors group"
+              onClick={onClose}
+            >
+              <FaHome className="text-blue-500 group-hover:text-blue-600" />
+              <span className="font-medium text-gray-700 group-hover:text-blue-600">Manage Listings</span>
+            </Link>
+          </motion.div>
+          <motion.div variants={itemVariants}>
+            <Link 
+              to="/profile" 
+              className="flex items-center gap-3 w-full text-left px-5 py-3 hover:bg-blue-50 transition-colors group"
+              onClick={onClose}
+            >
+              <FaUser className="text-blue-500 group-hover:text-blue-600" />
+              <span className="font-medium text-gray-700 group-hover:text-blue-600">Profile</span>
+            </Link>
+          </motion.div>
+        </>
+      ) : (
+        <motion.div variants={itemVariants}>
+          <Link 
+            to="/profile" 
+            className="flex items-center gap-3 w-full text-left px-5 py-3 hover:bg-blue-50 transition-colors group"
+            onClick={onClose}
+          >
+            <FaUser className="text-blue-500 group-hover:text-blue-600" />
+            <span className="font-medium text-gray-700 group-hover:text-blue-600">Profile</span>
+          </Link>
+        </motion.div>
+      )}
+    </div>
   </>
 )}
 
 
-        <div className="border-t border-gray-200 mt-1">
-          <Link 
-            to="/wishlist" 
-            className="block w-full text-left px-4 py-3 hover:bg-gray-100"
-            onClick={onClose}
-          >
-            Wishlist
-          </Link>
+        <div className="border-t border-gray-200 py-2">
+          <motion.div variants={itemVariants}>
+            <Link 
+              to="/wishlist" 
+              className="flex items-center gap-3 w-full text-left px-5 py-3 hover:bg-red-50 transition-colors group relative"
+              onClick={onClose}
+            >
+              <FaHeart className="text-red-500 group-hover:text-red-600" />
+              <span className="font-medium text-gray-700 group-hover:text-red-600">Wishlist</span>
+              <NotificationBadge count={0} position="top-right" color="red" />
+            </Link>
+          </motion.div>
           {currentUser?.user_metadata?.role === 'guest' && (
-  <Link 
-    to="/bookings" 
-    className="block w-full text-left px-4 py-3 hover:bg-gray-100"
-    onClick={onClose}
-  >
-    <div className="flex items-center">
-      <FaCalendar className="mr-2" />
-      Your Bookings
-    </div>
-  </Link>
-)}
-
-
+            <motion.div variants={itemVariants}>
+              <Link 
+                to="/bookings" 
+                className="flex items-center gap-3 w-full text-left px-5 py-3 hover:bg-blue-50 transition-colors group"
+                onClick={onClose}
+              >
+                <FaCalendar className="text-blue-500 group-hover:text-blue-600" />
+                <span className="font-medium text-gray-700 group-hover:text-blue-600">Your Bookings</span>
+              </Link>
+            </motion.div>
+          )}
         </div>
 
-        <div className="border-t border-gray-200">
-          <Link 
-            to="/help" 
-            className="block w-full text-left px-4 py-3 hover:bg-gray-100"
-            onClick={onClose}
-          >
-            Help
-          </Link>
-          {currentUser && (
-            <button 
-              className="w-full text-left px-4 py-3 hover:bg-gray-100"
-              onClick={handleLogout}
+        <div className="border-t border-gray-200 py-2">
+          <motion.div variants={itemVariants}>
+            <Link 
+              to="/help" 
+              className="flex items-center gap-3 w-full text-left px-5 py-3 hover:bg-gray-50 transition-colors group"
+              onClick={onClose}
             >
-              Log out
-            </button>
+              <FaQuestionCircle className="text-gray-500 group-hover:text-gray-600" />
+              <span className="font-medium text-gray-700 group-hover:text-gray-900">Help Center</span>
+            </Link>
+          </motion.div>
+          {currentUser && (
+            <motion.div variants={itemVariants}>
+              <button 
+                className="flex items-center gap-3 w-full text-left px-5 py-3 hover:bg-red-50 transition-colors group"
+                onClick={handleLogout}
+              >
+                <FaSignOutAlt className="text-red-500 group-hover:text-red-600" />
+                <span className="font-medium text-gray-700 group-hover:text-red-600">Log out</span>
+              </button>
+            </motion.div>
           )}
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 

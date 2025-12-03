@@ -1,31 +1,42 @@
 import supabase from "../supabase/supabase";
-import { toast } from "react-toastify";
+
+// Cache for profile images
+const imageCache = new Map();
 
 export async function fetchProfileImageById(userId) {
-  console.log('fetchProfileImage: Starting with userId:', userId);
-  
   if (!userId) {
-    console.log('fetchProfileImage: No userId provided, returning null');
     return null;
   }
 
+  // Check cache first
+  if (imageCache.has(userId)) {
+    return imageCache.get(userId);
+  }
+
   try {
-    console.log('fetchProfileImage: Making RPC call');
     const { data, error } = await supabase.rpc("get_user_profile_image", {
       p_user_id: userId,
     });
 
     if (error) {
-      console.error("fetchProfileImage: RPC error:", error);
-      toast.error("Error fetching profile image via RPC:", error.message);
+      console.error("Error fetching profile image:", error);
       return null;
     }
 
-    console.log('fetchProfileImage: Success, returning data:', data);
-    return data; // string or null
+    // Cache the result
+    imageCache.set(userId, data);
+    return data;
   } catch (err) {
-    console.error("fetchProfileImage: Unexpected error:", err);
-    toast.error("Unexpected error in fetchProfileImageById:", err);
+    console.error("Unexpected error fetching profile image:", err);
     return null;
+  }
+}
+
+// Clear cache function (useful for profile updates)
+export function clearProfileImageCache(userId) {
+  if (userId) {
+    imageCache.delete(userId);
+  } else {
+    imageCache.clear();
   }
 }

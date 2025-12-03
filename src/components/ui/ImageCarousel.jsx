@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
+import { FaChevronLeft, FaChevronRight, FaExpand } from 'react-icons/fa'
+import { motion } from 'framer-motion'
 
-function ImageCarousel({ images = [], currentIndex = 0, setCurrentIndex }) {
+function ImageCarousel({ images = [], currentIndex = 0, setCurrentIndex, onImageClick }) {
   const [showControls, setShowControls] = useState(false)
   
   // Return early if no images
@@ -29,13 +30,14 @@ function ImageCarousel({ images = [], currentIndex = 0, setCurrentIndex }) {
 
   return (
     <div
-      className="relative aspect-square overflow-hidden rounded-t-xl"
+      className="relative aspect-square overflow-hidden rounded-t-xl group"
       onMouseEnter={() => setShowControls(true)}
       onMouseLeave={() => setShowControls(false)}
     >
       <div 
-        className="absolute inset-0 transition-transform duration-500 ease-in-out"
+        className="absolute inset-0 transition-transform duration-500 ease-in-out cursor-pointer"
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+        onClick={() => onImageClick && onImageClick(currentIndex)}
       >
         <div className="flex">
           {images.map((image, index) => (
@@ -49,9 +51,9 @@ function ImageCarousel({ images = [], currentIndex = 0, setCurrentIndex }) {
           ))}
         </div>
       </div>
-      
+
       {/* Image Indicators */}
-      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1">
+      <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1 z-10">
         {images.map((_, index) => (
           <div
             key={index}
@@ -65,20 +67,24 @@ function ImageCarousel({ images = [], currentIndex = 0, setCurrentIndex }) {
       {/* Navigation Buttons */}
       {images.length > 1 && (showControls || window.innerWidth < 768) && (
         <>
-          <button
+          <motion.button
             onClick={goToPrevious}
-            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/70 hover:bg-white p-1.5 rounded-full text-airbnb-dark focus:outline-none"
+            className="absolute left-3 top-1/2  bg-white/90 hover:bg-white p-2 rounded-full text-gray-800 focus:outline-none shadow-lg z-10 backdrop-blur-sm"
             aria-label="Previous image"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
           >
-            <FaChevronLeft size={12} />
-          </button>
-          <button
+            <FaChevronLeft size={14} />
+          </motion.button>
+          <motion.button
             onClick={goToNext}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/70 hover:bg-white p-1.5 rounded-full text-airbnb-dark focus:outline-none"
+            className="absolute right-3 top-1/2  bg-white/90 hover:bg-white p-2 rounded-full text-gray-800 focus:outline-none shadow-lg z-10 backdrop-blur-sm"
             aria-label="Next image"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
           >
-            <FaChevronRight size={12} />
-          </button>
+            <FaChevronRight size={14} />
+          </motion.button>
         </>
       )}
     </div>

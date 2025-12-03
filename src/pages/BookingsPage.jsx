@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FaCalendar, FaMapMarkerAlt } from "react-icons/fa";
+import { FaCalendar, FaMapMarkerAlt, FaHome } from "react-icons/fa";
+import { motion } from "framer-motion";
 import supabase from "../supabase/supabase";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
+import EmptyState from "../components/ui/EmptyState";
 
 function BookingsPage() {
   const [bookings, setBookings] = useState([]);
@@ -45,83 +47,126 @@ function BookingsPage() {
 
   return (
     <div className="container-custom py-8">
-      <h1 className="text-3xl font-bold mb-8">Your Bookings</h1>
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+          Your Bookings
+        </h1>
+        <p className="text-gray-600 mb-8">Manage and view all your reservations</p>
+      </motion.div>
 
       {bookings.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-card p-8 text-center">
-          <FaCalendar className="text-5xl text-green-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-semibold mb-4">No bookings yet</h2>
-          <p className="text-airbnb-light mb-6">
-            Start exploring and book your next stay!
-          </p>
-          <Link to="/" className="btn-primary">
-            Browse listings
-          </Link>
-        </div>
+        <EmptyState
+          icon={FaHome}
+          title="No bookings yet"
+          description="Start exploring and book your next stay!"
+          actionText="Browse listings"
+          actionLink="/"
+        />
       ) : (
-        <div className="space-y-6">
-          {bookings.map((booking) => (
-            <div
+        <motion.div 
+          className="grid grid-cols-1 gap-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          {bookings.map((booking, index) => (
+            <motion.div
               key={booking.booking_id}
-              className="bg-white rounded-xl shadow-card overflow-hidden"
+              className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-all"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              whileHover={{ y: -4 }}
             >
               <div className="flex flex-col md:flex-row">
-                <div className="md:w-1/3">
-                 {/* Use the first image from the array */}
-                   
-<img
-  src={booking.image_urls[0]}
-  alt={booking.listing_title}
-  className="w-full h-48 md:h-full object-cover"
-/>
+                {/* Image Section */}
+                <div className="md:w-1/4 relative overflow-hidden">
+                  <img
+                    src={booking.image_urls[0]}
+                    alt={booking.listing_title}
+                    className="w-full h-48 md:h-full object-cover hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute top-3 right-3">
+                    <span
+                      className={`px-3 py-1.5 rounded-full text-xs font-semibold shadow-lg backdrop-blur-sm ${
+                        booking.payment_status === "paid"
+                          ? "bg-green-500/90 text-white"
+                          : "bg-yellow-500/90 text-white"
+                      }`}
+                    >
+                      {booking.payment_status === "paid" ? "Paid" : "Pending"}
+                    </span>
+                  </div>
                 </div>
 
-                <div className="p-6 md:w-2/3">
-                  <Link
-                    to={`/listings/${booking.listing_id}`}
-                    className="text-xl font-semibold hover:text-airbnb-primary"
-                  >
-                    {booking.listing_title}
-                  </Link>
+                {/* Content Section */}
+                <div className="p-6 md:w-3/4 flex flex-col justify-between">
+                  <div>
+                    <Link
+                      to={`/listings/${booking.listing_id}`}
+                      className="text-2xl font-bold text-gray-900 hover:text-blue-600 transition-colors mb-3 inline-block"
+                    >
+                      {booking.listing_title}
+                    </Link>
 
-                  <div className="mt-4 space-y-2">
-                    <div className="flex items-center text-airbnb-light">
-                      <FaMapMarkerAlt className="mr-2" />
-                      <span>{booking.location}</span>
+                    <div className="flex items-center text-gray-600 mb-4">
+                      <FaMapMarkerAlt className="mr-2 text-blue-500" />
+                      <span className="text-sm">{booking.location}</span>
                     </div>
 
-                    <div className="flex items-center text-airbnb-light">
-                      <FaCalendar className="mr-2" />
-                      <span>
-                        {new Date(booking.start_date).toLocaleDateString()} -{" "}
-                        {new Date(booking.end_date).toLocaleDateString()}
-                      </span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                      <div className="bg-gradient-to-br from-blue-50 to-sky-50 rounded-xl p-4 border border-blue-100">
+                        <div className="flex items-center gap-2 mb-2">
+                          <FaCalendar className="text-blue-500" />
+                          <span className="text-xs font-semibold text-gray-700 uppercase">Check-in</span>
+                        </div>
+                        <p className="text-lg font-bold text-gray-900">
+                          {new Date(booking.start_date).toLocaleDateString('en-US', { 
+                            month: 'short', 
+                            day: 'numeric',
+                            year: 'numeric'
+                          })}
+                        </p>
+                      </div>
+
+                      <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
+                        <div className="flex items-center gap-2 mb-2">
+                          <FaCalendar className="text-purple-500" />
+                          <span className="text-xs font-semibold text-gray-700 uppercase">Check-out</span>
+                        </div>
+                        <p className="text-lg font-bold text-gray-900">
+                          {new Date(booking.end_date).toLocaleDateString('en-US', { 
+                            month: 'short', 
+                            day: 'numeric',
+                            year: 'numeric'
+                          })}
+                        </p>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="mt-4 flex justify-between items-center">
+                  <div className="flex items-center justify-between pt-4 border-t border-gray-200">
                     <div>
-                      <span className="font-semibold">Rs. {booking.total_amount}</span>
-                      <span className="text-airbnb-light"> total</span>
+                      <span className="text-sm text-gray-600">Total Amount</span>
+                      <p className="text-2xl font-bold text-blue-600">Rs. {booking.total_amount.toLocaleString()}</p>
                     </div>
 
-                    <div className="flex items-center">
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm ${
-                          booking.payment_status === "paid"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-yellow-100 text-yellow-800"
-                        }`}
-                      >
-                        {booking.payment_status === "paid" ? "Paid" : "Pending"}
-                      </span>
-                    </div>
+                    <Link
+                      to={`/listings/${booking.listing_id}`}
+                      className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:from-blue-600 hover:to-blue-700 transition-all"
+                    >
+                      View Details
+                    </Link>
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
     </div>
   );

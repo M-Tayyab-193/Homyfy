@@ -1,50 +1,51 @@
-import { Routes, Route, useLocation } from 'react-router-dom'
-import { lazy, Suspense, useEffect } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
-import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-import Lenis from '@studio-freight/lenis'
-import Navbar from './components/layout/Navbar'
-import Footer from './components/layout/Footer'
-import LoadingSpinner from './components/ui/LoadingSpinner'
-import FloatingActionButton from './components/ui/FloatingActionButton'
+import { Routes, Route, useLocation } from "react-router-dom";
+import { lazy, Suspense, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Lenis from "@studio-freight/lenis";
+import Navbar from "./components/layout/Navbar";
+import Footer from "./components/layout/Footer";
+import LoadingSpinner from "./components/ui/LoadingSpinner";
+import FloatingActionButton from "./components/ui/FloatingActionButton";
 
 // Lazy load pages for better performance
-const HomePage = lazy(() => import('./pages/HomePage'))
-const ListingDetailsPage = lazy(() => import('./pages/ListingDetailsPage'))
-const SearchResultsPage = lazy(() => import('./pages/SearchResultsPage'))
-const ProfilePage = lazy(() => import('./pages/ProfilePage'))
-const WishlistPage = lazy(() => import('./pages/WishlistPage'))
-const AuthPage = lazy(() => import('./pages/AuthPage'))
-const SignupPage = lazy(() => import('./pages/SignupPage'))
-const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
-const HostingPage = lazy(() => import('./pages/HostingPage'))
-const AddPropertyPage = lazy(() => import('./pages/AddPropertyPage'))
-const EditListingPage = lazy(() => import('./pages/EditListingPage'))
-const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'))
-const BookingsPage = lazy(() => import('./pages/BookingsPage'))
+const HomePage = lazy(() => import("./pages/HomePage"));
+const ListingDetailsPage = lazy(() => import("./pages/ListingDetailsPage"));
+const SearchResultsPage = lazy(() => import("./pages/SearchResultsPage"));
+const ProfilePage = lazy(() => import("./pages/ProfilePage"));
+const WishlistPage = lazy(() => import("./pages/WishlistPage"));
+const AuthPage = lazy(() => import("./pages/AuthPage"));
+const SignupPage = lazy(() => import("./pages/SignupPage"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
+const HostingPage = lazy(() => import("./pages/HostingPage"));
+const AddPropertyPage = lazy(() => import("./pages/AddPropertyPage"));
+const EditListingPage = lazy(() => import("./pages/EditListingPage"));
+const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage"));
+const BookingsPage = lazy(() => import("./pages/BookingsPage"));
+const NotificationsPage = lazy(() => import("./pages/NotificationsPage"));
 
 function App() {
-  const location = useLocation()
-  
+  const location = useLocation();
+
   // Initialize Lenis smooth scrolling with optimized settings
   useEffect(() => {
     const lenis = new Lenis({
       smooth: true,
       lerp: 0.1,
-    })
+    });
 
     function raf(time) {
-      lenis.raf(time)
-      requestAnimationFrame(raf)
+      lenis.raf(time);
+      requestAnimationFrame(raf);
     }
 
-    requestAnimationFrame(raf)
+    requestAnimationFrame(raf);
 
     return () => {
-      lenis.destroy()
-    }
-  }, [])
+      lenis.destroy();
+    };
+  }, []);
 
   // Page transition variants
   const pageVariants = {
@@ -57,7 +58,7 @@ function App() {
       y: 0,
       transition: {
         duration: 0.4,
-        ease: 'easeOut',
+        ease: "easeOut",
       },
     },
     exit: {
@@ -65,10 +66,10 @@ function App() {
       y: -20,
       transition: {
         duration: 0.3,
-        ease: 'easeIn',
+        ease: "easeIn",
       },
     },
-  }
+  };
 
   return (
     <>
@@ -176,6 +177,16 @@ function App() {
             }
           />
           <Route
+            path="/notifications"
+            element={
+              <PageTransition>
+                <Suspense fallback={<LoadingSpinner fullScreen />}>
+                  <NotificationsPage />
+                </Suspense>
+              </PageTransition>
+            }
+          />
+          <Route
             path="/hosting/add"
             element={
               <PageTransition>
@@ -221,10 +232,10 @@ function App() {
         pauseOnHover={false}
         theme="light"
         limit={3}
-        style={{ marginTop: '70px' }}
+        style={{ marginTop: "70px" }}
       />
     </>
-  )
+  );
 }
 
 // Page transition wrapper component
@@ -237,12 +248,12 @@ function PageTransition({ children }) {
       exit={{ opacity: 0, y: -20 }}
       transition={{
         duration: 0.4,
-        ease: 'easeInOut',
+        ease: "easeInOut",
       }}
     >
       {children}
     </motion.main>
-  )
+  );
 }
 
-export default App
+export default App;

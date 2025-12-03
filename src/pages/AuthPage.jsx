@@ -137,7 +137,7 @@ function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-sky-50 flex justify-center items-center px-4 py-12">
+    <div className="min-h-screen bg-white flex justify-center items-center px-4 py-12">
       
 
       <motion.div 
@@ -147,32 +147,31 @@ function AuthPage() {
         transition={{ duration: 0.5 }}
       >
         <motion.div 
-          className="text-center mb-8"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          <motion.div
-            className="inline-block p-4 bg-gradient-to-br from-blue-400 to-blue-500 rounded-2xl shadow-lg mb-4"
-            whileHover={{ scale: 1.1, rotate: 5 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
-            <FaHome className="text-white text-4xl" />
-          </motion.div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
-            {showResetPassword ? "Reset Password" : "Welcome Back"}
-          </h1>
-          <p className="text-gray-600 mt-2">
-            {showResetPassword ? "Enter your email to reset password" : "Log in to continue your journey"}
-          </p>
-        </motion.div>
-
-        <motion.div 
           className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-card-hover p-8 mb-6 border border-gray-200"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
+          <motion.div 
+            className="text-center mb-6"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.15 }}
+          >
+            <motion.div
+              className="inline-block p-4 bg-gradient-to-br from-blue-400 to-blue-500 rounded-2xl shadow-lg mb-4"
+              whileHover={{ scale: 1.07, rotate: 3 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              <FaHome className="text-white text-4xl" />
+            </motion.div>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
+              {showResetPassword ? "Reset Password" : "Welcome Back"}
+            </h1>
+            <p className="text-gray-600 mt-2">
+              {showResetPassword ? "Enter your email to reset password" : "Log in to continue your journey"}
+            </p>
+          </motion.div>
           {error && (
             <motion.div 
               className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl mb-6 flex items-start gap-3"
@@ -372,7 +371,7 @@ function AuthPage() {
                 </motion.button>
               </form>
 
-              <div className="flex items-center my-6">
+              {/* <div className="flex items-center my-6">
                 <div className="flex-grow border-t border-gray-300"></div>
                 <div className="px-4 text-gray-500 text-sm font-medium">or continue with</div>
                 <div className="flex-grow border-t border-gray-300"></div>
@@ -388,7 +387,7 @@ function AuthPage() {
                   <FaGoogle className="text-red-500 mr-3 text-xl" />
                   <span className="group-hover:text-gray-900 transition-colors">Continue with Google</span>
                 </motion.button>
-              </div>
+              </div> */}
             </>
           )}
         </motion.div>

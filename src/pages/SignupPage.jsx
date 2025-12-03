@@ -102,50 +102,31 @@ function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-sky-50 flex justify-center items-center px-4 py-12">
-      {/* Floating background elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div 
-          className="absolute top-10 right-20 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-20"
-          animate={{
-            x: [0, -100, 0],
-            y: [0, 100, 0],
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-        <motion.div 
-          className="absolute bottom-10 left-20 w-96 h-96 bg-sky-200 rounded-full mix-blend-multiply filter blur-xl opacity-20"
-          animate={{
-            x: [0, 100, 0],
-            y: [0, -100, 0],
-          }}
-          transition={{
-            duration: 30,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-      </div>
+    <div className="min-h-screen bg-white flex justify-center items-center px-4 py-12">
+      
 
       <motion.div 
         className="w-full max-w-md relative z-10"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-      >
+      > 
+       <motion.div 
+          className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-card-hover p-8 mb-6 border border-gray-200"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+        
         <motion.div 
-          className="text-center mb-8"
+          className="text-center mb-6"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
         >
           <motion.div
             className="inline-block p-4 bg-gradient-to-br from-blue-400 to-blue-500 rounded-2xl shadow-lg mb-4"
-            whileHover={{ scale: 1.1, rotate: -5 }}
+            whileHover={{ scale: 1.07, rotate: -3 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
             <FaHome className="text-white text-4xl" />
@@ -158,12 +139,7 @@ function SignupPage() {
           </p>
         </motion.div>
 
-        <motion.div 
-          className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-card-hover p-8 mb-6 border border-gray-200"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
+       
           {error && (
             <motion.div 
               className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl mb-6 flex items-start gap-3"
@@ -363,14 +339,14 @@ function SignupPage() {
             </motion.button>
           </form>
 
-          {/* Divider */}
+          {/* Divider
           <div className="flex items-center my-6">
             <div className="flex-grow border-t border-gray-300" />
             <div className="px-4 text-gray-500 text-sm font-medium">or sign up with</div>
             <div className="flex-grow border-t border-gray-300" />
-          </div>
+          </div> */}
 
-          {/* OAuth */}
+          {/* OAuth
           <div className="space-y-3">
             <motion.button
               className="w-full flex items-center justify-center py-3 px-4 border-2 border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all font-medium group"
@@ -381,7 +357,7 @@ function SignupPage() {
               <FaGoogle className="text-red-500 mr-3 text-xl" />
               <span className="group-hover:text-gray-900 transition-colors">Continue with Google</span>
             </motion.button>
-          </div>
+          </div> */}
         </motion.div>
 
         {/* Footer */}

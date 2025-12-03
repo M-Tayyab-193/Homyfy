@@ -227,7 +227,7 @@ function Navbar() {
                   )}
                 </>
               ) : (
-                <FaUserCircle className="w-8 h-8 text-gray-400" />
+                <FaUserCircle className="w-8 h-8 text-blue-500" />
               )}
             </motion.button>
 

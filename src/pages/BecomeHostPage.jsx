@@ -1,9 +1,11 @@
-import { useState } from 'react'
+import {  useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FaAirbnb, FaHome, FaBed, FaBath, FaUsers, FaDollarSign, FaImage } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 import supabase from '../supabase/supabase'
+
 import useCurrentUser from '../hooks/useCurrentUser'
+
 
 function BecomeHostPage() {
   const { user, loading } = useCurrentUser()
@@ -320,7 +322,7 @@ function BecomeHostPage() {
                   key={amenity}
                   className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${
                     formData.amenities.includes(amenity)
-                      ? 'border-green-500 bg-green-50'
+                      ? 'border-[#0F1520] bg-gray-50'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
@@ -399,7 +401,7 @@ function BecomeHostPage() {
       <div className="container-custom py-8">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-8">
-            <FaAirbnb className="text-green-500 text-5xl mx-auto mb-4" />
+            <FaAirbnb className="#0F1520 text-5xl mx-auto mb-4" />
             <h1 className="text-3xl font-bold">Become a Host</h1>
           </div>
 
@@ -443,7 +445,7 @@ function BecomeHostPage() {
               <div
                 key={num}
                 className={`w-2 h-2 rounded-full ${
-                  step === num ? 'bg-green-500' : 'bg-gray-300'
+                  step === num ? 'bg-[#0F1520]' : 'bg-gray-300'
                 }`}
               />
             ))}

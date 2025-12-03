@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef, useCallback, memo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FaUser, FaCamera, FaLock, FaSignOutAlt, FaTimes, FaTrash } from 'react-icons/fa'
+import { motion, AnimatePresence } from 'framer-motion'
+import { FaUser, FaCamera, FaLock, FaTimes, FaTrash, FaEdit, FaEnvelope, FaUserTag, FaCrown } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 import supabase from '../supabase/supabase'
 import axios from 'axios'
+import LoadingSpinner from '../components/ui/LoadingSpinner'
 
 // Memoized DeleteAccountModal Component
 const DeleteAccountModal = memo(({ 
@@ -14,62 +16,101 @@ const DeleteAccountModal = memo(({
   onPasswordChange,
   inputRef
 }) => (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4">
-      <h3 className="text-xl font-semibold mb-4">Delete Account</h3>
-      <p className="text-airbnb-light mb-4">
-        This action cannot be undone. Please enter your password to confirm.
+  <motion.div 
+    className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+  >
+    <motion.div 
+      className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl"
+      initial={{ scale: 0.9, y: 20 }}
+      animate={{ scale: 1, y: 0 }}
+      exit={{ scale: 0.9, y: 20 }}
+    >
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-xl font-bold text-gray-900">Delete Account</h3>
+        <motion.button
+          onClick={onClose}
+          whileHover={{ scale: 1.1, rotate: 90 }}
+          whileTap={{ scale: 0.9 }}
+          className="text-gray-400 hover:text-gray-600"
+        >
+          <FaTimes size={20} />
+        </motion.button>
+      </div>
+      <p className="text-gray-600 mb-4">
+        This action cannot be undone. Please enter your password to confirm account deletion.
       </p>
       <input
         type="password"
         ref={inputRef}
         value={deletePassword}
         onChange={onPasswordChange}
-        className="input-field mb-4"
+        className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent mb-4"
         placeholder="Enter your password"
       />
-      <div className="flex justify-end space-x-2">
-        <button
+      <div className="flex gap-3">
+        <motion.button
           onClick={onClose}
-          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex-1 px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors"
         >
           Cancel
-        </button>
-        <button
+        </motion.button>
+        <motion.button
           onClick={onDelete}
-          className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex-1 px-4 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50"
           disabled={loading}
         >
           {loading ? 'Deleting...' : 'Delete Account'}
-        </button>
+        </motion.button>
       </div>
-    </div>
-  </div>
+    </motion.div>
+  </motion.div>
 ))
 
 // Memoized ImageModal Component
 const ImageModal = memo(({ imageUrl, email, onClose }) => (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div className="bg-white rounded-xl p-6 max-w-lg w-full mx-4 relative">
-      <button
+  <motion.div 
+    className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    onClick={onClose}
+  >
+    <motion.div 
+      className="bg-white rounded-2xl p-6 max-w-2xl w-full mx-4 relative"
+      initial={{ scale: 0.9, y: 20 }}
+      animate={{ scale: 1, y: 0 }}
+      exit={{ scale: 0.9, y: 20 }}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <motion.button
         onClick={onClose}
-        className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+        whileHover={{ scale: 1.1, rotate: 90 }}
+        whileTap={{ scale: 0.9 }}
+        className="absolute top-4 right-4 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-600 transition-colors"
       >
-        <FaTimes size={24} />
-      </button>
+        <FaTimes size={20} />
+      </motion.button>
       <div className="mt-6">
         <img
           src={imageUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${email}`}
           alt="Profile"
-          className="w-full h-auto rounded-lg"
+          className="w-full h-auto rounded-xl shadow-lg"
         />
       </div>
-    </div>
-  </div>
+    </motion.div>
+  </motion.div>
 ))
 
 function ProfilePage() {
   const [user, setUser] = useState(null)
+  const [pageLoading, setPageLoading] = useState(true)
   const [editing, setEditing] = useState(false)
   const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
@@ -88,33 +129,30 @@ function ProfilePage() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    console.log('ProfilePage: Starting to fetch user data')
     const fetchUser = async () => {
       try {
         const { data: { user: authUser }, error: authError } = await supabase.auth.getUser()
-        console.log('ProfilePage: Auth user data:', { authUser, authError })
 
         if (authError || !authUser) {
-          console.log('ProfilePage: No authenticated user, redirecting to login')
           navigate('/login')
           return
         }
 
         const { data: userData, error: userError } = await supabase
           .rpc('get_user_by_id', { uid: authUser.id })
-        
-        console.log('ProfilePage: User data from RPC:', { userData, userError })
 
         if (userError) {
-          console.error('ProfilePage: Error fetching user data:', userError)
+          console.error('Error fetching user data:', userError)
           return
         }
 
-        console.log('ProfilePage: Setting user state with:', userData[0])
         setUser(userData[0])
         setName(userData[0]?.fullname || '')
       } catch (error) {
-        console.error('ProfilePage: Unexpected error:', error)
+        console.error('Unexpected error:', error)
+      } finally {
+        // Add a small delay to ensure smooth transition
+        setTimeout(() => setPageLoading(false), 300)
       }
     }
 
@@ -128,7 +166,6 @@ function ProfilePage() {
   const handleDeleteAccount = useCallback(async () => {
     try {
       setLoading(true)
-      console.log('ProfilePage: Starting account deletion process')
 
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email: user.email,
@@ -136,7 +173,7 @@ function ProfilePage() {
       })
 
       if (signInError) {
-        console.error('ProfilePage: Sign in error during deletion:', signInError)
+        console.error('Sign in error during deletion:', signInError)
         toast.error('Incorrect password')
         return
       }
@@ -147,11 +184,10 @@ function ProfilePage() {
       } = await supabase.auth.getSession()
 
       if (sessionError || !session) {
-        console.error('ProfilePage: Session error during deletion:', sessionError)
+        console.error('Session error during deletion:', sessionError)
         throw new Error('Failed to retrieve access token')
       }
 
-      console.log('ProfilePage: Making delete user request')
       const response = await fetch('https://sxkihvmmokprqrrklnxp.supabase.co/functions/v1/delete-user', {
         method: 'POST',
         headers: {
@@ -163,10 +199,9 @@ function ProfilePage() {
       })
 
       const result = await response.json()
-      console.log('ProfilePage: Delete user response:', result)
 
       if (!response.ok) {
-        console.error('ProfilePage: Delete user error:', result.error)
+        console.error('Delete user error:', result.error)
         throw new Error(result.error || 'Failed to delete account')
       }
 
@@ -175,7 +210,7 @@ function ProfilePage() {
       })
 
       if (deleteUserError) {
-        console.error('ProfilePage: Error deleting from custom users table:', deleteUserError)
+        console.error('Error deleting from custom users table:', deleteUserError)
         throw new Error('Failed to delete user from custom table')
       }
 
@@ -183,7 +218,7 @@ function ProfilePage() {
       toast.success('Account deleted successfully')
       window.location.href = '/'
     } catch (error) {
-      console.error('ProfilePage: Delete account error:', error)
+      console.error('Delete account error:', error)
       toast.error('Error deleting account: ' + error.message)
     } finally {
       setLoading(false)
@@ -193,14 +228,10 @@ function ProfilePage() {
   
   const handleImageUpload = async (e) => {
     const file = e.target.files?.[0]
-    if (!file) {
-      console.log('ProfilePage: No file selected for upload')
-      return
-    }
+    if (!file) return
 
     try {
       setLoading(true)
-      console.log('ProfilePage: Starting image upload')
 
       const formData = new FormData()
       formData.append('file', file)
@@ -212,7 +243,6 @@ function ProfilePage() {
         formData
       )
 
-      console.log('ProfilePage: Cloudinary response:', cloudinaryRes.data)
       const imageUrl = cloudinaryRes.data.secure_url
 
       const { error: updateError } = await supabase.rpc('update_profile_image', {
@@ -221,15 +251,14 @@ function ProfilePage() {
       })
 
       if (updateError) {
-        console.error('ProfilePage: Error updating profile image:', updateError)
+        console.error('Error updating profile image:', updateError)
         throw updateError
       }
 
-      console.log('ProfilePage: Profile image updated successfully')
       setUser(prev => ({ ...prev, profile_image: imageUrl }))
       toast.success('Profile picture updated successfully!')
     } catch (error) {
-      console.error('ProfilePage: Image upload error:', error)
+      console.error('Image upload error:', error)
       toast.error('Error uploading image: ' + error.message)
     } finally {
       setLoading(false)
@@ -239,7 +268,6 @@ function ProfilePage() {
   const handleNameUpdate = async () => {
     try {
       setLoading(true)
-      console.log('ProfilePage: Starting name update')
 
       const { error: updateError } = await supabase.rpc('update_fullname', {
         user_id: user.id,
@@ -247,16 +275,15 @@ function ProfilePage() {
       })
 
       if (updateError) {
-        console.error('ProfilePage: Error updating name:', updateError)
+        console.error('Error updating name:', updateError)
         throw updateError
       }
 
-      console.log('ProfilePage: Name updated successfully')
       setUser(prev => ({ ...prev, fullname: name }))
       setEditing(false)
       toast.success('Name updated successfully!')
     } catch (error) {
-      console.error('ProfilePage: Name update error:', error)
+      console.error('Name update error:', error)
       toast.error('Error updating name: ' + error.message)
     } finally {
       setLoading(false)
@@ -265,82 +292,103 @@ function ProfilePage() {
 
   const handlePasswordUpdate = async () => {
     if (passwords.new !== passwords.confirm) {
-      console.log('ProfilePage: Password mismatch')
       toast.error('New passwords do not match')
       return
     }
 
     try {
       setLoading(true)
-      console.log('ProfilePage: Starting password update')
 
       const { error } = await supabase.auth.updateUser({
         password: passwords.new
       })
 
       if (error) {
-        console.error('ProfilePage: Password update error:', error)
+        console.error('Password update error:', error)
         throw error
       }
 
-      console.log('ProfilePage: Password updated successfully')
       setShowPasswordModal(false)
       setPasswords({ current: '', new: '', confirm: '' })
       toast.success('Password updated successfully!')
     } catch (error) {
-      console.error('ProfilePage: Password update error:', error)
+      console.error('Password update error:', error)
       toast.error('Error updating password: ' + error.message)
     } finally {
       setLoading(false)
     }
   }
 
-  const handleLogout = async () => {
-    try {
-      console.log('ProfilePage: Starting logout')
-      await supabase.auth.signOut()
-      toast.success('Logged out successfully!')
-      window.location.reload()
-    } catch (error) {
-      console.error('ProfilePage: Logout error:', error)
-      toast.error('Error logging out: ' + error.message)
-    }
+  if (pageLoading) {
+    return <LoadingSpinner fullScreen />
   }
 
   if (!user) {
-    console.log('ProfilePage: No user data, rendering null')
     return null
   }
 
   return (
-    <div className="container-custom py-8">
-      <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-card overflow-hidden">
-        <div className="bg text-white p-6 relative">
-          <h1 className="text-2xl font-bold">Your Profile</h1>
-          <p>Manage your personal information</p>
+    <motion.div 
+      className="container-custom py-8 min-h-screen mt-[98px]"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.div 
+        className="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden"
+        initial={{ y: 20 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+      >
+        {/* Header with gradient */}
+        <div className="bg-gradient-to-br from-[#0F1520] via-[#1a2332] to-[#253549] text-white p-8 relative overflow-hidden">
+          <div className="absolute inset-0 bg-black opacity-10"></div>
+          <div className="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+          <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+          <motion.div
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="relative z-10"
+          >
+            <h1 className="text-3xl font-bold mb-2">Your Profile</h1>
+            <p className="text-gray-200">Manage your personal information and account settings</p>
+          </motion.div>
         </div>
 
-        <div className="p-6">
-          <div className="flex flex-col md:flex-row">
-            <div className="md:w-1/3 flex flex-col items-center mb-6 md:mb-0">
-              <div className="relative">
-                <div 
-                  className="w-32 h-32 rounded-full overflow-hidden mb-4 cursor-pointer"
+        <div className="p-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Column - Profile Picture & Account Actions */}
+            <motion.div 
+              className="flex flex-col items-center space-y-6"
+              initial={{ x: -20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              {/* Profile Picture */}
+              <div className="relative group">
+                <motion.div 
+                  className="w-40 h-40 rounded-full overflow-hidden border-4 border-gray-200 shadow-xl cursor-pointer relative"
                   onClick={() => setShowImageModal(true)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#0F1520] to-[#1a2332] opacity-0 group-hover:opacity-20 transition-opacity"></div>
                   <img
                     src={user.profile_image || `https://api.dicebear.com/7.x/initials/svg?seed=${user.email}`}
                     alt={user.fullname}
                     className="w-full h-full object-cover"
                   />
-                </div>
-                <button 
+                </motion.div>
+                <motion.button 
                   onClick={() => fileInputRef.current?.click()}
-                  className="absolute bottom-4 right-0 bg-white rounded-full p-2 shadow-md text hover:text-airbnb-secondary transition-colors"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="absolute bottom-2 right-2 bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
                   disabled={loading}
                 >
-                  <FaCamera />
-                </button>
+                  <FaCamera size={18} />
+                </motion.button>
                 <input
                   type="file"
                   ref={fileInputRef}
@@ -350,175 +398,268 @@ function ProfilePage() {
                 />
               </div>
 
-              <div className="space-y-2 w-full max-w-xs">
-                <button
-                  onClick={() => setShowDeleteModal(true)}
-                  className="w-full flex items-center justify-center py-2 px-4 border border-gray-300 rounded-lg hover:border-gray-500 transition-colors text-green-500"
-                >
-                  <FaTrash className="mr-2" />
-                  <span>Delete Account</span>
-                </button>
-                <button
-                  onClick={handleLogout}
-                  className="w-full flex items-center justify-center py-2 px-4 border border-gray-300 rounded-lg hover:border-gray-500 transition-colors text-green-500"
-                >
-                  <FaSignOutAlt className="mr-2" />
-                  <span>Log out</span>
-                </button>
-              </div>
-            </div>
+              {/* Account Role Badge */}
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.4, type: "spring" }}
+                className="px-4 py-2 bg-gradient-to-r from-gray-50 to-gray-100 rounded-full border-2 border-gray-300 flex items-center gap-2"
+              >
+                {user.role === 'host' ? (
+                  <>
+                    <FaCrown className="text-yellow-500" />
+                    <span className="font-semibold text-[#0F1520]">Host Account</span>
+                  </>
+                ) : (
+                  <>
+                    <FaUser className="#0F1520" />
+                    <span className="font-semibold text-[#0F1520]">Guest Account</span>
+                  </>
+                )}
+              </motion.div>
 
-            <div className="md:w-2/3 md:pl-8">
-              <div className="border-b border-gray-200 pb-4 mb-4">
-                <h2 className="text-xl font-semibold mb-4 flex items-center">
-                  <FaUser className="mr-2 text" />
-                  Personal Information
+              {/* Delete Account Button */}
+              <motion.button
+                onClick={() => setShowDeleteModal(true)}
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 border-2 border-red-200 text-red-600 rounded-xl hover:bg-red-50 hover:border-red-300 transition-all font-medium"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+              >
+                <FaTrash />
+                <span>Delete Account</span>
+              </motion.button>
+            </motion.div>
+
+            {/* Right Column - Personal Information */}
+            <motion.div 
+              className="lg:col-span-2 space-y-6"
+              initial={{ x: 20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              {/* Personal Information Card */}
+              <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border border-gray-200">
+                <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-gray-900">
+                  <div className="w-10 h-10 bg-gradient-to-r from-[#0F1520] to-[#1a2332] rounded-lg flex items-center justify-center">
+                    <FaUser className="text-white" />
+                  </div>
+                  <span>Personal Information</span>
                 </h2>
 
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm text-airbnb-light">Username</p>
-                    <p className="font-medium">{user.username}</p>
-                  </div>
+                <div className="space-y-5">
+                  {/* Username */}
+                  <motion.div 
+                    className="bg-white p-4 rounded-xl border border-gray-200"
+                    whileHover={{ scale: 1.01 }}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <FaUserTag className="#0F1520" />
+                      <p className="text-sm font-semibold text-gray-600">Username</p>
+                    </div>
+                    <p className="font-medium text-gray-900 ml-6">{user.username}</p>
+                  </motion.div>
 
-                  <div>
-                    <p className="text-sm text-airbnb-light">Name</p>
+                  {/* Name */}
+                  <motion.div 
+                    className="bg-white p-4 rounded-xl border border-gray-200"
+                    whileHover={{ scale: 1.01 }}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <FaUser className="#0F1520" />
+                      <p className="text-sm font-semibold text-gray-600">Full Name</p>
+                    </div>
                     {editing ? (
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center gap-2 ml-6">
                         <input
                           type="text"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
-                          className="input-field"
+                          className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F1520] focus:border-transparent"
                           disabled={loading}
                         />
-                        <button
+                        <motion.button
                           onClick={handleNameUpdate}
-                          className="px-4 py-2 bg text-white rounded-lg hover:bg-opacity-90"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="px-4 py-2 bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white rounded-lg font-medium hover:shadow-lg transition-all"
                           disabled={loading}
                         >
                           Save
-                        </button>
-                        <button
+                        </motion.button>
+                        <motion.button
                           onClick={() => {
                             setEditing(false)
                             setName(user.fullname || '')
                           }}
-                          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="px-4 py-2 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
                           disabled={loading}
                         >
                           Cancel
-                        </button>
+                        </motion.button>
                       </div>
                     ) : (
-                      <div className="flex items-center justify-between">
-                        <p className="font-medium">{user.fullname}</p>
-                        <button
+                      <div className="flex items-center justify-between ml-6">
+                        <p className="font-medium text-gray-900">{user.fullname}</p>
+                        <motion.button
                           onClick={() => setEditing(true)}
-                          className="text hover:underline"
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="flex items-center gap-2 px-3 py-1.5 text-[#0F1520] hover:bg-gray-50 rounded-lg transition-colors font-medium"
                         >
-                          Edit
-                        </button>
+                          <FaEdit />
+                          <span>Edit</span>
+                        </motion.button>
                       </div>
                     )}
-                  </div>
+                  </motion.div>
 
-                  <div>
-                    <p className="text-sm text-airbnb-light">Email</p>
-                    <p className="font-medium">{user.email}</p>
-                  </div>
+                  {/* Email */}
+                  <motion.div 
+                    className="bg-white p-4 rounded-xl border border-gray-200"
+                    whileHover={{ scale: 1.01 }}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <FaEnvelope className="#0F1520" />
+                      <p className="text-sm font-semibold text-gray-600">Email Address</p>
+                    </div>
+                    <p className="font-medium text-gray-900 ml-6">{user.email}</p>
+                  </motion.div>
                 </div>
               </div>
 
-              <div>
-                <h3 className="text-lg font-semibold mb-4 flex items-center">
-                  <FaLock className="mr-2 text" />
-                  Password
+              {/* Password Section */}
+              <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border border-gray-200">
+                <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-gray-900">
+                  <div className="w-10 h-10 bg-gradient-to-r from-[#0F1520] to-[#1a2332] rounded-lg flex items-center justify-center">
+                    <FaLock className="text-white" />
+                  </div>
+                  <span>Security</span>
                 </h3>
 
-                <button
+                <motion.button
                   onClick={() => setShowPasswordModal(true)}
-                  className="text hover:underline"
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all"
                 >
-                  Change password
-                </button>
+                  <FaLock />
+                  <span>Change Password</span>
+                </motion.button>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      {showPasswordModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4">
-            <h3 className="text-xl font-semibold mb-4">Change Password</h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  New Password
-                </label>
-                <input
-                  type="password"
-                  value={passwords.new}
-                  onChange={(e) => setPasswords(prev => ({ ...prev, new: e.target.value }))}
-                  className="input-field"
-                  placeholder="Enter new password"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Confirm New Password
-                </label>
-                <input
-                  type="password"
-                  value={passwords.confirm}
-                  onChange={(e) => setPasswords(prev => ({ ...prev, confirm: e.target.value }))}
-                  className="input-field"
-                  placeholder="Confirm new password"
-                />
-              </div>
-              <div className="flex justify-end space-x-2">
-                <button
+      <AnimatePresence>
+        {showPasswordModal && (
+          <motion.div 
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div 
+              className="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl"
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold text-gray-900">Change Password</h3>
+                <motion.button
                   onClick={() => {
                     setShowPasswordModal(false)
                     setPasswords({ current: '', new: '', confirm: '' })
                   }}
-                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                  whileHover={{ scale: 1.1, rotate: 90 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="text-gray-400 hover:text-gray-600"
                 >
-                  Cancel
-                </button>
-                <button
-                  onClick={handlePasswordUpdate}
-                  className="px-4 py-2 bg text-white rounded-lg hover:bg-opacity-90"
-                  disabled={loading}
-                >
-                  Update Password
-                </button>
+                  <FaTimes size={20} />
+                </motion.button>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    value={passwords.new}
+                    onChange={(e) => setPasswords(prev => ({ ...prev, new: e.target.value }))}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F1520] focus:border-transparent"
+                    placeholder="Enter new password"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Confirm New Password
+                  </label>
+                  <input
+                    type="password"
+                    value={passwords.confirm}
+                    onChange={(e) => setPasswords(prev => ({ ...prev, confirm: e.target.value }))}
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F1520] focus:border-transparent"
+                    placeholder="Confirm new password"
+                  />
+                </div>
+                <div className="flex gap-3 pt-2">
+                  <motion.button
+                    onClick={() => {
+                      setShowPasswordModal(false)
+                      setPasswords({ current: '', new: '', confirm: '' })
+                    }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="flex-1 px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition-colors"
+                  >
+                    Cancel
+                  </motion.button>
+                  <motion.button
+                    onClick={handlePasswordUpdate}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="flex-1 px-4 py-3 bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50"
+                    disabled={loading}
+                  >
+                    {loading ? 'Updating...' : 'Update Password'}
+                  </motion.button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {showImageModal && (
-        <ImageModal
-          imageUrl={user.profile_image}
-          email={user.email}
-          onClose={() => setShowImageModal(false)}
-        />
-      )}
+      <AnimatePresence>
+        {showImageModal && (
+          <ImageModal
+            imageUrl={user.profile_image}
+            email={user.email}
+            onClose={() => setShowImageModal(false)}
+          />
+        )}
+      </AnimatePresence>
 
-      {showDeleteModal && (
-        <DeleteAccountModal
-          onClose={() => setShowDeleteModal(false)}
-          onDelete={handleDeleteAccount}
-          loading={loading}
-          deletePassword={deletePassword}
-          onPasswordChange={handleDeletePasswordChange}
-          inputRef={deletePasswordInputRef}
-        />
-      )}
-    </div>
+      <AnimatePresence>
+        {showDeleteModal && (
+          <DeleteAccountModal
+            onClose={() => setShowDeleteModal(false)}
+            onDelete={handleDeleteAccount}
+            loading={loading}
+            deletePassword={deletePassword}
+            onPasswordChange={handleDeletePasswordChange}
+            inputRef={deletePasswordInputRef}
+          />
+        )}
+      </AnimatePresence>
+    </motion.div>
   )
 }
 

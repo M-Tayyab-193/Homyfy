@@ -1,10 +1,15 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FaUpload, FaImage } from 'react-icons/fa'
+import { FaUpload, FaImage, FaCube, FaBed, FaBath, FaUser, FaInfoCircle } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 import supabase from '../supabase/supabase'
 import useCurrentUser from '../hooks/useCurrentUser'
 import axios from 'axios'
+import NumberStepper from '../components/ui/NumberStepper'
+import Tooltip from '../components/ui/Tooltip'
+import LocationPicker from '../components/forms/LocationPicker'
+import { extractMatterportId, isValidMatterportUrl } from '../utils/matterportHelper'
+import { COUNTRIES, getProvincesForCountry } from '../data/countries'
 
 const PROPERTY_TYPES = [
   { id: 'Others', label: 'Others' },
@@ -49,10 +54,23 @@ function AddPropertyPage() {
     latitude: '',
     longitude: '',
     amenities: [],
-    images: []
+    images: [],
+    matterportUrl: ''
   })
   
   const [loading, setLoading] = useState(false)
+  const [uploadingImages, setUploadingImages] = useState(false)
+  const [selectedCountry, setSelectedCountry] = useState('')
+  const [availableProvinces, setAvailableProvinces] = useState([])
+
+  // Update provinces when country changes
+  useEffect(() => {
+    if (selectedCountry) {
+      setAvailableProvinces(getProvincesForCountry(selectedCountry))
+    } else {
+      setAvailableProvinces([])
+    }
+  }, [selectedCountry])
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -73,6 +91,11 @@ function AddPropertyPage() {
 
   const handleImageUpload = async (e) => {
     const files = Array.from(e.target.files || [])
+    if (files.length === 0) return
+    
+    setUploadingImages(true)
+    toast.info(`Uploading ${files.length} image${files.length > 1 ? 's' : ''}...`)
+    
     const uploadPromises = files.map(async file => {
       try {
         const formData = new FormData()
@@ -100,8 +123,12 @@ function AddPropertyPage() {
         ...prev,
         images: [...prev.images, ...validUrls]
       }))
+      
+      toast.success(`${validUrls.length} image${validUrls.length > 1 ? 's' : ''} uploaded successfully!`)
     } catch (error) {
       toast.error('Error uploading images: ' + error.message)
+    } finally {
+      setUploadingImages(false)
     }
   }
 
@@ -111,7 +138,10 @@ function AddPropertyPage() {
 
     try {
       // Create the listing
-     const { data: listing, error: listingError } = await supabase
+      // Extract Matterport ID if URL provided
+      const matterportId = formData.matterportUrl ? extractMatterportId(formData.matterportUrl) : null
+      
+      const { data: listing, error: listingError } = await supabase
   .rpc('insert_listing', {
     p_title: formData.title,
     p_description: formData.description,
@@ -123,7 +153,8 @@ function AddPropertyPage() {
     p_location: `${formData.city}, ${formData.province}, ${formData.country}`,
     p_latitude: formData.latitude,
     p_longitude: formData.longitude,
-    p_user_id: user.id
+    p_user_id: user.id,
+    p_matterport_url: matterportId
   })
 
 
@@ -160,13 +191,12 @@ function AddPropertyPage() {
   }
 
   return (
-    <div className="container-custom py-8">
-      <h1 className="text-3xl font-bold mb-8">Add New Listing</h1>
-
+    <div className="container-custom py-8 mt-[98px]">
       <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
         <div className="bg-white rounded-xl shadow-card p-6 mb-6">
           {/* Basic Information */}
           <div className="space-y-4 mb-8">
+            <h1 className="text-3xl font-bold mb-8 text-center">Add New Listing</h1>
             <h2 className="text-xl font-semibold mb-4">Basic Information</h2>
             
             <div>
@@ -218,7 +248,12 @@ function AddPropertyPage() {
 
           {/* Location */}
           <div className="space-y-4 mb-8">
-            <h2 className="text-xl font-semibold mb-4">Location</h2>
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              Location
+              <Tooltip content="Drag the map marker to set precise location">
+                <FaInfoCircle className="text-gray-400 text-sm" />
+              </Tooltip>
+            </h2>
             
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -237,16 +272,34 @@ function AddPropertyPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Province
+                  Province / State
                 </label>
-                <input
-                  type="text"
-                  name="province"
-                  value={formData.province}
-                  onChange={handleInputChange}
-                  className="input-field"
-                  required
-                />
+                {availableProvinces.length > 0 ? (
+                  <select
+                    name="province"
+                    value={formData.province}
+                    onChange={handleInputChange}
+                    className="input-field"
+                    required
+                    disabled={!selectedCountry}
+                  >
+                    <option value="">Select Province/State</option>
+                    {availableProvinces.map(province => (
+                      <option key={province} value={province}>{province}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type="text"
+                    name="province"
+                    value={formData.province}
+                    onChange={handleInputChange}
+                    className="input-field"
+                    placeholder={selectedCountry ? "Enter province/state" : "Select country first"}
+                    required
+                    disabled={!selectedCountry}
+                  />
+                )}
               </div>
             </div>
 
@@ -254,93 +307,85 @@ function AddPropertyPage() {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Country
               </label>
-              <input
-                type="text"
+              <select
                 name="country"
                 value={formData.country}
-                onChange={handleInputChange}
+                onChange={(e) => {
+                  setSelectedCountry(e.target.value)
+                  handleInputChange(e)
+                  // Reset province when country changes
+                  setFormData(prev => ({...prev, province: ''}))
+                }}
                 className="input-field"
                 required
-              />
+              >
+                <option value="">Select Country</option>
+                {COUNTRIES.map(country => (
+                  <option key={country.code} value={country.name}>{country.name}</option>
+                ))}
+              </select>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Latitude
-                </label>
-                <input
-                  type="text"
-                  name="latitude"
-                  value={formData.latitude}
-                  onChange={handleInputChange}
-                  className="input-field"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Longitude
-                </label>
-                <input
-                  type="text"
-                  name="longitude"
-                  value={formData.longitude}
-                  onChange={handleInputChange}
-                  className="input-field"
-                  required
-                />
-              </div>
+            {/* Location Picker - Interactive Map */}
+            <div className="mt-6">
+              <LocationPicker
+                initialLat={parseFloat(formData.latitude) || 31.5204}
+                initialLon={parseFloat(formData.longitude) || 74.3587}
+                initialCity={formData.city}
+                onLocationChange={({ city, lat, lon }) => {
+                  setFormData(prev => ({
+                    ...prev,
+                    city: city || prev.city,
+                    latitude: lat.toString(),
+                    longitude: lon.toString()
+                  }))
+                }}
+              />
             </div>
           </div>
 
           {/* Details */}
           <div className="space-y-4 mb-8">
-            <h2 className="text-xl font-semibold mb-4">Property Details</h2>
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              Property Details
+              <Tooltip content="Use steppers to increment counts">
+                <FaInfoCircle className="text-gray-400 text-sm" />
+              </Tooltip>
+            </h2>
             
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Beds
-                </label>
-                <input
-                  type="text"
-                  name="beds"
-                  value={formData.beds}
-                  onChange={handleInputChange}
-                  className="input-field"
-                  required
+                <NumberStepper
+                  value={parseInt(formData.beds) || 1}
+                  onChange={(val) => setFormData(prev => ({...prev, beds: val.toString()}))}
+                  min={1}
+                  max={20}
+                  label="Beds"
+                  icon={FaBed}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Bathrooms
-                </label>
-                <input
-                  type="text"
-                  name="bathrooms"
-                  value={formData.bathrooms}
-                  onChange={handleInputChange}
-                  className="input-field"
-                  required
+                <NumberStepper
+                  value={parseInt(formData.bathrooms) || 1}
+                  onChange={(val) => setFormData(prev => ({...prev, bathrooms: val.toString()}))}
+                  min={1}
+                  max={10}
+                  label="Bathrooms"
+                  icon={FaBath}
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Max Guests
-                </label>
-                <input
-                  type="text"
-                  name="maxGuests"
-                  value={formData.maxGuests}
-                  onChange={handleInputChange}
-                  className="input-field"
-                  required
+                <NumberStepper
+                  value={parseInt(formData.maxGuests) || 1}
+                  onChange={(val) => setFormData(prev => ({...prev, maxGuests: val.toString()}))}
+                  min={1}
+                  max={50}
+                  label="Max Guests"
+                  icon={FaUser}
                 />
               </div>
 
@@ -372,7 +417,7 @@ function AddPropertyPage() {
                   key={amenity.id}
                   className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${
                     formData.amenities.includes(amenity.id)
-                      ? 'border-green-500 bg-green-50'
+                      ? 'border-[#0F1520] bg-gray-50'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
@@ -388,6 +433,48 @@ function AddPropertyPage() {
             </div>
           </div>
 
+          {/* Virtual Tour (Optional) */}
+          <div className="space-y-4 mb-8">
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              <FaCube className="text-blue-600" />
+              3D Virtual Tour (Optional)
+              <Tooltip content="Paste link from Matterport only">
+                <FaInfoCircle className="text-gray-400 text-sm" />
+              </Tooltip>
+            </h2>
+            
+            <div className="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4 mb-4">
+              <p className="text-sm text-gray-700 mb-2">
+                <strong>📸 Have a Matterport 3D tour?</strong> Paste your Matterport link below to give guests an immersive virtual experience!
+              </p>
+              <p className="text-xs text-gray-600">
+                Example: <code className="bg-white px-2 py-1 rounded">https://my.matterport.com/show/?m=XXXXXXXXXX</code>
+              </p>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Matterport Tour Link
+              </label>
+              <input
+                type="text"
+                name="matterportUrl"
+                value={formData.matterportUrl}
+                onChange={handleInputChange}
+                className="input-field"
+                placeholder="https://my.matterport.com/show/?m=..."
+              />
+              {formData.matterportUrl && !isValidMatterportUrl(formData.matterportUrl) && (
+                <p className="text-sm text-red-600 mt-1">Please enter a valid Matterport URL or ID</p>
+              )}
+              {formData.matterportUrl && isValidMatterportUrl(formData.matterportUrl) && (
+                <p className="text-sm text-green-600 mt-1 flex items-center gap-1">
+                  ✓ Valid Matterport link detected
+                </p>
+              )}
+            </div>
+          </div>
+
           {/* Images */}
           <div className="space-y-4">
             <h2 className="text-xl font-semibold mb-4">Property Images</h2>
@@ -400,18 +487,29 @@ function AddPropertyPage() {
                 onChange={handleImageUpload}
                 className="hidden"
                 id="images"
+                disabled={uploadingImages}
               />
               <label
                 htmlFor="images"
-                className="cursor-pointer block text-center"
+                className={`block text-center ${uploadingImages ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}
               >
-                <FaUpload className="text-4xl text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600">
-                  Click to upload images
-                </p>
-                <p className="text-sm text-gray-500">
-                  (You can upload multiple images)
-                </p>
+                {uploadingImages ? (
+                  <>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+                    <p className="text-gray-600 font-medium">Uploading images...</p>
+                    <p className="text-sm text-gray-500">Please wait</p>
+                  </>
+                ) : (
+                  <>
+                    <FaUpload className="text-4xl text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-600">
+                      Click to upload images
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      (You can upload multiple images)
+                    </p>
+                  </>
+                )}
               </label>
             </div>
 

@@ -60,7 +60,7 @@ function HostingPage() {
   }
 
   return (
-    <div className="container-custom py-8">
+    <div className="container-custom py-8 mt-[98px]">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">Your Listings</h1>
         <Link to="/hosting/add" className="btn-primary">
@@ -100,7 +100,7 @@ function HostingPage() {
                     onClick={() => handleDelete(listing.id)}
                     className="bg-white rounded-full p-2 shadow-md hover:bg-gray-100 transition-colors"
                   >
-                    <FaTrash className="text-green-500" />
+                    <FaTrash className="text-red-500" />
                   </button>
                 </div>
               </div>

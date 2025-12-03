@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 import {
   FaGlobe,
   FaFacebookF,
@@ -7,177 +9,220 @@ import {
   FaPhone,
   FaEnvelope,
   FaMapMarkerAlt,
+  FaHome,
 } from "react-icons/fa";
 
 function Footer() {
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+    threshold: 0.1,
+  });
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5 },
+    },
+  };
+
   return (
-    <footer className="bg-white mt-8 border-t border-gray-200">
-      <div className="container-custom py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="bg-gradient-to-b from-gray-50 to-white mt-12 border-t border-gray-200">
+      <motion.div
+        ref={ref}
+        variants={containerVariants}
+        initial="hidden"
+        animate={inView ? "visible" : "hidden"}
+        className="container-custom py-12"
+      >
+        {/* Logo and Tagline */}
+        <motion.div variants={itemVariants} className="text-center mb-8">
+          <div className="flex items-center justify-center space-x-2 mb-2">
+            <motion.div
+              whileHover={{ rotate: 360 }}
+              transition={{ duration: 0.6 }}
+            >
+              <FaHome className="text-4xl text-[#0F1520]" />
+            </motion.div>
+            <h2 className="text-3xl font-bold gradient-text">Homyfy</h2>
+          </div>
+          <p className="text-gray-600 max-w-md mx-auto">
+            Your trusted partner in finding the perfect home away from home
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* About Section */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">About Homyfy</h3>
-            <p className="text-airbnb-light mb-4">
+          <motion.div variants={itemVariants}>
+            <h3 className="text-lg font-semibold mb-4 text-gray-800">
+              About Homyfy
+            </h3>
+            <p className="text-gray-600 mb-4 text-sm leading-relaxed">
               Connecting travelers with unique homes and experiences around
               Pakistan.
             </p>
-            <div className="space-y-2">
-              <div className="flex items-center text-airbnb-light">
-                <FaPhone className="mr-2" />
+            <div className="space-y-3">
+              <motion.div
+                whileHover={{ x: 5 }}
+                className="flex items-center text-gray-600 text-sm"
+              >
+                <FaPhone className="mr-3 text-[#0F1520]" />
                 <span>+92 300 1234567</span>
-              </div>
-              <div className="flex items-center text-airbnb-light">
-                <FaEnvelope className="mr-2" />
+              </motion.div>
+              <motion.div
+                whileHover={{ x: 5 }}
+                className="flex items-center text-gray-600 text-sm"
+              >
+                <FaEnvelope className="mr-3 text-[#0F1520]" />
                 <span>support@homyfy.com</span>
-              </div>
-              <div className="flex items-center text-airbnb-light">
-                <FaMapMarkerAlt className="mr-2" />
+              </motion.div>
+              <motion.div
+                whileHover={{ x: 5 }}
+                className="flex items-center text-gray-600 text-sm"
+              >
+                <FaMapMarkerAlt className="mr-3 text-[#0F1520]" />
                 <span>Islamabad, Pakistan</span>
-              </div>
+              </motion.div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Quick Links */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  to="/about"
-                  className="text-airbnb-light hover:text-green-500"
-                >
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/host"
-                  className="text-airbnb-light hover:text-green-500"
-                >
-                  Become a Host
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/help"
-                  className="text-airbnb-light hover:text-green-500"
-                >
-                  Help Center
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/careers"
-                  className="text-airbnb-light hover:text-green-500"
-                >
-                  Careers
-                </Link>
-              </li>
+          <motion.div variants={itemVariants}>
+            <h3 className="text-lg font-semibold mb-4 text-gray-800">
+              Quick Links
+            </h3>
+            <ul className="space-y-3">
+              {[
+                { to: "/about", label: "About Us" },
+                { to: "/host", label: "Become a Host" },
+                { to: "/help", label: "Help Center" },
+                { to: "/careers", label: "Careers" },
+              ].map((link) => (
+                <li key={link.to}>
+                  <motion.div whileHover={{ x: 5 }}>
+                    <Link
+                      to={link.to}
+                      className="text-gray-600 hover:#0F1520 transition-colors text-sm inline-block"
+                    >
+                      {link.label}
+                    </Link>
+                  </motion.div>
+                </li>
+              ))}
             </ul>
-          </div>
+          </motion.div>
 
           {/* Legal */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Legal</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link
-                  to="/privacy"
-                  className="text-airbnb-light hover:text-green-500"
-                >
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/terms"
-                  className="text-airbnb-light hover:text-green-500"
-                >
-                  Terms of Service
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/cancellation"
-                  className="text-airbnb-light hover:text-green-500"
-                >
-                  Cancellation Policy
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/safety"
-                  className="text-airbnb-light hover:text-green-500"
-                >
-                  Trust & Safety
-                </Link>
-              </li>
+          <motion.div variants={itemVariants}>
+            <h3 className="text-lg font-semibold mb-4 text-gray-800">Legal</h3>
+            <ul className="space-y-3">
+              {[
+                { to: "/privacy", label: "Privacy Policy" },
+                { to: "/terms", label: "Terms of Service" },
+                { to: "/cancellation", label: "Cancellation Policy" },
+                { to: "/safety", label: "Trust & Safety" },
+              ].map((link) => (
+                <li key={link.to}>
+                  <motion.div whileHover={{ x: 5 }}>
+                    <Link
+                      to={link.to}
+                      className="text-gray-600 hover:#0F1520 transition-colors text-sm inline-block"
+                    >
+                      {link.label}
+                    </Link>
+                  </motion.div>
+                </li>
+              ))}
             </ul>
-          </div>
+          </motion.div>
 
           {/* Newsletter */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Newsletter</h3>
-            <p className="text-airbnb-light mb-4">
-              Subscribe to our newsletter for the latest updates and offers.
+          <motion.div variants={itemVariants}>
+            <h3 className="text-lg font-semibold mb-4 text-gray-800">
+              Newsletter
+            </h3>
+            <p className="text-gray-600 mb-4 text-sm">
+              Subscribe for the latest updates and offers.
             </p>
             <div className="flex">
               <input
                 type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:border-green-500"
+                placeholder="Your email"
+                className="flex-1 px-4 py-2 text-sm border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-[#0F1520] focus:border-transparent"
               />
-              <button className="px-4 py-2 bg-green-500 text-white rounded-r-lg hover:bg-opacity-90 transition-colors">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-4 py-2 bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white rounded-r-lg hover:shadow-glow transition-all text-sm font-medium"
+              >
                 Subscribe
-              </button>
+              </motion.button>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Bottom Section */}
-        <div className="mt-8 pt-8 border-t border-gray-200">
-          <div className="flex flex-col-reverse md:flex-row justify-between items-center text-center space-y-4 md:space-y-0">
+        <motion.div
+          variants={itemVariants}
+          className="mt-8 pt-8 border-t border-gray-200"
+        >
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             {/* Left: Language and Currency */}
-            <div className="flex items-center space-x-4 ">
-              <button className="flex items-center text-airbnb-dark font-bold  hover:text-green-500">
+            <div className="flex items-center space-x-4">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                className="flex items-center text-gray-700 font-medium hover:#0F1520 transition-colors text-sm"
+              >
+                <FaGlobe className="mr-2" />
                 <span>English (US)</span>
-              </button>
-              <button className=" hover:text-green-500 font-bold ">
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                className="hover:#0F1520 font-medium transition-colors text-sm text-gray-700"
+              >
                 PKR - Rs.
-              </button>
+              </motion.button>
             </div>
 
             {/* Center: Copyright */}
-            <div>
-              <span className="text-airbnb-dark font-bold text-sm md:text-base">
-                © 2025 Homyfy. All rights reserved.
+            <div className="text-center">
+              <span className="text-gray-600 text-sm sm:text-[16px] font-bold">
+                © 2025 Homyfy.
               </span>
             </div>
 
             {/* Right: Social Icons */}
-            <div className="flex items-center space-x-6">
-              <a
-                href="#"
-                className="text-airbnb-dark hover:text-green-500"
-              >
-                <FaFacebookF size={20} />
-              </a>
-              <a
-                href="#"
-                className="text-airbnb-dark hover:text-green-500"
-              >
-                <FaTwitter size={20} />
-              </a>
-              <a
-                href="#"
-                className="text-airbnb-dark hover:text-green-500"
-              >
-                <FaInstagram size={20} />
-              </a>
+            <div className="flex items-center space-x-4">
+              {[
+                { Icon: FaFacebookF, href: "#facebook" },
+                { Icon: FaTwitter, href: "#twitter" },
+                { Icon: FaInstagram, href: "#instagram" },
+              ].map(({ Icon, href }) => (
+                <motion.a
+                  key={href}
+                  href={href}
+                  whileHover={{ scale: 1.2, y: -2 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 text-gray-700 hover:bg-gradient-to-r hover:from-[#0F1520] hover:to-[#1a2332] hover:text-white transition-all"
+                >
+                  <Icon size={18} />
+                </motion.a>
+              ))}
             </div>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </footer>
   );
 }

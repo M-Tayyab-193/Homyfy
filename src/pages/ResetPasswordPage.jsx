@@ -81,7 +81,7 @@ function ResetPasswordPage() {
     <div className="flex justify-center items-center min-h-[80vh] px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <FaAirbnb className="text-green-500 text-5xl mx-auto mb-4" />
+          <FaAirbnb className="#0F1520 text-5xl mx-auto mb-4" />
           <h1 className="text-2xl font-bold">Reset Your Password</h1>
         </div>
 

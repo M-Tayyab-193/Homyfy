@@ -1,26 +1,14 @@
-import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import SearchBar from '../search/SearchBar'
 import useCurrentUser from '../../hooks/useCurrentUser'
-
-const HERO_IMAGES = [
-  'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2000&q=80',
-  'https://images.unsplash.com/photo-1540518614846-7eded433c457?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2000&q=80',
-  'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2000&q=80'
-]
+import bgImage from '../../assets/bg.jpg'
 
 function Hero() {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const { user } = useCurrentUser()
   const navigate = useNavigate()
-  
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex(prevIndex => (prevIndex + 1) % HERO_IMAGES.length)
-    }, 6000)
-    
-    return () => clearInterval(interval)
-  }, [])
+  const heroRef = useRef(null)
 
   const handleHostClick = () => {
     if (user?.user_metadata?.role === 'host') {
@@ -31,47 +19,61 @@ function Hero() {
   }
 
   return (
-    <div className="relative h-[80vh] max-h-[600px] mb-8">
-      {/* Background Images */}
-      <div className="absolute inset-0 overflow-hidden">
-        {HERO_IMAGES.map((img, index) => (
-          <div
-            key={index}
-            className="absolute inset-0 transition-opacity duration-2000 ease-in-out bg-cover bg-center"
-            style={{ 
-              backgroundImage: `url(${img})`,
-              opacity: index === currentImageIndex ? 1 : 0
-            }}
-          />
-        ))}
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-transparent"></div>
-      </div>
-      
-      {/* Content */}
-      <div className="relative h-full flex flex-col items-center justify-center text-white px-4">
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-6 drop-shadow-lg">
-          Find your next adventure
-        </h1>
-        <p className="text-xl md:text-2xl text-center mb-10 max-w-xl">
-          Discover the perfect place to stay, anywhere in Pakistan
-        </p>
-        
-        <div className="w-full max-w-4xl">
-          <SearchBar />
-        </div>
-        
-        <div className="mt-10">
-  {user?.user_metadata?.role === 'host' && (
-    <button 
-      onClick={handleHostClick}
-      className="bg-white text-airbnb-dark px-6 py-3 rounded-lg font-medium hover:bg-opacity-90 transition-colors shadow-lg"
-    >
-      Manage your Listings
-    </button>
-  )}
-</div>
+    <div ref={heroRef} className="relative w-full -mt-[80px]">
+      {/* Background Image Section - 90vh height */}
+      <div className="relative h-[90vh] w-full">
+        <motion.div
+          initial={{ opacity: 0, scale: 1.05 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.5, ease: "easeOut" }}
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${bgImage})` }}
+        >
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60"></div>
+        </motion.div>
 
+        {/* Content Overlay on Image */}
+        <div className="relative h-full flex flex-col items-center justify-center text-white px-4 z-10 pt-20">
+          {/* Animated Heading */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-center mb-6 drop-shadow-2xl text-white" style={{ fontFamily: '"Amethysta", sans-serif' }}>
+              Explore Luxury Stays with Virtual Tours{' '}
+              <span className="relative inline-block lg:mt-4">
+                <span className="text-white">
+                   & Detailed Listings
+                </span>
+              </span>
+            </h1>
+          </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className="text-lg md:text-xl text-center mb-8 max-w-2xl drop-shadow-lg text-white"
+          >
+            From interactive virtual tours to comprehensive listings, explore luxury with confidence
+          </motion.p>
+        </div>
+
+        {/* Search Bar Section - Positioned at bottom boundary of hero image, centered */}
+        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 z-20 w-full px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.7 }}
+            className="w-full max-w-5xl mx-auto"
+          >
+            <div className="bg-white rounded-3xl lg:rounded-full shadow-md px-3 py-2 sm:px-4 sm:py-2 lg:px-6 lg:py-3">
+              <SearchBar />
+            </div>
+          </motion.div>
+        </div>
       </div>
     </div>
   )

@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { FaTimes, FaMoneyBillWave, FaCreditCard, FaMobile, FaWallet } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 import { toast } from 'react-toastify';
 import supabase from '../../../supabase/supabase';
 
@@ -99,56 +100,79 @@ function ConfirmationModal({ onClose, listing, dateRange, onSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl p-6 max-w-md w-full z-10">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Confirm Booking</h2>
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+        className="bg-white rounded-2xl p-6 max-w-lg w-full z-10 shadow-2xl"
+      >
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+            Confirm Booking
+          </h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
           >
-            <FaTimes />
+            <FaTimes className="text-gray-600" />
           </button>
         </div>
 
-        <div className="space-y-4">
-          <div className="border-b pb-4">
-            <h3 className="font-medium mb-2">Booking Details</h3>
-            <p>Check-in: {dateRange.startDate.toLocaleDateString()}</p>
-            <p>Check-out: {dateRange.endDate.toLocaleDateString()}</p>
-            <p>Nights: {numberOfNights}</p>
-          </div>
-
-          <div className="border-b pb-4">
-            <h3 className="font-medium mb-2">Price Details</h3>
-            <div className="space-y-2">
+        <div className="space-y-5">
+          {/* Booking Details */}
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200">
+            <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+              <div className="w-2 h-2 bg-[#0F1520] rounded-full"></div>
+              Booking Details
+            </h3>
+            <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span>
-                  Rs. {listing.price_value} × {numberOfNights} nights
-                </span>
-                <span>Rs. {subtotal}</span>
+                <span className="text-gray-600">Check-in:</span>
+                <span className="font-medium text-gray-900">{dateRange.startDate.toLocaleDateString()}</span>
               </div>
               <div className="flex justify-between">
+                <span className="text-gray-600">Check-out:</span>
+                <span className="font-medium text-gray-900">{dateRange.endDate.toLocaleDateString()}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Nights:</span>
+                <span className="font-medium text-gray-900">{numberOfNights}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Price Details */}
+          <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+            <h3 className="font-semibold text-gray-900 mb-3">Price Details</h3>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between text-gray-600">
+                <span>Rs. {listing.price_value} × {numberOfNights} nights</span>
+                <span>Rs. {subtotal}</span>
+              </div>
+              <div className="flex justify-between text-gray-600">
                 <span>Service fee</span>
                 <span>Rs. {serviceFee}</span>
               </div>
-              <div className="flex justify-between font-semibold">
+              <div className="flex justify-between font-bold text-base text-gray-900 pt-2 border-t border-gray-300">
                 <span>Total</span>
                 <span>Rs. {total}</span>
               </div>
             </div>
           </div>
 
+          {/* Payment Method */}
           <div>
-            <h3 className="font-medium mb-2">Payment Method</h3>
+            <h3 className="font-semibold text-gray-900 mb-3">Payment Method</h3>
             <div className="space-y-2">
               {PAYMENT_METHODS.map(({ id, label, icon: Icon }) => (
                 <label
                   key={id}
-                  className={`flex items-center p-3 border rounded-lg cursor-pointer transition-colors ${
+                  className={`flex items-center p-3 border-2 rounded-xl cursor-pointer transition-all ${
                     paymentMethod === id
-                      ? 'border-green-500 bg-green-50 hover:bg-green-100'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-[#0F1520] bg-gray-50 shadow-md'
+                      : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50/50'
                   }`}
                 >
                   <input
@@ -159,34 +183,54 @@ function ConfirmationModal({ onClose, listing, dateRange, onSuccess }) {
                     onChange={(e) => setPaymentMethod(e.target.value)}
                     className="sr-only"
                   />
-                  <Icon className="text-xl text-green-500 mr-3" />
-                  <span>{label}</span>
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 ${
+                    paymentMethod === id ? 'bg-[#0F1520]' : 'bg-gray-200'
+                  }`}>
+                    <Icon className={`text-lg ${paymentMethod === id ? 'text-white' : 'text-gray-600'}`} />
+                  </div>
+                  <span className={`font-medium ${paymentMethod === id ? 'text-[#0F1520]' : 'text-gray-700'}`}>
+                    {label}
+                  </span>
                 </label>
               ))}
             </div>
 
             {paymentMethod && paymentMethod !== "arrival" && (
-              <input
-                type="text"
-                ref={paymentNumberRef}
-                placeholder="Enter 11-digit number"
-                className="w-full mt-4 p-3 border rounded-lg"
-                maxLength="11"
-              />
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                transition={{ duration: 0.3 }}
+              >
+                <input
+                  type="text"
+                  ref={paymentNumberRef}
+                  placeholder="Enter 11-digit number"
+                  className="w-full mt-3 p-3 border-2 border-gray-200 rounded-xl focus:border-[#0F1520] focus:ring-2 focus:ring-blue-200 transition-all outline-none"
+                  maxLength="11"
+                />
+              </motion.div>
             )}
           </div>
 
+          {/* Confirm Button */}
           <button
             onClick={handleBooking}
             disabled={!paymentMethod || loading}
-            className={`w-full btn-primary ${
-              !paymentMethod || loading ? "opacity-50 cursor-not-allowed" : ""
+            className={`w-full py-4 bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all ${
+              !paymentMethod || loading ? "opacity-50 cursor-not-allowed" : "hover:from-[#1a2332] hover:to-[#253549]"
             }`}
           >
-            {loading ? "Processing..." : "Confirm and Pay"}
+            {loading ? (
+              <div className="flex items-center justify-center gap-2">
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <span>Processing...</span>
+              </div>
+            ) : (
+              "Confirm and Pay"
+            )}
           </button>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

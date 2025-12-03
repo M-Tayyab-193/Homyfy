@@ -1,15 +1,16 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import ListingGrid from '../components/listings/ListingGrid'
 import PropertyFilters from '../components/listings/PropertyFilters'
-import Map from '../components/map/Map'
-import { FaMapMarkerAlt, FaList } from 'react-icons/fa'
+import EmptyState from '../components/ui/EmptyState'
+import { FaMapMarkerAlt, FaSearch } from 'react-icons/fa'
 import supabase from '../supabase/supabase'
+import { FaChevronLeft, FaChevronRight} from 'react-icons/fa'
 
 function SearchResultsPage() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [results, setResults] = useState([])
-  const [showMap, setShowMap] = useState(false)
   const [loading, setLoading] = useState(true)
   const [totalCount, setTotalCount] = useState(0)
   const listingsPerPage = 12
@@ -30,6 +31,7 @@ function SearchResultsPage() {
 
   useEffect(() => {
     document.title = `${location || 'All locations'} - Homyfy`
+    window.scrollTo({ top: 0, behavior: 'smooth' })
     fetchListings()
   }, [location, guests, activeFilter, currentPage, sortType, minPrice, maxPrice, selectedAmenities])
 
@@ -173,32 +175,41 @@ function SearchResultsPage() {
   }
 
   return (
-    <div className="container-custom py-6">
-      {/* Search Summary */}
-      <div className="flex justify-between items-center mb-6 flex-wrap gap-2">
-        <div>
-          <h1 className="text-2xl font-semibold mb-1">
-            {totalCount} {totalCount === 1 ? 'place' : 'places'} in {location || 'all locations'}
-          </h1>
-        </div>
+    <div className="container-custom py-6 mt-[90px]">
+      {/* Search Summary with gradient background */}
+      <motion.div 
+        className="relative p-6 mb-8 rounded-2xl overflow-hidden"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        {/* Gradient Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-sky-50 to-blue-100 opacity-50" />
         
-        <button
-          className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:border-black transition-colors"
-          onClick={() => setShowMap(!showMap)}
-        >
-          {showMap ? (
-            <>
-              <FaList />
-              <span>Show list</span>
-            </>
-          ) : (
-            <>
-              <FaMapMarkerAlt />
-              <span>Show map</span>
-            </>
-          )}
-        </button>
-      </div>
+        {/* Content */}
+        <div className="relative flex justify-between items-center flex-wrap gap-4">
+          <div>
+            <motion.h1 
+              className="text-3xl font-bold mb-2 gradient-text"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              {totalCount} {totalCount === 1 ? 'place' : 'places'}
+            </motion.h1>
+            <motion.p 
+              className="text-gray-600 flex items-center gap-2"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <FaMapMarkerAlt className="#0F1520" />
+              {location || 'all locations'}
+            </motion.p>
+          </div>
+          
+         
+        </div>
+      </motion.div>
       
       {/* Property Type Filters */}
       <PropertyFilters 
@@ -212,22 +223,15 @@ function SearchResultsPage() {
         onSortChange={handleSortChange}
       />
       
-      {/* Results display - Grid or Map */}
-      {showMap ? (
-        <div className="h-[70vh] rounded-xl overflow-hidden">
-          <Map
-            latitude={40.7128}
-            longitude={-74.0060}
-            zoom={10}
-            markers={results.map(listing => ({
-              id: listing.id,
-              latitude: listing.latitude,
-              longitude: listing.longitude,
-              title: listing.title,
-              price: listing.price
-            }))}
-          />
-        </div>
+      {/* Results display */}
+      {totalCount === 0 && !loading ? (
+        <EmptyState
+          icon={FaSearch}
+          title="No places found"
+          description={`We couldn't find any places matching your search in ${location || 'this location'}. Try adjusting your filters or search in a different area.`}
+          actionText="Clear filters"
+          onAction={() => setSearchParams({ location: location || '' })}
+        />
       ) : (
         <ListingGrid 
           listings={results} 
@@ -238,59 +242,71 @@ function SearchResultsPage() {
 
       {/* Pagination */}
       {totalCount > listingsPerPage && (
-        <div className="flex justify-center items-center mt-8 space-x-2">
-          <button
+        <motion.div 
+          className="flex justify-center items-center mt-12 space-x-3"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <motion.button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className={`p-2 rounded-full ${
+            className={`p-3 rounded-full transition-all btn-ripple ${
               currentPage === 1 
-                ? 'text-gray-300 cursor-not-allowed' 
-                : 'text-airbnb-dark hover:bg-gray-100'
+                ? 'text-gray-300 cursor-not-allowed bg-gray-100' 
+                : 'text-white bg-gradient-to-r from-[#0F1520] to-[#1a2332] hover:shadow-glow'
             }`}
+            whileHover={currentPage !== 1 ? { scale: 1.1 } : {}}
+            whileTap={currentPage !== 1 ? { scale: 0.9 } : {}}
           >
-            &lt;
-          </button>
+            <FaChevronLeft />
+          </motion.button>
 
-          {Array.from({ length: Math.ceil(totalCount / listingsPerPage) }, (_, i) => i + 1)
-            .filter(page => {
-              return (
-                page === 1 ||
-                page === Math.ceil(totalCount / listingsPerPage) ||
-                Math.abs(page - currentPage) <= 1
-              )
-            })
-            .map((page, i, arr) => {
-              const prevPage = arr[i - 1];
-              const showEllipsis = prevPage && page - prevPage > 1;
-              return (
-                <div key={page} className="flex items-center">
-                  {showEllipsis && <span className="px-2">...</span>}
-                  <button
-                    onClick={() => handlePageChange(page)}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                      currentPage === page
-                        ? 'bg-green-500 text-white'
-                        : 'text-airbnb-dark hover:bg-gray-100'
-                    }`}
-                  >
-                    {page}
-                  </button>
-                </div>
-              )
-            })}
+          <div className="flex space-x-2">
+            {Array.from({ length: Math.ceil(totalCount / listingsPerPage) }, (_, i) => i + 1)
+              .filter(page => {
+                return (
+                  page === 1 ||
+                  page === Math.ceil(totalCount / listingsPerPage) ||
+                  Math.abs(page - currentPage) <= 1
+                )
+              })
+              .map((page, i, arr) => {
+                const prevPage = arr[i - 1];
+                const showEllipsis = prevPage && page - prevPage > 1;
+                return (
+                  <div key={page} className="flex items-center">
+                    {showEllipsis && <span className="px-2 text-gray-400">...</span>}
+                    <motion.button
+                      onClick={() => handlePageChange(page)}
+                      className={`w-10 h-10 rounded-full font-medium transition-all btn-ripple ${
+                        currentPage === page
+                          ? 'bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white shadow-glow'
+                          : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                      }`}
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                    >
+                      {page}
+                    </motion.button>
+                  </div>
+                )
+              })}
+          </div>
 
-          <button
+          <motion.button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === Math.ceil(totalCount / listingsPerPage)}
-            className={`p-2 rounded-full ${
+            className={`p-3 rounded-full transition-all btn-ripple ${
               currentPage === Math.ceil(totalCount / listingsPerPage)
-                ? 'text-gray-300 cursor-not-allowed' 
-                : 'text-airbnb-dark hover:bg-gray-100'
+                ? 'text-gray-300 cursor-not-allowed bg-gray-100' 
+                : 'text-white bg-gradient-to-r from-[#0F1520] to-[#1a2332] hover:shadow-glow'
             }`}
+            whileHover={currentPage !== Math.ceil(totalCount / listingsPerPage) ? { scale: 1.1 } : {}}
+            whileTap={currentPage !== Math.ceil(totalCount / listingsPerPage) ? { scale: 0.9 } : {}}
           >
-            &gt;
-          </button>
-        </div>
+            <FaChevronRight />
+          </motion.button>
+        </motion.div>
       )}
     </div>
   )

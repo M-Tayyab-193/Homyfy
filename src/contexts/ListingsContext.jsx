@@ -148,6 +148,7 @@ const fetchFilteredListings = async (page = 1, limit = 12, filters = {}) => {
         rating: listing.rating_overall,
         reviewCount: listing.reviews_count,
         images: listing.image_urls,
+        matterport_url: listing.matterport_url || null,
         host: {
           name: listing.host_name,
           email: listing.host_email,

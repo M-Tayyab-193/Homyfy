@@ -104,7 +104,7 @@ function HostAuthPage({ mode = 'login' }) {
     <div className="flex justify-center items-center min-h-[80vh] px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <FaAirbnb className="text-green-500 text-5xl mx-auto mb-4" />
+          <FaAirbnb className="#0F1520 text-5xl mx-auto mb-4" />
           <h1 className="text-2xl font-bold">
             {isLogin ? 'Log in as a Host' : 'Become a Host'}
           </h1>
@@ -204,14 +204,14 @@ function HostAuthPage({ mode = 'login' }) {
           {isLogin ? (
             <>
               New to hosting?{' '}
-              <Link to="/host/signup" className="text-green-500 hover:underline font-medium">
+              <Link to="/host/signup" className="#0F1520 hover:underline font-medium">
                 Become a Host
               </Link>
             </>
           ) : (
             <>
               Already a host?{' '}
-              <Link to="/host/login" className="text-green-500 hover:underline font-medium">
+              <Link to="/host/login" className="#0F1520 hover:underline font-medium">
                 Log in
               </Link>
             </>

@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { FaHeart, FaTrash } from 'react-icons/fa'
+import { motion } from 'framer-motion'
 import { useListings } from '../contexts/ListingsContext'
 import supabase from '../supabase/supabase'
 import LoadingSpinner from '../components/ui/LoadingSpinner'
+import EmptyState from '../components/ui/EmptyState'
+import Tooltip from '../components/ui/Tooltip'
 
 function WishlistPage() {
   const [wishlistItems, setWishlistItems] = useState([])
@@ -61,7 +64,7 @@ function WishlistPage() {
   if (loading) return <LoadingSpinner fullScreen />
 
   return (
-    <div className="container-custom py-8">
+    <div className="container-custom py-8 mt-[98px]">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Wishlist</h1>
         <p className="text-airbnb-light">
@@ -70,35 +73,53 @@ function WishlistPage() {
       </div>
 
       {wishlistItems.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-card p-8 text-center">
-          <div className="flex justify-center mb-4">
-            <FaHeart className="text-5xl text-green-500" />
-          </div>
-          <h2 className="text-2xl font-semibold mb-2">No saved places yet</h2>
-          <p className="text-airbnb-light mb-6">
-            As you search, click the heart icon to save your favorite places and experiences.
-          </p>
-          <Link to="/" className="btn-primary inline-block">Start exploring</Link>
-        </div>
+        <EmptyState
+          icon={FaHeart}
+          title="No saved places yet"
+          description="As you search, click the heart icon to save your favorite places and experiences."
+          actionText="Start exploring"
+          actionLink="/"
+        />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {wishlistItems.map(listing => (
-            <div key={listing.id} className="relative group">
+        <motion.div 
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          {wishlistItems.map((listing, index) => (
+            <motion.div 
+              key={listing.id} 
+              className="relative group"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
               <Link to={`/listings/${listing.id}`} className="block">
-                <div className="card">
+                <motion.div 
+                  className="card"
+                  whileHover={{ y: -8 }}
+                  transition={{ duration: 0.3 }}
+                >
                   <div className="relative aspect-video overflow-hidden rounded-t-xl">
-                    <img 
+                    <motion.img 
                       src={listing.images[0]} 
                       alt={listing.title}
-                      className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300"
+                      className="w-full h-full object-cover"
+                      whileHover={{ scale: 1.1 }}
+                      transition={{ duration: 0.4 }}
                     />
-                    <button
-                      onClick={(e) => handleRemoveFromWishlist(e, listing.id)}
-                      className="absolute top-3 right-3 bg-white rounded-full p-2 shadow-md text-green-500 hover:text-green-700 transition-colors"
-                      aria-label="Remove from wishlist"
-                    >
-                      <FaTrash size={12} />
-                    </button>
+                    <Tooltip content="Remove from wishlist" position="left">
+                      <motion.button
+                        onClick={(e) => handleRemoveFromWishlist(e, listing.id)}
+                        className="absolute top-3 right-3 bg-white rounded-full p-2 shadow-md text-red-500 hover:text-red-700 transition-colors"
+                        aria-label="Remove from wishlist"
+                        whileHover={{ scale: 1.1, rotate: 5 }}
+                        whileTap={{ scale: 0.9 }}
+                      >
+                        <FaTrash size={12} />
+                      </motion.button>
+                    </Tooltip>
                   </div>
 
                   <div className="p-4">
@@ -111,11 +132,11 @@ function WishlistPage() {
                       <span className="text-airbnb-light"> night</span>
                     </p>
                   </div>
-                </div>
+                </motion.div>
               </Link>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
     </div>
   )

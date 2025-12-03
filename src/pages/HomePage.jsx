@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { useListings } from '../contexts/ListingsContext'
 import ListingGrid from '../components/listings/ListingGrid'
 import PropertyFilters from '../components/listings/PropertyFilters'
 import Hero from '../components/ui/Hero'
+import SectionDivider from '../components/ui/SectionDivider'
 import { useMemo } from 'react'
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
+import { FaChevronLeft, FaChevronRight, FaHome } from 'react-icons/fa'
 
 function HomePage() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -105,64 +107,95 @@ function HomePage() {
   return (
     <div>
       <Hero />
+      <div className="mt-48 sm:mt-40 md:mt-32 lg:mt-20">
+        <SectionDivider icon={FaHome} text="Explore Properties" />
+      </div>
       <div className="container-custom pb-12">
-        <PropertyFilters 
-          activeFilter={activeFilter}
-          currentSort={sortType}
-          minPrice={minPrice}
-          maxPrice={maxPrice}
-          onFilterChange={handleFilterChange}
-          onPriceChange={handlePriceChange}
-          onSortChange={handleSortChange}
-        />
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <PropertyFilters 
+            activeFilter={activeFilter}
+            currentSort={sortType}
+            minPrice={minPrice}
+            maxPrice={maxPrice}
+            onFilterChange={handleFilterChange}
+            onPriceChange={handlePriceChange}
+            onSortChange={handleSortChange}
+          />
+        </motion.div>
         
-        <ListingGrid 
-          listings={Array.isArray(currentListings) ? currentListings : []} 
-          loading={loading} 
-        />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <ListingGrid 
+            listings={Array.isArray(currentListings) ? currentListings : []} 
+            loading={loading} 
+          />
+        </motion.div>
 
         {totalPages > 1 && (
-          <div className="flex justify-center items-center mt-8 space-x-2">
-            <button
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="flex justify-center items-center mt-12 space-x-3"
+          >
+            <motion.button
               onClick={() => updateSearchParams({ page: (currentPage - 1).toString() })}
               disabled={currentPage === 1}
-              className={`p-2 rounded-full ${
+              whileHover={currentPage !== 1 ? { scale: 1.1 } : {}}
+              whileTap={currentPage !== 1 ? { scale: 0.9 } : {}}
+              className={`p-3 rounded-full transition-all ${
                 currentPage === 1 
-                  ? 'text-gray-300 cursor-not-allowed' 
-                  : 'text-airbnb-dark hover:bg-gray-100'
+                  ? 'text-gray-300 cursor-not-allowed bg-gray-100' 
+                  : 'text-white hover:shadow-glow'
               }`}
+              style={currentPage !== 1 ? { background: 'linear-gradient(to right, #0F1520, #1a2332)' } : {}}
               aria-label="Previous page"
             >
               <FaChevronLeft />
-            </button>
+            </motion.button>
             
-            {getPageNumbers().map(number => (
-              <button
-                key={number}
-                onClick={() => updateSearchParams({ page: number.toString() })}
-                className={`w-8 h-8 rounded-full ${
-                  currentPage === number
-                    ? 'bg-green-500 text-white'
-                    : 'text-airbnb-dark hover:bg-gray-100'
-                }`}
-              >
-                {number}
-              </button>
-            ))}
+            <div className="flex space-x-2">
+              {getPageNumbers().map(number => (
+                <motion.button
+                  key={number}
+                  onClick={() => updateSearchParams({ page: number.toString() })}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  className={`w-10 h-10 rounded-full font-medium transition-all ${
+                    currentPage === number
+                      ? 'text-white shadow-glow'
+                      : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                  }`}
+                  style={currentPage === number ? { background: 'linear-gradient(to right, #0F1520, #1a2332)' } : {}}
+                >
+                  {number}
+                </motion.button>
+              ))}
+            </div>
             
-            <button
+            <motion.button
               onClick={() => updateSearchParams({ page: (currentPage + 1).toString() })}
               disabled={currentPage === totalPages}
-              className={`p-2 rounded-full ${
+              whileHover={currentPage !== totalPages ? { scale: 1.1 } : {}}
+              whileTap={currentPage !== totalPages ? { scale: 0.9 } : {}}
+              className={`p-3 rounded-full transition-all ${
                 currentPage === totalPages 
-                  ? 'text-gray-300 cursor-not-allowed' 
-                  : 'text-airbnb-dark hover:bg-gray-100'
+                  ? 'text-gray-300 cursor-not-allowed bg-gray-100' 
+                  : 'text-white hover:shadow-glow'
               }`}
+              style={currentPage !== totalPages ? { background: 'linear-gradient(to right, #0F1520, #1a2332)' } : {}}
               aria-label="Next page"
             >
               <FaChevronRight />
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
         )}
       </div>
     </div>

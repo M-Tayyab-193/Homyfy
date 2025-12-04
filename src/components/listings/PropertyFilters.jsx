@@ -323,28 +323,28 @@ function PropertyFilters({
                 <div>
                   <label className="block text-xs text-gray-600 mb-1.5 font-medium">Minimum</label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-sm">$</span>
+                    <span className="ml-[1px] absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold text-sm">Rs.  </span>
                     <motion.input
                       type="number"
                       placeholder="0"
                       value={minPrice}
                       onChange={(e) => setMinPrice(e.target.value)}
                       whileFocus={{ scale: 1.02 }}
-                      className="w-full pl-7 pr-3 py-2 text-sm border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="ml-2 w-full pl-7 pr-3 py-2 text-sm border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                     />
                   </div>
                 </div>
                 <div>
                   <label className="block text-xs text-gray-600 mb-1.5 font-medium">Maximum</label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-sm">$</span>
+                    <span className="ml-[1px] absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold text-sm">Rs.  </span>
                     <motion.input
                       type="number"
                       placeholder="1000"
                       value={maxPrice}
                       onChange={(e) => setMaxPrice(e.target.value)}
                       whileFocus={{ scale: 1.02 }}
-                      className="w-full pl-7 pr-3 py-2 text-sm border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="ml-2 w-full pl-7 pr-3 py-2 text-sm border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                     />
                   </div>
                 </div>

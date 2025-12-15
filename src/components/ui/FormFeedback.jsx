@@ -19,10 +19,10 @@ function FormFeedback({ type = 'error', message, show = false }) {
     },
     info: {
       icon: FaInfoCircle,
-      bgColor: 'bg-blue-50',
+      bgColor: 'bg-gray-50',
       textColor: 'text-blue-800',
-      iconColor: 'text-blue-500',
-      borderColor: 'border-blue-200',
+      iconColor: '#0F1520',
+      borderColor: 'border-gray-300',
     },
   }
 

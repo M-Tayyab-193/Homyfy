@@ -197,7 +197,7 @@ function ImageLightbox({ images, initialIndex = 0, isOpen, onClose }) {
                 }}
                 className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden transition-all ${
                   index === currentIndex
-                    ? 'ring-4 ring-blue-500 ring-offset-2 ring-offset-black'
+                    ? 'ring-4 ring-[#0F1520] ring-offset-2 ring-offset-black'
                     : 'opacity-60 hover:opacity-100'
                 }`}
               >

@@ -178,6 +178,7 @@ function ListingDetailsPage() {
           bed_count: data.bed_count,
           bathroom_count: data.bathroom_count,
           guest_count: data.guest_count,
+          matterport_url: data.matterport_url || null,
         };
 
         console.log('Transformed listing:', transformedListing);
@@ -251,21 +252,11 @@ function ListingDetailsPage() {
 
   return (
     <motion.div 
-      className="container-custom py-6"
+      className="container-custom py-6 mt-[90px]"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <motion.button
-        onClick={handleBack}
-        className="group flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-md border border-gray-200 rounded-full hover:shadow-lg transition-all mb-6"
-        whileHover={{ scale: 1.05, x: -5 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        <FaArrowLeft className="group-hover:text-blue-500 transition-colors" />
-        <span className="font-medium">Back</span>
-      </motion.button>
-
       <motion.div 
         className="mb-8"
         initial={{ opacity: 0, y: -20 }}
@@ -278,17 +269,17 @@ function ListingDetailsPage() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center flex-wrap gap-4">
             <motion.div 
-              className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-blue-50 to-sky-50 rounded-full border border-blue-200"
+              className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-gray-50 to-gray-100 rounded-full border border-gray-300"
               whileHover={{ scale: 1.05 }}
               onClick={scrollToReviews}
             >
               <FaStar className="text-yellow-500" />
               <span className="font-semibold">{listing.rating_overall}</span>
               <span className="text-gray-400">·</span>
-              <span className="text-gray-600 underline cursor-pointer hover:text-blue-500 transition-colors">{reviews.length} reviews</span>
+              <span className="text-gray-600 underline cursor-pointer hover:#0F1520 transition-colors">{reviews.length} reviews</span>
             </motion.div>
             <div className="flex items-center gap-2 text-gray-600">
-              <FaMapMarkerAlt className="text-blue-500" />
+              <FaMapMarkerAlt className="#0F1520" />
               <span className="font-medium">{listing.location}</span>
             </div>
           </div>
@@ -318,6 +309,7 @@ function ListingDetailsPage() {
         images={listing.images}
         selectedImage={selectedImage}
         setSelectedImage={setSelectedImage}
+        matterportUrl={listing.matterport_url}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
@@ -348,7 +340,7 @@ function ListingDetailsPage() {
               </div>
               <motion.button 
                 onClick={() => setShowContactInfo(!showContactInfo)}
-                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
+                className="px-6 py-3 bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -368,11 +360,11 @@ function ListingDetailsPage() {
                       href={`https://wa.me/${listing.host.phone}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-3 bg-gradient-to-r from-blue-50 to-sky-50 rounded-lg hover:shadow-md transition-all group"
+                      className="flex items-center gap-3 p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg hover:shadow-md transition-all group"
                       whileHover={{ x: 5 }}
                     >
                       <FaWhatsapp className="text-green-500 text-2xl flex-shrink-0" />
-                      <span className="group-hover:text-blue-500 transition-colors font-medium break-all">{listing.host.phone}</span>
+                      <span className="group-hover:#0F1520 transition-colors font-medium break-all">{listing.host.phone}</span>
                     </motion.a>
                     <motion.a
                       href={`mailto:${listing.host.email}`}
@@ -380,7 +372,7 @@ function ListingDetailsPage() {
                       whileHover={{ x: 5 }}
                     >
                       <FaEnvelope className="text-gray-600 text-2xl flex-shrink-0" />
-                      <span className="group-hover:text-blue-500 transition-colors font-medium break-all">{listing.host.email}</span>
+                      <span className="group-hover:#0F1520 transition-colors font-medium break-all">{listing.host.email}</span>
                     </motion.a>
                   </motion.div>
                 )}
@@ -392,7 +384,7 @@ function ListingDetailsPage() {
               transition={{ type: "spring", stiffness: 300 }}
             >
               <div className="relative w-20 h-20">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-sky-400 rounded-full blur-md opacity-50"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-[#0F1520] to-sky-400 rounded-full blur-md opacity-50"></div>
                 <img
                   src={listing.host.avatar}
                   alt={listing.host.name}
@@ -431,12 +423,12 @@ function ListingDetailsPage() {
                   {Object.entries(amenitiesByCategory).slice(0, 2).map(([category, items], idx) => (
                     <motion.div 
                       key={category}
-                      className="p-4 bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all"
+                      className="p-4 bg-white rounded-xl border border-gray-200 hover:border-gray-400 hover:shadow-md transition-all"
                       initial={{ opacity: 0, x: idx % 2 === 0 ? -20 : 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.7 + idx * 0.1 }}
                     >
-                      <h3 className="font-bold text-base mb-3 text-blue-600">{category}</h3>
+                      <h3 className="font-bold text-base mb-3 text-[#0F1520]">{category}</h3>
                       <div className="space-y-2">
                         {items.slice(0, 3).map((amenity) => (
                           <motion.div 
@@ -444,7 +436,7 @@ function ListingDetailsPage() {
                             className="flex items-center gap-2 text-sm"
                             whileHover={{ x: 5 }}
                           >
-                            <span className="text-blue-500 font-bold">✓</span>
+                            <span className="#0F1520 font-bold">✓</span>
                             <span className="text-gray-700">{amenity.title}</span>
                           </motion.div>
                         ))}
@@ -454,7 +446,7 @@ function ListingDetailsPage() {
                 </div>
                 <motion.button
                   onClick={() => setShowAllAmenities(true)}
-                  className="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all"
+                  className="w-full px-6 py-3 bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
@@ -474,7 +466,7 @@ function ListingDetailsPage() {
           >
             <h2 className="text-xl font-bold mb-4 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Where you'll be</h2>
             <div className="flex items-center gap-2 mb-4 text-gray-600">
-              <FaMapMarkerAlt className="text-blue-500" />
+              <FaMapMarkerAlt className="#0F1520" />
               <p className="font-medium">{listing.location}</p>
             </div>
 

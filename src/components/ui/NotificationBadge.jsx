@@ -4,7 +4,7 @@ function NotificationBadge({ count = 0, max = 99, position = 'top-right', color 
   const colors = {
     red: 'bg-red-500',
     green: 'bg-green-500',
-    blue: 'bg-blue-500',
+    blue: 'bg-[#0F1520]',
     yellow: 'bg-yellow-500',
     purple: 'bg-purple-500',
   }

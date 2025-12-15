@@ -29,7 +29,7 @@ function SectionDivider({ icon: Icon, text }) {
                   repeat: Infinity,
                   repeatDelay: 3
                 }}
-                className="text-blue-500"
+                className="#0F1520"
               >
                 <Icon className="text-xl" />
               </motion.div>

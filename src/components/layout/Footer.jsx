@@ -53,7 +53,7 @@ function Footer() {
               whileHover={{ rotate: 360 }}
               transition={{ duration: 0.6 }}
             >
-              <FaHome className="text-4xl text-blue-500" />
+              <FaHome className="text-4xl text-[#0F1520]" />
             </motion.div>
             <h2 className="text-3xl font-bold gradient-text">Homyfy</h2>
           </div>
@@ -77,21 +77,21 @@ function Footer() {
                 whileHover={{ x: 5 }}
                 className="flex items-center text-gray-600 text-sm"
               >
-                <FaPhone className="mr-3 text-blue-500" />
+                <FaPhone className="mr-3 text-[#0F1520]" />
                 <span>+92 300 1234567</span>
               </motion.div>
               <motion.div
                 whileHover={{ x: 5 }}
                 className="flex items-center text-gray-600 text-sm"
               >
-                <FaEnvelope className="mr-3 text-blue-500" />
+                <FaEnvelope className="mr-3 text-[#0F1520]" />
                 <span>support@homyfy.com</span>
               </motion.div>
               <motion.div
                 whileHover={{ x: 5 }}
                 className="flex items-center text-gray-600 text-sm"
               >
-                <FaMapMarkerAlt className="mr-3 text-blue-500" />
+                <FaMapMarkerAlt className="mr-3 text-[#0F1520]" />
                 <span>Islamabad, Pakistan</span>
               </motion.div>
             </div>
@@ -113,7 +113,7 @@ function Footer() {
                   <motion.div whileHover={{ x: 5 }}>
                     <Link
                       to={link.to}
-                      className="text-gray-600 hover:text-blue-500 transition-colors text-sm inline-block"
+                      className="text-gray-600 hover:#0F1520 transition-colors text-sm inline-block"
                     >
                       {link.label}
                     </Link>
@@ -137,7 +137,7 @@ function Footer() {
                   <motion.div whileHover={{ x: 5 }}>
                     <Link
                       to={link.to}
-                      className="text-gray-600 hover:text-blue-500 transition-colors text-sm inline-block"
+                      className="text-gray-600 hover:#0F1520 transition-colors text-sm inline-block"
                     >
                       {link.label}
                     </Link>
@@ -159,12 +159,12 @@ function Footer() {
               <input
                 type="email"
                 placeholder="Your email"
-                className="flex-1 px-4 py-2 text-sm border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="flex-1 px-4 py-2 text-sm border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-[#0F1520] focus:border-transparent"
               />
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-r-lg hover:shadow-glow transition-all text-sm font-medium"
+                className="px-4 py-2 bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white rounded-r-lg hover:shadow-glow transition-all text-sm font-medium"
               >
                 Subscribe
               </motion.button>
@@ -182,14 +182,14 @@ function Footer() {
             <div className="flex items-center space-x-4">
               <motion.button
                 whileHover={{ scale: 1.05 }}
-                className="flex items-center text-gray-700 font-medium hover:text-blue-500 transition-colors text-sm"
+                className="flex items-center text-gray-700 font-medium hover:#0F1520 transition-colors text-sm"
               >
                 <FaGlobe className="mr-2" />
                 <span>English (US)</span>
               </motion.button>
               <motion.button
                 whileHover={{ scale: 1.05 }}
-                className="hover:text-blue-500 font-medium transition-colors text-sm text-gray-700"
+                className="hover:#0F1520 font-medium transition-colors text-sm text-gray-700"
               >
                 PKR - Rs.
               </motion.button>
@@ -214,7 +214,7 @@ function Footer() {
                   href={href}
                   whileHover={{ scale: 1.2, y: -2 }}
                   whileTap={{ scale: 0.9 }}
-                  className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 text-gray-700 hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-600 hover:text-white transition-all"
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 text-gray-700 hover:bg-gradient-to-r hover:from-[#0F1520] hover:to-[#1a2332] hover:text-white transition-all"
                 >
                   <Icon size={18} />
                 </motion.a>

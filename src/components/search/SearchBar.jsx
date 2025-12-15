@@ -1,18 +1,55 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FaSearch, FaUserFriends, FaMapMarkerAlt } from 'react-icons/fa'
+import { toast } from 'react-toastify'
+import { FaSearch, FaUserFriends, FaMapMarkerAlt, FaCalendarAlt } from 'react-icons/fa'
+import { MdArrowForward } from 'react-icons/md'
 import GuestsCounter from './GuestsCounter'
+import DateRangePicker from './DateRangePicker'
 
 function SearchBar({ onSearch }) {
   const navigate = useNavigate()
   const [location, setLocation] = useState('')
   const [isGuestsOpen, setIsGuestsOpen] = useState(false)
-  const [guests, setGuests] = useState(1)
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false)
+  const [guests, setGuests] = useState(0)
   const [focusedInput, setFocusedInput] = useState(null)
+  const [locationSuggestions, setLocationSuggestions] = useState([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const debounceTimerRef = useRef(null)
+  const [dateRange, setDateRange] = useState([
+    {
+      startDate: null,
+      endDate: null,
+      key: 'selection'
+    }
+  ])
   
   const handleSubmit = (e) => {
     e.preventDefault()
+    
+    // Validate all required fields
+    const missingFields = []
+    
+    if (!location.trim()) {
+      missingFields.push('Location')
+    }
+    
+    if (!dateRange[0].startDate || !dateRange[0].endDate) {
+      missingFields.push('Check-in and Check-out dates')
+    }
+    
+    if (guests === 0) {
+      missingFields.push('Number of guests')
+    }
+    
+    if (missingFields.length > 0) {
+      toast.error(`Please provide: ${missingFields.join(', ')}`, {
+        position: 'top-center',
+        autoClose: 4000,
+      })
+      return
+    }
     
     const queryParams = new URLSearchParams({
       location: location.trim(),
@@ -28,107 +65,306 @@ function SearchBar({ onSearch }) {
 
   const toggleGuests = () => {
     setIsGuestsOpen(!isGuestsOpen)
+    setIsDatePickerOpen(false)
+  }
+
+  const toggleDatePicker = () => {
+    setIsDatePickerOpen(!isDatePickerOpen)
+    setIsGuestsOpen(false)
+  }
+
+  const handleDateChange = (ranges) => {
+    setDateRange([ranges.selection])
+  }
+
+  // Fetch location suggestions with debouncing
+  useEffect(() => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current)
+    }
+
+    if (location.trim().length < 3) {
+      setLocationSuggestions([])
+      setShowSuggestions(false)
+      return
+    }
+
+    debounceTimerRef.current = setTimeout(async () => {
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}&limit=5`,
+          {
+            headers: {
+              'User-Agent': 'Homyfy Property Rental App'
+            }
+          }
+        )
+        const data = await response.json()
+        setLocationSuggestions(data)
+        setShowSuggestions(data.length > 0)
+      } catch (error) {
+        console.error('Error fetching location suggestions:', error)
+      }
+    }, 300)
+
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current)
+      }
+    }
+  }, [location])
+
+  const handleSuggestionClick = (suggestion) => {
+    setLocation(suggestion.display_name)
+    setShowSuggestions(false)
+    setLocationSuggestions([])
+  }
+
+  const formatDate = (date) => {
+    if (!date) return 'Add date'
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
   }
 
   return (
-    <div className="relative z-50 ">
+    <div className="relative z-50">
       <motion.form 
         onSubmit={handleSubmit}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col md:flex-row items-center bg-white rounded-full overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 divide-y md:divide-y-0 md:divide-x divide-gray-200"
+        className="flex flex-col lg:flex-row items-stretch lg:items-center bg-white rounded-3xl lg:rounded-full overflow-hidden transition-all duration-300"
       >
-        {/* Location Input */}
+        {/* Location Section */}
         <motion.div 
-          className="w-full md:w-1/2 relative"
+          className="flex-1 relative sm:px-6 border-b lg:border-b-0 lg:border-r border-gray-200"
           animate={{
             scale: focusedInput === 'location' ? 1.02 : 1,
           }}
           transition={{ duration: 0.2 }}
         >
-          <div className="absolute left-4 top-1/2 transform -translate-y-1/2 flex items-center">
-            <motion.div
-              animate={{
-                scale: focusedInput === 'location' ? 1.2 : 1,
-                rotate: focusedInput === 'location' ? 360 : 0,
-              }}
-              transition={{ duration: 0.3 }}
-            >
-              <FaMapMarkerAlt className="text-blue-500 text-lg" />
-            </motion.div>
+          <div className="flex items-center gap-3">
+            <FaMapMarkerAlt 
+              className="text-gray-600 text-base sm:text-lg flex-shrink-0" 
+              style={{ color: focusedInput === 'location' ? '#0F1520' : '#6b7280' }} 
+            />
+            <div className="flex-1">
+              <label htmlFor="search-location" className="text-xs font-semibold text-gray-900 block mb-1">
+                Location
+              </label>
+              <input
+                id="search-location"
+                type="text"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                onFocus={() => setFocusedInput('location')}
+                onBlur={() => {
+                  setTimeout(() => {
+                    setShowSuggestions(false)
+                  }, 200)
+                }}
+                className="w-full focus:outline-none text-sm text-gray-600 placeholder-gray-400 bg-transparent"
+                placeholder="Where to?"
+                required
+              />
+            </div>
           </div>
-          <input
-            id="search-location"
-            type="text"
-            placeholder="Where are you going?"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            onFocus={() => setFocusedInput('location')}
-            onBlur={() => setFocusedInput(null)}
-            className="w-full pl-12 pr-4 py-4 focus:outline-none text-sm md:text-base text-gray-800 placeholder-gray-400 bg-transparent transition-all"
-          />
-          {location && (
-            <motion.button
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0, opacity: 0 }}
-              type="button"
-              onClick={() => setLocation('')}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              ×
-            </motion.button>
-          )}
+
+            {/* Location Suggestions Dropdown */}
+            <AnimatePresence>
+              {showSuggestions && locationSuggestions.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-gray-200 z-[70] max-h-64 overflow-y-auto"
+                >
+                  {locationSuggestions.map((suggestion, index) => (
+                    <motion.div
+                      key={suggestion.place_id}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: index * 0.05 }}
+                      onClick={() => handleSuggestionClick(suggestion)}
+                      className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
+                    >
+                      <div className="flex items-start gap-2">
+                        <FaMapMarkerAlt className="text-blue-500 mt-1 flex-shrink-0" />
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-gray-900">
+                            {suggestion.display_name}
+                          </p>
+                          <p className="text-xs text-gray-500 mt-0.5">
+                            {suggestion.type}
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
         </motion.div>
         
-        {/* Guests */}
+        {/* Mobile: Date Section Combined */}
+        <div className="lg:hidden">
+          <motion.div 
+            className="relative px-4 sm:px-6 py-4 border-b border-gray-200 cursor-pointer"
+            onClick={toggleDatePicker}
+            animate={{
+              scale: isDatePickerOpen ? 1.02 : 1,
+            }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="flex items-center gap-3">
+              <FaCalendarAlt 
+                className="text-gray-600 text-base sm:text-lg flex-shrink-0" 
+                style={{ color: isDatePickerOpen ? '#0F1520' : '#6b7280' }} 
+              />
+              <div className="flex-1">
+                <div className="text-xs font-semibold text-gray-900 block mb-1">
+                  Dates
+                </div>
+                <div className="text-sm text-gray-600">
+                  {formatDate(dateRange[0].startDate)} - {formatDate(dateRange[0].endDate)}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Desktop: Check In Section */}
         <motion.div 
-          className="w-full md:w-1/2 flex items-center"
+          className="hidden lg:flex flex-1 relative px-6 py-4 cursor-pointer items-center"
+          onClick={toggleDatePicker}
           animate={{
-            scale: focusedInput === 'guests' ? 1.02 : 1,
+            scale: isDatePickerOpen ? 1.02 : 1,
+          }}
+          transition={{ duration: 0.2 }}
+        >
+          <div className="flex items-center gap-3 flex-1">
+            <FaCalendarAlt 
+              className="text-gray-600 text-lg flex-shrink-0" 
+              style={{ color: isDatePickerOpen ? '#0F1520' : '#6b7280' }} 
+            />
+            <div className="flex-1">
+              <div className="text-xs font-semibold text-gray-900 block mb-1">
+                Check in
+              </div>
+              <div className="text-sm text-gray-600">
+                {formatDate(dateRange[0].startDate)}
+              </div>
+            </div>
+          </div>
+          {/* Arrow Icon Between Dates - Desktop Only */}
+          <MdArrowForward className="text-gray-400 text-sm mx-2" />
+        </motion.div>
+
+        {/* Desktop: Check Out Section */}
+        <motion.div 
+          className="hidden lg:flex flex-1 relative px-6 py-4 border-r border-gray-200 cursor-pointer"
+          onClick={toggleDatePicker}
+          animate={{
+            scale: isDatePickerOpen ? 1.02 : 1,
+          }}
+          transition={{ duration: 0.2 }}
+        >
+          <div className="flex items-center gap-3">
+            <FaCalendarAlt 
+              className="text-gray-600 text-lg flex-shrink-0" 
+              style={{ color: isDatePickerOpen ? '#0F1520' : '#6b7280' }} 
+            />
+            <div className="flex-1">
+              <div className="text-xs font-semibold text-gray-900 block mb-1">
+                Check out
+              </div>
+              <div className="text-sm text-gray-600">
+                {formatDate(dateRange[0].endDate)}
+              </div>
+            </div>
+          </div>
+        </motion.div>
+        
+        {/* Guests Section */}
+        <motion.div 
+          className="flex-1 relative px-4 sm:px-6 py-4 border-b lg:border-b-0"
+          animate={{
+            scale: isGuestsOpen ? 1.02 : 1,
           }}
           transition={{ duration: 0.2 }}
         >
           <button
             type="button"
-            className="flex-grow pl-12 pr-4 py-4 text-left focus:outline-none text-sm md:text-base relative group"
+            className="flex items-center gap-3 w-full text-left focus:outline-none"
             onClick={toggleGuests}
             onFocus={() => setFocusedInput('guests')}
             onBlur={() => setFocusedInput(null)}
           >
-            <div className="absolute left-4 top-1/2 transform -translate-y-1/2 flex items-center">
-              <motion.div
-                animate={{
-                  scale: focusedInput === 'guests' || isGuestsOpen ? 1.2 : 1,
-                }}
-                transition={{ duration: 0.3 }}
-              >
-                <FaUserFriends className="text-gray-600 group-hover:text-blue-500 transition-colors text-lg" />
-              </motion.div>
-            </div>
-            <span className="text-gray-800">
-              {guests} {guests === 1 ? 'guest' : 'guests'}
-            </span>
-          </button>
-          
-          <motion.button
-            type="submit"
-            className="max-sm:mr-5 max-sm:w-10 max-sm:h-10 bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 rounded-full mx-2 relative overflow-hidden group"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            aria-label="Search"
-          >
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-blue-400 to-sky-500"
-              initial={{ x: '-100%' }}
-              whileHover={{ x: 0 }}
-              transition={{ duration: 0.3 }}
+            <FaUserFriends 
+              className="text-gray-600 text-base sm:text-lg flex-shrink-0" 
+              style={{ color: isGuestsOpen ? '#0F1520' : '#6b7280' }} 
             />
-            <FaSearch className="relative max-sm:right-[3px] max-sm:bottom-[3px] z-10" />
-          </motion.button>
+            <div className="flex-1">
+              <div className="text-xs font-semibold text-gray-900 block mb-1">
+                Guests
+              </div>
+              <div className="text-sm text-gray-600">
+                {guests} {guests === 1 ? 'guest' : 'guests'}
+              </div>
+            </div>
+          </button>
         </motion.div>
+
+        {/* Search Button */}
+        <motion.button
+          type="submit"
+          className="text-white px-6 py-4 mx-2 my-2 lg:my-0 rounded-full relative overflow-hidden group flex items-center justify-center gap-2"
+          style={{ background: 'linear-gradient(to right, #0F1520, #1a2332)' }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          aria-label="Search"
+        >
+          <motion.div
+            className="absolute inset-0"
+            style={{ background: 'linear-gradient(to right, #1a2332, #253549)' }}
+            initial={{ x: '-100%' }}
+            whileHover={{ x: 0 }}
+            transition={{ duration: 0.3 }}
+          />
+          <FaSearch className="relative z-10" />
+          <span className="relative z-10 font-medium">Search</span>
+        </motion.button>
       </motion.form>
       
+      {/* Date Picker Dropdown */}
+      <AnimatePresence>
+        {isDatePickerOpen && (
+          <>
+            {/* Backdrop for mobile */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/50 z-[55] lg:hidden"
+              onClick={() => setIsDatePickerOpen(false)}
+            />
+            
+            {/* Date Picker */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-h-[85vh] max-w-[364px] overflow-auto lg:fixed lg:left-auto lg:top-auto lg:translate-x-0 lg:translate-y-0 lg:absolute lg:bottom-0 lg:-translate-y-full lg:left-1/4 lg:w-auto lg:max-h-none lg:overflow-visible lg:mb-2 bg-white rounded-2xl shadow-2xl z-[60] border border-gray-100"
+            >
+              <DateRangePicker 
+                ranges={dateRange}
+                onChange={handleDateChange}
+                onClose={() => setIsDatePickerOpen(false)}
+              />
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
       {/* Guests Dropdown */}
       <AnimatePresence>
         {isGuestsOpen && (
@@ -137,7 +373,7 @@ function SearchBar({ onSearch }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="absolute right-0 md:right-1/6 mt-2 bg-white rounded-2xl shadow-2xl z-[60] border border-gray-100"
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-sm lg:fixed lg:left-auto lg:top-auto lg:translate-x-0 lg:translate-y-0 lg:absolute lg:bottom-0 lg:-translate-y-full lg:right-1/4 lg:w-auto bg-white rounded-2xl shadow-2xl z-[60] border border-gray-100"
           >
             <GuestsCounter 
               guests={guests}

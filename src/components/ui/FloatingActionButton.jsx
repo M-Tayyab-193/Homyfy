@@ -20,12 +20,7 @@ function FloatingActionButton() {
   }
 
   const fabButtons = [
-    {
-      icon: FaComments,
-      label: 'Chat Support',
-      color: 'from-blue-500 to-blue-600',
-      action: () => console.log('Chat opened'),
-    },
+    
     {
       icon: FaQuestionCircle,
       label: 'Help Center',
@@ -46,7 +41,7 @@ function FloatingActionButton() {
             whileHover={{ scale: 1.1, y: -5 }}
             whileTap={{ scale: 0.9 }}
             onClick={scrollToTop}
-            className="fixed bottom-6 right-6 z-50 p-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full shadow-2xl hover:shadow-glow transition-all"
+            className="fixed bottom-6 right-6 z-50 p-4 bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white rounded-full shadow-2xl hover:shadow-glow transition-all"
             aria-label="Scroll to top"
           >
             <FaChevronUp size={20} />
@@ -88,23 +83,7 @@ function FloatingActionButton() {
         </AnimatePresence>
 
         {/* Main FAB Toggle */}
-        <motion.button
-          whileHover={{ scale: 1.1, rotate: 90 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className={`w-14 h-14 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full shadow-2xl hover:shadow-glow transition-all flex items-center justify-center ${
-            isMenuOpen ? 'rotate-45' : ''
-          }`}
-          animate={{ rotate: isMenuOpen ? 45 : 0 }}
-          aria-label="Open action menu"
-        >
-          <motion.div
-            animate={{ rotate: isMenuOpen ? -45 : 0 }}
-            className="text-2xl font-bold"
-          >
-            +
-          </motion.div>
-        </motion.button>
+        
       </div>
     </>
   )

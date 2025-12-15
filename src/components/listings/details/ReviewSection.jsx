@@ -86,7 +86,7 @@ if (reviewsError) {
       {currentUser && !hasReviewed && hasBooked && (
         <motion.button
           onClick={() => setShowReviewForm(!showReviewForm)}
-          className="mb-6 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all"
+          className="mb-6 px-6 py-3 bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all"
           whileHover={{ scale: 1.05, y: -2 }}
           whileTap={{ scale: 0.95 }}
         >
@@ -98,7 +98,7 @@ if (reviewsError) {
         {showReviewForm && (
           <motion.form 
             onSubmit={handleReviewSubmit} 
-            className="mb-8 p-6 bg-white rounded-xl border-2 border-blue-200 shadow-lg"
+            className="mb-8 p-6 bg-white rounded-xl border-2 border-gray-300 shadow-lg"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
@@ -145,7 +145,7 @@ if (reviewsError) {
                 ref={reviewTextRef}
                 value={userReview}
                 onChange={handleReviewTextChange}
-                className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                className="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-[#0F1520] focus:ring-2 focus:ring-blue-200 transition-all"
                 rows="4"
                 placeholder="Share your experience..."
                 required
@@ -154,7 +154,7 @@ if (reviewsError) {
 
             <motion.button
               type="submit"
-              className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition-all"
+              className="w-full py-3 bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition-all"
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -178,7 +178,7 @@ if (reviewsError) {
               <motion.img
                 src={review.profile_image || `https://api.dicebear.com/7.x/initials/svg?seed=${review.fullname}`}
                 alt={review.fullname}
-                className="w-12 h-12 rounded-full border-2 border-blue-200 shadow-md"
+                className="w-12 h-12 rounded-full border-2 border-gray-300 shadow-md"
                 whileHover={{ scale: 1.1, rotate: 5 }}
               />
               <div className="flex-1">

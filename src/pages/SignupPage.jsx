@@ -102,7 +102,7 @@ function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex justify-center items-center px-4 py-12">
+    <div className="min-h-screen bg-white flex justify-center items-center px-4 py-12 mt-[45px]">
       
 
       <motion.div 
@@ -124,15 +124,8 @@ function SignupPage() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <motion.div
-            className="inline-block p-4 bg-gradient-to-br from-blue-400 to-blue-500 rounded-2xl shadow-lg mb-4"
-            whileHover={{ scale: 1.07, rotate: -3 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
-            <FaHome className="text-white text-4xl" />
-          </motion.div>
           <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent">
-            Join Homyfy
+            Sign Up
           </h1>
           <p className="text-gray-600 mt-2">
             Create your account and start your journey
@@ -164,7 +157,7 @@ function SignupPage() {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#0F1520] focus:ring-4 focus:ring-gray-200 transition-all"
                   placeholder="your.email@example.com"
                 />
               </div>
@@ -182,7 +175,7 @@ function SignupPage() {
                   name="username"
                   value={formData.username}
                   onChange={handleInputChange}
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#0F1520] focus:ring-4 focus:ring-gray-200 transition-all"
                   placeholder="Choose a unique username"
                 />
               </div>
@@ -200,7 +193,7 @@ function SignupPage() {
                   name="fullname"
                   value={formData.fullname}
                   onChange={handleInputChange}
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#0F1520] focus:ring-4 focus:ring-gray-200 transition-all"
                   placeholder="John Doe"
                 />
               </div>
@@ -218,7 +211,7 @@ function SignupPage() {
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#0F1520] focus:ring-4 focus:ring-gray-200 transition-all"
                   placeholder="+1 (555) 123-4567"
                 />
               </div>
@@ -236,7 +229,7 @@ function SignupPage() {
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="w-full pl-12 pr-12 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all"
+                  className="w-full pl-12 pr-12 py-3 border-2 border-gray-200 rounded-xl focus:border-[#0F1520] focus:ring-4 focus:ring-gray-200 transition-all"
                   placeholder="Create a strong password"
                 />
                 <motion.button
@@ -260,7 +253,7 @@ function SignupPage() {
                 <motion.label
                   className={`flex flex-col items-center justify-center p-5 border-2 rounded-xl cursor-pointer transition-all ${
                     formData.role === "guest"
-                      ? "border-blue-500 bg-gradient-to-br from-blue-50 to-sky-50 shadow-lg"
+                      ? "border-[#0F1520] bg-gradient-to-br from-gray-50 to-gray-100 shadow-lg"
                       : "border-gray-200 hover:border-gray-300 hover:shadow-md"
                   }`}
                   whileHover={{ scale: 1.02, y: -2 }}
@@ -278,7 +271,7 @@ function SignupPage() {
                     animate={formData.role === "guest" ? { scale: [1, 1.2, 1] } : { scale: 1 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <FaUser className="text-3xl mb-2 text-blue-500" />
+                    <FaUser className="text-3xl mb-2 text-[#0F1520]" />
                   </motion.div>
                   <span className="font-bold text-gray-900">Guest</span>
                   <span className="text-xs text-gray-500 text-center mt-1">
@@ -290,7 +283,7 @@ function SignupPage() {
                 <motion.label
                   className={`flex flex-col items-center justify-center p-5 border-2 rounded-xl cursor-pointer transition-all ${
                     formData.role === "host"
-                      ? "border-blue-500 bg-gradient-to-br from-blue-50 to-sky-50 shadow-lg"
+                      ? "border-[#0F1520] bg-gradient-to-br from-gray-50 to-gray-100 shadow-lg"
                       : "border-gray-200 hover:border-gray-300 hover:shadow-md"
                   }`}
                   whileHover={{ scale: 1.02, y: -2 }}
@@ -308,7 +301,7 @@ function SignupPage() {
                     animate={formData.role === "host" ? { scale: [1, 1.2, 1] } : { scale: 1 }}
                     transition={{ duration: 0.3 }}
                   >
-                    <FaBuilding className="text-3xl mb-2 text-blue-500" />
+                    <FaBuilding className="text-3xl mb-2 text-[#0F1520]" />
                   </motion.div>
                   <span className="font-bold text-gray-900">Host</span>
                   <span className="text-xs text-gray-500 text-center mt-1">
@@ -321,7 +314,7 @@ function SignupPage() {
             {/* Submit */}
             <motion.button
               type="submit"
-              className="w-full py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition-all"
+              className="w-full py-4 bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white rounded-xl font-bold shadow-lg hover:shadow-xl transition-all"
               disabled={loading}
               whileHover={{ scale: 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
@@ -370,7 +363,7 @@ function SignupPage() {
           Already have an account?{" "}
           <Link
             to="/login"
-            className="text-blue-600 hover:text-blue-700 font-bold underline"
+            className="text-[#0F1520] hover:text-[#0F1520] font-bold underline"
           >
             Log in
           </Link>

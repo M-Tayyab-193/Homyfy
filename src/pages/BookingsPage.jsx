@@ -46,7 +46,7 @@ function BookingsPage() {
   if (loading) return <LoadingSpinner fullScreen />;
 
   return (
-    <div className="container-custom py-8">
+    <div className="container-custom py-8 mt-[98px]">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -108,20 +108,20 @@ function BookingsPage() {
                   <div>
                     <Link
                       to={`/listings/${booking.listing_id}`}
-                      className="text-2xl font-bold text-gray-900 hover:text-blue-600 transition-colors mb-3 inline-block"
+                      className="text-2xl font-bold text-gray-900 hover:text-[#0F1520] transition-colors mb-3 inline-block"
                     >
                       {booking.listing_title}
                     </Link>
 
                     <div className="flex items-center text-gray-600 mb-4">
-                      <FaMapMarkerAlt className="mr-2 text-blue-500" />
+                      <FaMapMarkerAlt className="mr-2 text-[#0F1520]" />
                       <span className="text-sm">{booking.location}</span>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                      <div className="bg-gradient-to-br from-blue-50 to-sky-50 rounded-xl p-4 border border-blue-100">
+                      <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200">
                         <div className="flex items-center gap-2 mb-2">
-                          <FaCalendar className="text-blue-500" />
+                          <FaCalendar className="#0F1520" />
                           <span className="text-xs font-semibold text-gray-700 uppercase">Check-in</span>
                         </div>
                         <p className="text-lg font-bold text-gray-900">
@@ -152,12 +152,12 @@ function BookingsPage() {
                   <div className="flex items-center justify-between pt-4 border-t border-gray-200">
                     <div>
                       <span className="text-sm text-gray-600">Total Amount</span>
-                      <p className="text-2xl font-bold text-blue-600">Rs. {booking.total_amount.toLocaleString()}</p>
+                      <p className="text-2xl font-bold text-[#0F1520]">Rs. {booking.total_amount.toLocaleString()}</p>
                     </div>
 
                     <Link
                       to={`/listings/${booking.listing_id}`}
-                      className="px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:from-blue-600 hover:to-blue-700 transition-all"
+                      className="px-6 py-3 bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:from-[#1a2332] hover:to-[#253549] transition-all"
                     >
                       View Details
                     </Link>

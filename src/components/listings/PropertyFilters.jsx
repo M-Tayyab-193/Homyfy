@@ -84,11 +84,11 @@ function PropertyFilters({
               whileTap={{ scale: 0.95 }}
               className={`flex flex-col items-center gap-2 min-w-fit px-6 py-3 rounded-xl transition-all duration-300 ${
                 activeFilter === type.id 
-                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg' 
+                  ? 'bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white shadow-lg' 
                   : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
               }`}
             >
-              <type.icon className={`text-lg ${activeFilter === type.id ? 'text-white' : 'text-blue-500'}`} />
+              <type.icon className={`text-lg ${activeFilter === type.id ? 'text-white' : '#0F1520'}`} />
               <span className="text-sm font-medium whitespace-nowrap">{type.label}</span>
             </motion.button>
           ))}
@@ -106,7 +106,7 @@ function PropertyFilters({
             whileTap={{ scale: 0.98 }}
             className={`w-full px-4 py-3 rounded-xl flex items-center justify-between font-medium transition-all shadow-sm ${
               showPropertyTypes 
-                ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white' 
+                ? 'bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white' 
                 : 'bg-white text-gray-700 border border-gray-200'
             }`}
           >
@@ -115,7 +115,7 @@ function PropertyFilters({
                 <div className="flex items-center">
                   {(() => {
                     const ActiveIcon = PROPERTY_TYPES.find(t => t.id === activeFilter).icon;
-                    return <ActiveIcon className={`text-lg ${showPropertyTypes ? 'text-white' : 'text-blue-500'}`} />;
+                    return <ActiveIcon className={`text-lg ${showPropertyTypes ? 'text-white' : '#0F1520'}`} />;
                   })()}
                 </div>
               )}
@@ -142,7 +142,7 @@ function PropertyFilters({
                 transition={{ duration: 0.2 }}
                 className="absolute left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-30"
               >
-                <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-4 py-3">
+                <div className="bg-gradient-to-r from-[#0F1520] to-[#1a2332] px-4 py-3">
                   <h3 className="font-bold text-white text-sm">Property Type</h3>
                 </div>
                 <div className="p-2">
@@ -154,19 +154,19 @@ function PropertyFilters({
                       whileTap={{ scale: 0.98 }}
                       className={`w-full text-left px-4 py-3 rounded-xl transition-all flex items-center justify-between ${
                         activeFilter === type.id 
-                          ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 font-semibold shadow-sm' 
+                          ? 'bg-gradient-to-r from-gray-50 to-blue-100 text-[#0F1520] font-semibold shadow-sm' 
                           : 'hover:bg-gray-50 text-gray-700'
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <type.icon className={`text-lg ${activeFilter === type.id ? 'text-blue-500' : 'text-gray-400'}`} />
+                        <type.icon className={`text-lg ${activeFilter === type.id ? '#0F1520' : 'text-gray-400'}`} />
                         <span className="text-sm">{type.label}</span>
                       </div>
                       {activeFilter === type.id && (
                         <motion.div
                           initial={{ scale: 0, rotate: -180 }}
                           animate={{ scale: 1, rotate: 0 }}
-                          className="w-5 h-5 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-md"
+                          className="w-5 h-5 bg-gradient-to-r from-[#0F1520] to-[#1a2332] rounded-full flex items-center justify-center shadow-md"
                         >
                           <FaCheck className="text-white text-xs" />
                         </motion.div>
@@ -190,19 +190,19 @@ function PropertyFilters({
             whileTap={{ scale: 0.95 }}
             className={`px-5 py-3 rounded-xl flex items-center gap-2 font-medium transition-all shadow-sm ${
               showFilters 
-                ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white' 
-                : 'bg-white text-gray-700 border border-gray-200 hover:border-blue-500'
+                ? 'bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white' 
+                : 'bg-white text-gray-700 border border-gray-200 hover:border-[#0F1520]'
             }`}
           >
             <HiAdjustmentsHorizontal className={`text-lg ${
-              showFilters ? 'text-white' : 'text-blue-600'
+              showFilters ? 'text-white' : 'text-[#0F1520]'
             }`} />
             <span className="hidden sm:inline">Filters</span>
             {(selectedAmenities.length > 0 || minPrice || maxPrice) && (
               <motion.span
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="bg-white text-blue-600 text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
+                className="bg-white text-[#0F1520] text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
               >
                 {selectedAmenities.length + (minPrice ? 1 : 0) + (maxPrice ? 1 : 0)}
               </motion.span>
@@ -220,12 +220,12 @@ function PropertyFilters({
               whileTap={{ scale: 0.95 }}
               className={`px-5 py-3 rounded-xl flex items-center gap-2 font-medium transition-all shadow-sm ${
                 showSort 
-                  ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white' 
-                  : 'bg-white text-gray-700 border border-gray-200 hover:border-blue-500'
+                  ? 'bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white' 
+                  : 'bg-white text-gray-700 border border-gray-200 hover:border-[#0F1520]'
               }`}
             >
               <TbArrowsSort className={`text-xl ${
-                showSort ? 'text-white' : 'text-blue-600'
+                showSort ? 'text-white' : 'text-[#0F1520]'
               }`} />
               <span className="hidden sm:inline">Sort</span>
             </motion.button>
@@ -240,7 +240,7 @@ function PropertyFilters({
                   className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-20"
                 >
                   {/* Header with gradient background */}
-                  <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-5 py-4">
+                  <div className="bg-gradient-to-r from-[#0F1520] to-[#1a2332] px-5 py-4">
                     <h3 className="font-bold text-white flex items-center gap-2">
                       <TbArrowsSort className="text-lg" />
                       Sort By
@@ -261,7 +261,7 @@ function PropertyFilters({
                         whileTap={{ scale: 0.98 }}
                         className={`w-full text-left px-4 py-3.5 rounded-xl transition-all flex items-center justify-between group ${
                           currentSort === option.id 
-                            ? 'bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 font-semibold shadow-sm' 
+                            ? 'bg-gradient-to-r from-gray-50 to-blue-100 text-[#0F1520] font-semibold shadow-sm' 
                             : 'hover:bg-gray-50 text-gray-700'
                         }`}
                       >
@@ -273,7 +273,7 @@ function PropertyFilters({
                           <motion.div
                             initial={{ scale: 0, rotate: -180 }}
                             animate={{ scale: 1, rotate: 0 }}
-                            className="w-6 h-6 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-md"
+                            className="w-6 h-6 bg-gradient-to-r from-[#0F1520] to-[#1a2332] rounded-full flex items-center justify-center shadow-md"
                           >
                             <FaCheck className="text-white text-xs" />
                           </motion.div>
@@ -298,7 +298,7 @@ function PropertyFilters({
             className="absolute right-0 mt-2 w-[360px] bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-20"
           >
             {/* Header with gradient background */}
-            <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-4 py-3 flex items-center justify-between">
+            <div className="bg-gradient-to-r from-[#0F1520] to-[#1a2332] px-4 py-3 flex items-center justify-between">
               <h3 className="font-bold text-lg text-white flex items-center gap-2">
                 <HiAdjustmentsHorizontal className="text-base" />
                 Filters
@@ -330,7 +330,7 @@ function PropertyFilters({
                       value={minPrice}
                       onChange={(e) => setMinPrice(e.target.value)}
                       whileFocus={{ scale: 1.02 }}
-                      className="ml-2 w-full pl-7 pr-3 py-2 text-sm border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="ml-2 w-full pl-7 pr-3 py-2 text-sm border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F1520] focus:border-transparent transition-all"
                     />
                   </div>
                 </div>
@@ -344,7 +344,7 @@ function PropertyFilters({
                       value={maxPrice}
                       onChange={(e) => setMaxPrice(e.target.value)}
                       whileFocus={{ scale: 1.02 }}
-                      className="ml-2 w-full pl-7 pr-3 py-2 text-sm border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      className="ml-2 w-full pl-7 pr-3 py-2 text-sm border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F1520] focus:border-transparent transition-all"
                     />
                   </div>
                 </div>
@@ -367,7 +367,7 @@ function PropertyFilters({
                     whileTap={{ scale: 0.95 }}
                     className={`flex items-center justify-center p-2 rounded-xl cursor-pointer transition-all shadow-sm ${
                       selectedAmenities.includes(amenity.id)
-                        ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white border-2 border-blue-500 shadow-lg'
+                        ? 'bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white border-2 border-[#0F1520] shadow-lg'
                         : 'border-2 border-gray-200 hover:border-blue-400 hover:shadow-md text-gray-700 bg-white'
                     }`}
                   >
@@ -410,7 +410,7 @@ function PropertyFilters({
                 onClick={handlePriceSubmit}
                 whileHover={{ scale: 1.02, y: -2 }}
                 whileTap={{ scale: 0.98 }}
-                className="flex-1 px-3 py-2 text-sm bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all"
+                className="flex-1 px-3 py-2 text-sm bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all"
               >
                 Apply Filters
               </motion.button>

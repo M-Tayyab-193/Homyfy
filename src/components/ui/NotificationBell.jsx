@@ -1,13 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaBell, FaCheck, FaCheckDouble, FaTimes } from 'react-icons/fa';
-import { useNotifications } from '../../hooks/useNotifications';
+import { useNotificationsContext } from '../../contexts/NotificationsContext';
 import { Link } from 'react-router-dom';
 import { formatDistanceToNow } from 'date-fns';
 
-function NotificationBell({ userId }) {
+function NotificationBell({ userId, className = '' }) {
   const [isOpen, setIsOpen] = useState(false);
-  const { notifications, unreadCount, loading, markAsRead, markAllAsRead } = useNotifications(userId);
+  const { notifications, unreadCount, loading, markAsRead, markAllAsRead } = useNotificationsContext();
   const dropdownRef = useRef(null);
 
   // Debug logging
@@ -60,7 +60,7 @@ function NotificationBell({ userId }) {
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
-        <FaBell className="text-blue-500 text-xl" />
+        <FaBell className={`text-xl ${className}`} />
         {unreadCount > 0 && (
           <motion.span
             initial={{ scale: 0 }}
@@ -82,7 +82,7 @@ function NotificationBell({ userId }) {
             className="absolute right-0 mt-2 w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden z-50"
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-4 py-3 flex items-center justify-between">
+            <div className="bg-gradient-to-r from-[#0F1520] to-[#1a2332] px-4 py-3 flex items-center justify-between">
               <h3 className="font-bold text-white">Notifications</h3>
               {unreadCount > 0 && (
                 <motion.button
@@ -101,7 +101,7 @@ function NotificationBell({ userId }) {
             <div className="max-h-96 overflow-y-auto">
               {loading ? (
                 <div className="p-8 text-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0F1520] mx-auto"></div>
                   <p className="text-sm text-gray-500 mt-3">Loading notifications...</p>
                 </div>
               ) : notifications.length === 0 ? (
@@ -116,7 +116,7 @@ function NotificationBell({ userId }) {
                     key={notification.id}
                     onClick={() => handleNotificationClick(notification)}
                     className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors ${
-                      !notification.is_read ? 'bg-blue-50' : ''
+                      !notification.is_read ? 'bg-gray-50' : ''
                     }`}
                     whileHover={{ x: 2 }}
                   >
@@ -134,7 +134,7 @@ function NotificationBell({ userId }) {
                             {notification.title}
                           </h4>
                           {!notification.is_read && (
-                            <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-1" />
+                            <div className="w-2 h-2 bg-[#0F1520] rounded-full flex-shrink-0 mt-1" />
                           )}
                         </div>
                         <p className="text-xs text-gray-600 mt-1 line-clamp-2">
@@ -153,7 +153,7 @@ function NotificationBell({ userId }) {
             {notifications.length > 0 && (
               <Link
                 to="/notifications"
-                className="block p-3 text-center text-sm text-blue-600 hover:bg-blue-50 font-medium border-t border-gray-200"
+                className="block p-3 text-center text-sm text-[#0F1520] hover:bg-gray-50 font-medium border-t border-gray-200"
                 onClick={() => setIsOpen(false)}
               >
                 View all notifications

@@ -66,7 +66,7 @@ function FormInput({
             ${type === 'password' ? 'pr-10' : ''}
             ${error 
               ? 'border-red-500 focus:ring-2 focus:ring-red-200 focus:border-red-500' 
-              : 'border-gray-300 focus:ring-2 focus:ring-blue-200 focus:border-blue-500'
+              : 'border-gray-300 focus:ring-2 focus:ring-blue-200 focus:border-[#0F1520]'
             }
             ${disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'}
             focus:outline-none
@@ -84,7 +84,7 @@ function FormInput({
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 rounded p-1"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-[#0F1520] rounded p-1"
             aria-label={showPassword ? 'Hide password' : 'Show password'}
           >
             {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
@@ -95,7 +95,7 @@ function FormInput({
         {isFocused && !error && (
           <motion.div
             layoutId="focus-ring"
-            className="absolute inset-0 rounded-lg border-2 border-blue-500 pointer-events-none"
+            className="absolute inset-0 rounded-lg border-2 border-[#0F1520] pointer-events-none"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

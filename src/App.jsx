@@ -232,7 +232,7 @@ function App() {
         pauseOnHover={false}
         theme="light"
         limit={3}
-        style={{ marginTop: "70px" }}
+        style={{ marginTop: "60px" }}
       />
     </>
   );

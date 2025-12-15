@@ -34,7 +34,7 @@ function BookingCard({
           </div>
         </div>
         <motion.div 
-          className="flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-blue-50 to-sky-50 rounded-full border border-blue-200"
+          className="flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-gray-50 to-gray-100 rounded-full border border-gray-300"
           whileHover={{ scale: 1.05 }}
         >
           <FaStar className="text-yellow-500" />
@@ -42,7 +42,7 @@ function BookingCard({
         </motion.div>
       </div>
 
-      <div className="border-2 border-gray-200 rounded-xl overflow-hidden mb-4 hover:border-blue-300 transition-colors">
+      <div className="border-2 border-gray-200 rounded-xl overflow-hidden mb-4 hover:border-gray-400 transition-colors">
         <motion.button
           className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
           onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
@@ -50,12 +50,12 @@ function BookingCard({
           whileTap={{ scale: 0.98 }}
         >
           <div className="text-left">
-            <div className="text-xs font-bold uppercase text-blue-600 mb-1">CHECK-IN → CHECK-OUT</div>
+            <div className="text-xs font-bold uppercase text-[#0F1520] mb-1">CHECK-IN → CHECK-OUT</div>
             <div className="font-medium text-gray-700">
               {dateRange.startDate.toLocaleDateString()} - {dateRange.endDate.toLocaleDateString()}
             </div>
           </div>
-          <FaRegCalendarAlt className="text-blue-500 text-xl" />
+          <FaRegCalendarAlt className="#0F1520 text-xl" />
         </motion.button>
       </div>
 
@@ -93,7 +93,7 @@ function BookingCard({
         className={`w-full py-4 rounded-xl font-bold text-white text-lg shadow-lg transition-all mb-4 ${
           currentUser?.user_metadata?.role === 'host' 
             ? 'bg-gray-400 cursor-not-allowed' 
-            : 'bg-gradient-to-r from-blue-400 to-blue-500 hover:shadow-xl'
+            : 'bg-gradient-to-r from-[#0F1520] to-[#1a2332] hover:shadow-xl'
         }`}
         onClick={handleReserveClick}
         disabled={currentUser?.user_metadata?.role === 'host'}
@@ -115,7 +115,7 @@ function BookingCard({
         </div>
         <div className="flex justify-between items-center pt-4 border-t-2 border-gray-200">
           <span className="text-lg font-bold text-gray-900">Total Rent</span>
-          <span className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">Rs. {subtotal}</span>
+          <span className="text-2xl font-bold bg-gradient-to-r from-[#0F1520] to-[#1a2332] bg-clip-text text-transparent">Rs. {subtotal}</span>
         </div>
         <p className="text-xs text-center text-gray-500">(Exclusive of service fee)</p>
       </div>

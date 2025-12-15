@@ -14,8 +14,8 @@ function GuestsCounter({ guests, onChange, onClose }) {
       className="p-5 w-72"
     >
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center flex-shrink-0">
-          <FaUsers className="text-blue-500 text-sm" />
+        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gray-50 to-blue-100 flex items-center justify-center flex-shrink-0">
+          <FaUsers className="#0F1520 text-sm" />
         </div>
         <div className="flex-1 min-w-0">
           <p className="font-bold text-gray-800 text-sm">Number of Guests</p>
@@ -32,7 +32,7 @@ function GuestsCounter({ guests, onChange, onClose }) {
           className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
             guests <= 1 
               ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
-              : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600 shadow-sm'
+              : 'bg-white text-gray-700 hover:bg-gray-50 hover:text-[#0F1520] shadow-sm'
           }`}
         >
           <FaMinus size={12} />
@@ -59,7 +59,7 @@ function GuestsCounter({ guests, onChange, onClose }) {
           className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
             guests >= 20
               ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-              : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600 shadow-sm'
+              : 'bg-white text-gray-700 hover:bg-gray-50 hover:text-[#0F1520] shadow-sm'
           }`}
         >
           <FaPlus size={12} />
@@ -89,7 +89,7 @@ function GuestsCounter({ guests, onChange, onClose }) {
         onClick={onClose}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        className="w-full mt-4 px-4 py-2.5 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-medium hover:shadow-lg transition-all"
+        className="w-full mt-4 px-4 py-2.5 bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white rounded-xl font-medium hover:shadow-lg transition-all"
       >
         Done
       </motion.button>

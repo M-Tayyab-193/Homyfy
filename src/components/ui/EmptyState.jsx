@@ -41,7 +41,7 @@ function EmptyState({
           }}
           className="w-32 h-32 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center shadow-lg"
         >
-          <Icon className="text-6xl text-blue-500" />
+          <Icon className="text-6xl text-[#0F1520]" />
         </motion.div>
       </motion.div>
 

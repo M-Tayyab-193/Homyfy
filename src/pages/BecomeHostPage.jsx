@@ -322,7 +322,7 @@ function BecomeHostPage() {
                   key={amenity}
                   className={`flex items-center p-4 border rounded-lg cursor-pointer transition-colors ${
                     formData.amenities.includes(amenity)
-                      ? 'border-blue-500 bg-blue-50'
+                      ? 'border-[#0F1520] bg-gray-50'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
@@ -401,7 +401,7 @@ function BecomeHostPage() {
       <div className="container-custom py-8">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-8">
-            <FaAirbnb className="text-blue-500 text-5xl mx-auto mb-4" />
+            <FaAirbnb className="#0F1520 text-5xl mx-auto mb-4" />
             <h1 className="text-3xl font-bold">Become a Host</h1>
           </div>
 
@@ -445,7 +445,7 @@ function BecomeHostPage() {
               <div
                 key={num}
                 className={`w-2 h-2 rounded-full ${
-                  step === num ? 'bg-blue-500' : 'bg-gray-300'
+                  step === num ? 'bg-[#0F1520]' : 'bg-gray-300'
                 }`}
               />
             ))}

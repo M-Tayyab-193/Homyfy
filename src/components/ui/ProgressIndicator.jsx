@@ -8,7 +8,7 @@ function ProgressIndicator({ steps, currentStep }) {
         {/* Progress Line */}
         <div className="absolute top-6 left-0 w-full h-1 bg-gray-200 -z-10">
           <motion.div
-            className="h-full bg-gradient-to-r from-blue-500 to-blue-600"
+            className="h-full bg-gradient-to-r from-[#0F1520] to-[#1a2332]"
             initial={{ width: '0%' }}
             animate={{ 
               width: `${((currentStep - 1) / (steps.length - 1)) * 100}%` 
@@ -33,9 +33,9 @@ function ProgressIndicator({ steps, currentStep }) {
                 transition={{ delay: index * 0.1 }}
                 className={`w-12 h-12 rounded-full flex items-center justify-center font-semibold transition-all duration-300 ${
                   isCompleted
-                    ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-glow'
+                    ? 'bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white shadow-glow'
                     : isCurrent
-                    ? 'bg-white border-4 border-blue-500 text-blue-600 shadow-lg'
+                    ? 'bg-white border-4 border-[#0F1520] text-[#0F1520] shadow-lg'
                     : 'bg-white border-2 border-gray-300 text-gray-400'
                 }`}
               >
@@ -66,7 +66,7 @@ function ProgressIndicator({ steps, currentStep }) {
               >
                 <p
                   className={`text-sm font-medium ${
-                    isCompleted || isCurrent ? 'text-blue-600' : 'text-gray-400'
+                    isCompleted || isCurrent ? 'text-[#0F1520]' : 'text-gray-400'
                   }`}
                 >
                   {step.label}
@@ -81,7 +81,7 @@ function ProgressIndicator({ steps, currentStep }) {
               {/* Pulse animation for current step */}
               {isCurrent && (
                 <motion.div
-                  className="absolute w-12 h-12 rounded-full bg-blue-500 opacity-20"
+                  className="absolute w-12 h-12 rounded-full bg-[#0F1520] opacity-20"
                   animate={{ scale: [1, 1.5, 1], opacity: [0.3, 0, 0.3] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 />

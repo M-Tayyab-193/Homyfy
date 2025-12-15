@@ -107,7 +107,9 @@ function HomePage() {
   return (
     <div>
       <Hero />
-      <SectionDivider icon={FaHome} text="Explore Properties" />
+      <div className="mt-48 sm:mt-40 md:mt-32 lg:mt-20">
+        <SectionDivider icon={FaHome} text="Explore Properties" />
+      </div>
       <div className="container-custom pb-12">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -151,8 +153,9 @@ function HomePage() {
               className={`p-3 rounded-full transition-all ${
                 currentPage === 1 
                   ? 'text-gray-300 cursor-not-allowed bg-gray-100' 
-                  : 'text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:shadow-glow'
+                  : 'text-white hover:shadow-glow'
               }`}
+              style={currentPage !== 1 ? { background: 'linear-gradient(to right, #0F1520, #1a2332)' } : {}}
               aria-label="Previous page"
             >
               <FaChevronLeft />
@@ -167,9 +170,10 @@ function HomePage() {
                   whileTap={{ scale: 0.9 }}
                   className={`w-10 h-10 rounded-full font-medium transition-all ${
                     currentPage === number
-                      ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-glow'
-                      : 'bg-white text-gray-700 hover:bg-blue-50 border border-gray-200'
+                      ? 'text-white shadow-glow'
+                      : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
                   }`}
+                  style={currentPage === number ? { background: 'linear-gradient(to right, #0F1520, #1a2332)' } : {}}
                 >
                   {number}
                 </motion.button>
@@ -184,8 +188,9 @@ function HomePage() {
               className={`p-3 rounded-full transition-all ${
                 currentPage === totalPages 
                   ? 'text-gray-300 cursor-not-allowed bg-gray-100' 
-                  : 'text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:shadow-glow'
+                  : 'text-white hover:shadow-glow'
               }`}
+              style={currentPage !== totalPages ? { background: 'linear-gradient(to right, #0F1520, #1a2332)' } : {}}
               aria-label="Next page"
             >
               <FaChevronRight />

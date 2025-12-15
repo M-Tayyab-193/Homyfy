@@ -329,7 +329,7 @@ function ProfilePage() {
 
   return (
     <motion.div 
-      className="container-custom py-8 min-h-screen"
+      className="container-custom py-8 min-h-screen mt-[98px]"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -341,7 +341,7 @@ function ProfilePage() {
         transition={{ duration: 0.5, delay: 0.1 }}
       >
         {/* Header with gradient */}
-        <div className="bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-white p-8 relative overflow-hidden">
+        <div className="bg-gradient-to-br from-[#0F1520] via-[#1a2332] to-[#253549] text-white p-8 relative overflow-hidden">
           <div className="absolute inset-0 bg-black opacity-10"></div>
           <div className="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
           <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
@@ -352,7 +352,7 @@ function ProfilePage() {
             className="relative z-10"
           >
             <h1 className="text-3xl font-bold mb-2">Your Profile</h1>
-            <p className="text-blue-100">Manage your personal information and account settings</p>
+            <p className="text-gray-200">Manage your personal information and account settings</p>
           </motion.div>
         </div>
 
@@ -368,12 +368,12 @@ function ProfilePage() {
               {/* Profile Picture */}
               <div className="relative group">
                 <motion.div 
-                  className="w-40 h-40 rounded-full overflow-hidden border-4 border-blue-100 shadow-xl cursor-pointer relative"
+                  className="w-40 h-40 rounded-full overflow-hidden border-4 border-gray-200 shadow-xl cursor-pointer relative"
                   onClick={() => setShowImageModal(true)}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-600 opacity-0 group-hover:opacity-20 transition-opacity"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#0F1520] to-[#1a2332] opacity-0 group-hover:opacity-20 transition-opacity"></div>
                   <img
                     src={user.profile_image || `https://api.dicebear.com/7.x/initials/svg?seed=${user.email}`}
                     alt={user.fullname}
@@ -384,7 +384,7 @@ function ProfilePage() {
                   onClick={() => fileInputRef.current?.click()}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  className="absolute bottom-2 right-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
+                  className="absolute bottom-2 right-2 bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white rounded-full p-3 shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
                   disabled={loading}
                 >
                   <FaCamera size={18} />
@@ -403,17 +403,17 @@ function ProfilePage() {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.4, type: "spring" }}
-                className="px-4 py-2 bg-gradient-to-r from-blue-50 to-sky-50 rounded-full border-2 border-blue-200 flex items-center gap-2"
+                className="px-4 py-2 bg-gradient-to-r from-gray-50 to-gray-100 rounded-full border-2 border-gray-300 flex items-center gap-2"
               >
                 {user.role === 'host' ? (
                   <>
                     <FaCrown className="text-yellow-500" />
-                    <span className="font-semibold text-blue-700">Host Account</span>
+                    <span className="font-semibold text-[#0F1520]">Host Account</span>
                   </>
                 ) : (
                   <>
-                    <FaUser className="text-blue-500" />
-                    <span className="font-semibold text-blue-700">Guest Account</span>
+                    <FaUser className="#0F1520" />
+                    <span className="font-semibold text-[#0F1520]">Guest Account</span>
                   </>
                 )}
               </motion.div>
@@ -443,7 +443,7 @@ function ProfilePage() {
               {/* Personal Information Card */}
               <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border border-gray-200">
                 <h2 className="text-xl font-bold mb-6 flex items-center gap-2 text-gray-900">
-                  <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                  <div className="w-10 h-10 bg-gradient-to-r from-[#0F1520] to-[#1a2332] rounded-lg flex items-center justify-center">
                     <FaUser className="text-white" />
                   </div>
                   <span>Personal Information</span>
@@ -456,7 +456,7 @@ function ProfilePage() {
                     whileHover={{ scale: 1.01 }}
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <FaUserTag className="text-blue-500" />
+                      <FaUserTag className="#0F1520" />
                       <p className="text-sm font-semibold text-gray-600">Username</p>
                     </div>
                     <p className="font-medium text-gray-900 ml-6">{user.username}</p>
@@ -468,7 +468,7 @@ function ProfilePage() {
                     whileHover={{ scale: 1.01 }}
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <FaUser className="text-blue-500" />
+                      <FaUser className="#0F1520" />
                       <p className="text-sm font-semibold text-gray-600">Full Name</p>
                     </div>
                     {editing ? (
@@ -477,14 +477,14 @@ function ProfilePage() {
                           type="text"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
-                          className="flex-1 px-4 py-2 border-2 border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F1520] focus:border-transparent"
                           disabled={loading}
                         />
                         <motion.button
                           onClick={handleNameUpdate}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg font-medium hover:shadow-lg transition-all"
+                          className="px-4 py-2 bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white rounded-lg font-medium hover:shadow-lg transition-all"
                           disabled={loading}
                         >
                           Save
@@ -509,7 +509,7 @@ function ProfilePage() {
                           onClick={() => setEditing(true)}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                          className="flex items-center gap-2 px-3 py-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors font-medium"
+                          className="flex items-center gap-2 px-3 py-1.5 text-[#0F1520] hover:bg-gray-50 rounded-lg transition-colors font-medium"
                         >
                           <FaEdit />
                           <span>Edit</span>
@@ -524,7 +524,7 @@ function ProfilePage() {
                     whileHover={{ scale: 1.01 }}
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <FaEnvelope className="text-blue-500" />
+                      <FaEnvelope className="#0F1520" />
                       <p className="text-sm font-semibold text-gray-600">Email Address</p>
                     </div>
                     <p className="font-medium text-gray-900 ml-6">{user.email}</p>
@@ -535,7 +535,7 @@ function ProfilePage() {
               {/* Password Section */}
               <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border border-gray-200">
                 <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-gray-900">
-                  <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                  <div className="w-10 h-10 bg-gradient-to-r from-[#0F1520] to-[#1a2332] rounded-lg flex items-center justify-center">
                     <FaLock className="text-white" />
                   </div>
                   <span>Security</span>
@@ -545,7 +545,7 @@ function ProfilePage() {
                   onClick={() => setShowPasswordModal(true)}
                   whileHover={{ scale: 1.02, y: -2 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all"
                 >
                   <FaLock />
                   <span>Change Password</span>
@@ -593,7 +593,7 @@ function ProfilePage() {
                     type="password"
                     value={passwords.new}
                     onChange={(e) => setPasswords(prev => ({ ...prev, new: e.target.value }))}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F1520] focus:border-transparent"
                     placeholder="Enter new password"
                   />
                 </div>
@@ -605,7 +605,7 @@ function ProfilePage() {
                     type="password"
                     value={passwords.confirm}
                     onChange={(e) => setPasswords(prev => ({ ...prev, confirm: e.target.value }))}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0F1520] focus:border-transparent"
                     placeholder="Confirm new password"
                   />
                 </div>
@@ -625,7 +625,7 @@ function ProfilePage() {
                     onClick={handlePasswordUpdate}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50"
+                    className="flex-1 px-4 py-3 bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50"
                     disabled={loading}
                   >
                     {loading ? 'Updating...' : 'Update Password'}

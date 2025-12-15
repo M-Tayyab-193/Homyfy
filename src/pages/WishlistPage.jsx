@@ -64,7 +64,7 @@ function WishlistPage() {
   if (loading) return <LoadingSpinner fullScreen />
 
   return (
-    <div className="container-custom py-8">
+    <div className="container-custom py-8 mt-[98px]">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Wishlist</h1>
         <p className="text-airbnb-light">

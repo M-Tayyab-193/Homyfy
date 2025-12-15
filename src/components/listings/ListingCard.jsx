@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { FaStar, FaHeart, FaRegHeart, FaBed, FaBath, FaUser, FaCrown, FaCheckCircle } from 'react-icons/fa'
+import { FaStar, FaHeart, FaRegHeart, FaBed, FaBath, FaUser, FaCrown, FaCheckCircle, FaCube } from 'react-icons/fa'
 import { useListings } from '../../contexts/ListingsContext'
 import ImageCarousel from '../ui/ImageCarousel'
-import ImageLightbox from '../ui/ImageLightbox'
 import Tooltip from '../ui/Tooltip'
 import { toast } from 'react-toastify'
 import supabase from '../../supabase/supabase'
@@ -13,24 +12,15 @@ function ListingCard({ listing }) {
   const { wishlist, toggleWishlist } = useListings()
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isHovered, setIsHovered] = useState(false)
-  const [lightboxOpen, setLightboxOpen] = useState(false)
-  const [lightboxIndex, setLightboxIndex] = useState(0)
   const navigate = useNavigate()
 
   const isWishlisted = wishlist.includes(listing.id)
 
-  const handleWishlistToggle = async (e) => {
+  const handleWishlistToggle = (e) => {
     e.preventDefault()
     e.stopPropagation()
 
-    const { data: { user } } = await supabase.auth.getUser()
-
-    if (!user) {
-      toast.info('Please log in to add to wishlist')
-      navigate('/login', { state: { from: window.location.pathname } })
-      return
-    }
-
+    // Call toggleWishlist - it handles user check internally
     toggleWishlist(listing.id)
   }
 
@@ -42,10 +32,7 @@ function ListingCard({ listing }) {
   const isFeatured = listing.rating >= 4.8 
   const isNew = listing.created_at && new Date(listing.created_at) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
 
-  const handleImageClick = (index) => {
-    setLightboxIndex(index)
-    setLightboxOpen(true)
-  }
+
 
   return (
     <>
@@ -78,31 +65,33 @@ function ListingCard({ listing }) {
                 initial={{ x: -50, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.1 }}
-                className="flex items-center gap-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg"
+                className="flex items-center gap-1 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg"
+                style={{ background: 'linear-gradient(to right, #0F1520, #1a2332)' }}
               >
                 <FaCheckCircle className="text-sm" />
                 <span>New</span>
               </motion.div>
             )}
+            {listing.matterport_url && (
+              <motion.div
+                initial={{ x: -50, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="flex items-center gap-1 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg"
+              >
+                <FaCube className="text-lg" />
+                <span>VR Tour</span>
+              </motion.div>
+            )}
           </div>
 
-          {/* Image Carousel with zoom effect */}
-          <motion.div
-            animate={{ scale: isHovered ? 1.1 : 1 }}
-            transition={{ duration: 0.4 }}
-            onClick={(e) => {
-              e.stopPropagation()
-              handleImageClick(currentImageIndex)
-            }}
-            style={{ cursor: 'pointer' }}
-          >
+          {/* Image Carousel - No longer opens lightbox */}
+          <motion.div className="relative h-64 sm:h-72">
             <ImageCarousel
               images={images}
               currentIndex={currentImageIndex}
               setCurrentIndex={setCurrentImageIndex}
-              onImageClick={(index) => {
-                // Handled by parent div onClick
-              }}
+              onImageClick={() => {}} // No action on click
             />
           </motion.div>
 
@@ -142,7 +131,8 @@ function ListingCard({ listing }) {
           {/* Title and Rating */}
           <div className="flex justify-between items-start mb-2">
             <motion.h3 
-              className="font-semibold text-lg truncate flex-1 group-hover:text-blue-600 transition-colors"
+              className="font-semibold text-lg truncate flex-1 transition-colors"
+              style={{ color: isHovered ? '#0F1520' : 'inherit' }}
               animate={{ x: isHovered ? 5 : 0 }}
               transition={{ duration: 0.2 }}
             >
@@ -176,7 +166,7 @@ function ListingCard({ listing }) {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <FaBed className="text-blue-500 text-lg" />
+              <FaBed className="text-lg" style={{ color: '#1864f1ff' }} />
               <span className="text-center font-medium">{listing.beds} bed{listing.beds !== '1' ? 's' : ''}</span>
             </motion.div>
             <div className="w-px h-8 bg-gray-200"></div>
@@ -205,7 +195,8 @@ function ListingCard({ listing }) {
             whileHover={{ scale: 1.05 }}
           >
             <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg"
+              className="absolute inset-0 rounded-lg"
+              style={{ background: 'linear-gradient(to right, #f8f9fa, #e9ecef)' }}
               initial={{ opacity: 0 }}
               animate={{ opacity: isHovered ? 1 : 0 }}
               transition={{ duration: 0.3 }}
@@ -219,20 +210,15 @@ function ListingCard({ listing }) {
 
         {/* Hover indicator line */}
         <motion.div
-          className="h-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-b-xl"
+          className="h-1 rounded-b-xl"
+          style={{ background: 'linear-gradient(to right, #0F1520, #1a2332)' }}
           initial={{ scaleX: 0 }}
           animate={{ scaleX: isHovered ? 1 : 0 }}
           transition={{ duration: 0.3 }}
         />
       </motion.div>
 
-    {/* Image Lightbox */}
-    <ImageLightbox
-      images={images}
-      initialIndex={lightboxIndex}
-      isOpen={lightboxOpen}
-      onClose={() => setLightboxOpen(false)}
-    />
+   
   </>
   )
 }

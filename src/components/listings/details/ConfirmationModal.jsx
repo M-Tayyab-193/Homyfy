@@ -122,9 +122,9 @@ function ConfirmationModal({ onClose, listing, dateRange, onSuccess }) {
 
         <div className="space-y-5">
           {/* Booking Details */}
-          <div className="bg-gradient-to-br from-blue-50 to-sky-50 rounded-xl p-4 border border-blue-100">
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200">
             <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <div className="w-2 h-2 bg-[#0F1520] rounded-full"></div>
               Booking Details
             </h3>
             <div className="space-y-2 text-sm">
@@ -171,8 +171,8 @@ function ConfirmationModal({ onClose, listing, dateRange, onSuccess }) {
                   key={id}
                   className={`flex items-center p-3 border-2 rounded-xl cursor-pointer transition-all ${
                     paymentMethod === id
-                      ? 'border-blue-500 bg-blue-50 shadow-md'
-                      : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/50'
+                      ? 'border-[#0F1520] bg-gray-50 shadow-md'
+                      : 'border-gray-200 hover:border-gray-400 hover:bg-gray-50/50'
                   }`}
                 >
                   <input
@@ -184,11 +184,11 @@ function ConfirmationModal({ onClose, listing, dateRange, onSuccess }) {
                     className="sr-only"
                   />
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-3 ${
-                    paymentMethod === id ? 'bg-blue-500' : 'bg-gray-200'
+                    paymentMethod === id ? 'bg-[#0F1520]' : 'bg-gray-200'
                   }`}>
                     <Icon className={`text-lg ${paymentMethod === id ? 'text-white' : 'text-gray-600'}`} />
                   </div>
-                  <span className={`font-medium ${paymentMethod === id ? 'text-blue-700' : 'text-gray-700'}`}>
+                  <span className={`font-medium ${paymentMethod === id ? 'text-[#0F1520]' : 'text-gray-700'}`}>
                     {label}
                   </span>
                 </label>
@@ -205,7 +205,7 @@ function ConfirmationModal({ onClose, listing, dateRange, onSuccess }) {
                   type="text"
                   ref={paymentNumberRef}
                   placeholder="Enter 11-digit number"
-                  className="w-full mt-3 p-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none"
+                  className="w-full mt-3 p-3 border-2 border-gray-200 rounded-xl focus:border-[#0F1520] focus:ring-2 focus:ring-blue-200 transition-all outline-none"
                   maxLength="11"
                 />
               </motion.div>
@@ -216,8 +216,8 @@ function ConfirmationModal({ onClose, listing, dateRange, onSuccess }) {
           <button
             onClick={handleBooking}
             disabled={!paymentMethod || loading}
-            className={`w-full py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all ${
-              !paymentMethod || loading ? "opacity-50 cursor-not-allowed" : "hover:from-blue-600 hover:to-blue-700"
+            className={`w-full py-4 bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all ${
+              !paymentMethod || loading ? "opacity-50 cursor-not-allowed" : "hover:from-[#1a2332] hover:to-[#253549]"
             }`}
           >
             {loading ? (

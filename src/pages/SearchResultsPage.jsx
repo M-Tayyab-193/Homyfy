@@ -175,7 +175,7 @@ function SearchResultsPage() {
   }
 
   return (
-    <div className="container-custom py-6">
+    <div className="container-custom py-6 mt-[90px]">
       {/* Search Summary with gradient background */}
       <motion.div 
         className="relative p-6 mb-8 rounded-2xl overflow-hidden"
@@ -183,7 +183,7 @@ function SearchResultsPage() {
         animate={{ opacity: 1, y: 0 }}
       >
         {/* Gradient Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-sky-50 to-blue-100 opacity-50" />
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-sky-50 to-blue-100 opacity-50" />
         
         {/* Content */}
         <div className="relative flex justify-between items-center flex-wrap gap-4">
@@ -202,7 +202,7 @@ function SearchResultsPage() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
             >
-              <FaMapMarkerAlt className="text-blue-500" />
+              <FaMapMarkerAlt className="#0F1520" />
               {location || 'all locations'}
             </motion.p>
           </div>
@@ -253,7 +253,7 @@ function SearchResultsPage() {
             className={`p-3 rounded-full transition-all btn-ripple ${
               currentPage === 1 
                 ? 'text-gray-300 cursor-not-allowed bg-gray-100' 
-                : 'text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:shadow-glow'
+                : 'text-white bg-gradient-to-r from-[#0F1520] to-[#1a2332] hover:shadow-glow'
             }`}
             whileHover={currentPage !== 1 ? { scale: 1.1 } : {}}
             whileTap={currentPage !== 1 ? { scale: 0.9 } : {}}
@@ -280,8 +280,8 @@ function SearchResultsPage() {
                       onClick={() => handlePageChange(page)}
                       className={`w-10 h-10 rounded-full font-medium transition-all btn-ripple ${
                         currentPage === page
-                          ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-glow'
-                          : 'bg-white text-gray-700 hover:bg-blue-50 border border-gray-200'
+                          ? 'bg-gradient-to-r from-[#0F1520] to-[#1a2332] text-white shadow-glow'
+                          : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
                       }`}
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
@@ -299,7 +299,7 @@ function SearchResultsPage() {
             className={`p-3 rounded-full transition-all btn-ripple ${
               currentPage === Math.ceil(totalCount / listingsPerPage)
                 ? 'text-gray-300 cursor-not-allowed bg-gray-100' 
-                : 'text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:shadow-glow'
+                : 'text-white bg-gradient-to-r from-[#0F1520] to-[#1a2332] hover:shadow-glow'
             }`}
             whileHover={currentPage !== Math.ceil(totalCount / listingsPerPage) ? { scale: 1.1 } : {}}
             whileTap={currentPage !== Math.ceil(totalCount / listingsPerPage) ? { scale: 0.9 } : {}}

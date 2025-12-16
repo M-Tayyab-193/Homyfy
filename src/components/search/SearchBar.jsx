@@ -131,11 +131,11 @@ function SearchBar({ onSearch }) {
         onSubmit={handleSubmit}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col lg:flex-row items-stretch lg:items-center bg-white rounded-3xl lg:rounded-full overflow-hidden transition-all duration-300"
+        className="flex flex-col lg:flex-row items-stretch lg:items-stretch bg-white rounded-3xl lg:rounded-full overflow-hidden transition-all duration-300"
       >
         {/* Location Section */}
         <motion.div 
-          className="flex-1 relative sm:px-6 border-b lg:border-b-0 lg:border-r border-gray-200"
+          className="flex-1 relative sm:px-6 py-4 border-b lg:border-b-0 lg:border-r border-gray-200 flex items-center"
           animate={{
             scale: focusedInput === 'location' ? 1.02 : 1,
           }}
@@ -147,7 +147,7 @@ function SearchBar({ onSearch }) {
               style={{ color: focusedInput === 'location' ? '#0F1520' : '#6b7280' }} 
             />
             <div className="flex-1">
-              <label htmlFor="search-location" className="text-xs font-semibold text-gray-900 block mb-1">
+              <label htmlFor="search-location" className="text-md font-semibold text-gray-900 block mb-[1px]">
                 Location
               </label>
               <input
@@ -220,7 +220,7 @@ function SearchBar({ onSearch }) {
                 style={{ color: isDatePickerOpen ? '#0F1520' : '#6b7280' }} 
               />
               <div className="flex-1">
-                <div className="text-xs font-semibold text-gray-900 block mb-1">
+                <div className="text-md font-semibold text-gray-900 block mb-1">
                   Dates
                 </div>
                 <div className="text-sm text-gray-600">
@@ -246,7 +246,7 @@ function SearchBar({ onSearch }) {
               style={{ color: isDatePickerOpen ? '#0F1520' : '#6b7280' }} 
             />
             <div className="flex-1">
-              <div className="text-xs font-semibold text-gray-900 block mb-1">
+              <div className="text-md font-semibold text-gray-900 block mb-1">
                 Check in
               </div>
               <div className="text-sm text-gray-600">
@@ -260,7 +260,7 @@ function SearchBar({ onSearch }) {
 
         {/* Desktop: Check Out Section */}
         <motion.div 
-          className="hidden lg:flex flex-1 relative px-6 py-4 border-r border-gray-200 cursor-pointer"
+          className="hidden lg:flex flex-1 relative px-6 py-4 border-r border-gray-200 cursor-pointer items-center"
           onClick={toggleDatePicker}
           animate={{
             scale: isDatePickerOpen ? 1.02 : 1,
@@ -273,7 +273,7 @@ function SearchBar({ onSearch }) {
               style={{ color: isDatePickerOpen ? '#0F1520' : '#6b7280' }} 
             />
             <div className="flex-1">
-              <div className="text-xs font-semibold text-gray-900 block mb-1">
+              <div className="text-md font-semibold text-gray-900 block mb-1">
                 Check out
               </div>
               <div className="text-sm text-gray-600">
@@ -285,7 +285,7 @@ function SearchBar({ onSearch }) {
         
         {/* Guests Section */}
         <motion.div 
-          className="flex-1 relative px-4 sm:px-6 py-4 border-b lg:border-b-0"
+          className="flex-1 relative px-4 sm:px-6 py-4 border-b lg:border-b-0 flex items-center"
           animate={{
             scale: isGuestsOpen ? 1.02 : 1,
           }}
@@ -303,7 +303,7 @@ function SearchBar({ onSearch }) {
               style={{ color: isGuestsOpen ? '#0F1520' : '#6b7280' }} 
             />
             <div className="flex-1">
-              <div className="text-xs font-semibold text-gray-900 block mb-1">
+              <div className="text-md font-semibold text-gray-900 block mb-1">
                 Guests
               </div>
               <div className="text-sm text-gray-600">
@@ -355,7 +355,7 @@ function SearchBar({ onSearch }) {
               transition={{ duration: 0.2 }}
               className="fixed inset-0 z-[60] flex items-center justify-center p-4 lg:relative lg:inset-auto lg:p-0 lg:flex-none lg:block pointer-events-none lg:pointer-events-auto"
             >
-              <div className="w-full max-w-[360px] pointer-events-auto shadow-2xl rounded-2xl bg-white lg:absolute lg:top-full lg:left-0 lg:mt-2 lg:w-auto">
+              <div className="w-full max-w-[360px] pointer-events-auto shadow-2xl rounded-2xl bg-white lg:absolute lg:bottom-full lg:left-0 lg:mb-4 lg:w-auto">
                 <DateRangePicker 
                   ranges={dateRange}
                   onChange={handleDateChange}
@@ -377,7 +377,7 @@ function SearchBar({ onSearch }) {
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-[60] flex items-center justify-center p-4 lg:relative lg:inset-auto lg:p-0 lg:flex-none lg:block pointer-events-none lg:pointer-events-auto"
           >
-            <div className="w-full max-w-sm pointer-events-auto shadow-2xl rounded-2xl bg-white lg:absolute lg:top-full lg:right-0 lg:mt-2">
+            <div className="w-full max-w-sm pointer-events-auto shadow-2xl rounded-2xl bg-white lg:absolute lg:bottom-full lg:right-0 lg:mb-4">
               <GuestsCounter 
                 guests={guests}
                 onChange={setGuests}

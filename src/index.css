@@ -44,17 +44,14 @@ html.lenis {
 /* Smooth scroll behavior */
 html {
   scroll-behavior: smooth;
-  overflow: hidden!important;
-
 }
 
 body{
-  overflow: hidden!important;
 }
 /* Glass morphism utility */
 @layer utilities {
   .glass {
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(109, 100, 100, 0.8);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);

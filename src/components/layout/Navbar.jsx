@@ -117,7 +117,7 @@ function Navbar() {
       className="fixed top-0 left-0 right-0 z-50 py-3"
     >
       <div
-        className={`max-w-[1400px] mx-auto px-4 transition-all duration-300 ${
+        className={`lg:max-w-[1400px] mx-auto px-4 transition-all duration-300 ${
           isScrolled
             ? "glass-nav rounded-full shadow-lg backdrop-blur-xl border border-white/10 "
             : isHomePage 

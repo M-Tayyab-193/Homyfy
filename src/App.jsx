@@ -24,6 +24,7 @@ const EditListingPage = lazy(() => import("./pages/EditListingPage"));
 const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage"));
 const BookingsPage = lazy(() => import("./pages/BookingsPage"));
 const NotificationsPage = lazy(() => import("./pages/NotificationsPage"));
+const HelpCenterPage = lazy(() => import("./pages/HelpCenterPage"));
 
 function App() {
   const location = useLocation();
@@ -182,6 +183,16 @@ function App() {
               <PageTransition>
                 <Suspense fallback={<LoadingSpinner fullScreen />}>
                   <NotificationsPage />
+                </Suspense>
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/help"
+            element={
+              <PageTransition>
+                <Suspense fallback={<LoadingSpinner fullScreen />}>
+                  <HelpCenterPage />
                 </Suspense>
               </PageTransition>
             }

@@ -43,7 +43,7 @@ function Hero() {
           >
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-center mb-6 drop-shadow-2xl text-white" style={{ fontFamily: '"Amethysta", sans-serif' }}>
               Explore Luxury Stays with Virtual Tours{' '}
-              <span className="relative inline-block mt-4">
+              <span className="relative inline-block lg:mt-4">
                 <span className="text-white">
                    & Detailed Listings
                 </span>

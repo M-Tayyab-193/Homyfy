@@ -143,7 +143,7 @@ function SearchBar({ onSearch }) {
         >
           <div className="flex items-center gap-3">
             <FaMapMarkerAlt 
-              className="text-gray-600 text-base sm:text-lg flex-shrink-0" 
+              className="text-gray-600 text-base sm:text-lg flex-shrink-0 max-sm:ml-4" 
               style={{ color: focusedInput === 'location' ? '#0F1520' : '#6b7280' }} 
             />
             <div className="flex-1">
@@ -353,13 +353,15 @@ function SearchBar({ onSearch }) {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.2 }}
-              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-h-[85vh] max-w-[364px] overflow-auto lg:fixed lg:left-auto lg:top-auto lg:translate-x-0 lg:translate-y-0 lg:absolute lg:bottom-0 lg:-translate-y-full lg:left-1/4 lg:w-auto lg:max-h-none lg:overflow-visible lg:mb-2 bg-white rounded-2xl shadow-2xl z-[60] border border-gray-100"
+              className="fixed inset-0 z-[60] flex items-center justify-center p-4 lg:relative lg:inset-auto lg:p-0 lg:flex-none lg:block pointer-events-none lg:pointer-events-auto"
             >
-              <DateRangePicker 
-                ranges={dateRange}
-                onChange={handleDateChange}
-                onClose={() => setIsDatePickerOpen(false)}
-              />
+              <div className="w-full max-w-[360px] pointer-events-auto shadow-2xl rounded-2xl bg-white lg:absolute lg:top-full lg:left-0 lg:mt-2 lg:w-auto">
+                <DateRangePicker 
+                  ranges={dateRange}
+                  onChange={handleDateChange}
+                  onClose={() => setIsDatePickerOpen(false)}
+                />
+              </div>
             </motion.div>
           </>
         )}
@@ -373,13 +375,15 @@ function SearchBar({ onSearch }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-sm lg:fixed lg:left-auto lg:top-auto lg:translate-x-0 lg:translate-y-0 lg:absolute lg:bottom-0 lg:-translate-y-full lg:right-1/4 lg:w-auto bg-white rounded-2xl shadow-2xl z-[60] border border-gray-100"
+            className="fixed inset-0 z-[60] flex items-center justify-center p-4 lg:relative lg:inset-auto lg:p-0 lg:flex-none lg:block pointer-events-none lg:pointer-events-auto"
           >
-            <GuestsCounter 
-              guests={guests}
-              onChange={setGuests}
-              onClose={() => setIsGuestsOpen(false)}
-            />
+            <div className="w-full max-w-sm pointer-events-auto shadow-2xl rounded-2xl bg-white lg:absolute lg:top-full lg:right-0 lg:mt-2">
+              <GuestsCounter 
+                guests={guests}
+                onChange={setGuests}
+                onClose={() => setIsGuestsOpen(false)}
+              />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

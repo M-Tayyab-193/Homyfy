@@ -173,18 +173,11 @@ function Navbar() {
               >
                 <Link
                   to="/signup"
-                  className="hidden md:block px-6 py-2 rounded-full text-white font-medium relative overflow-hidden group shadow-lg hover:shadow-2xl transition-all duration-300 focus:outline-none focus:ring-0"
+                  className=" md:block px-6 py-2 rounded-full text-white font-medium relative overflow-hidden group shadow-lg hover:shadow-2xl transition-all duration-300 focus:outline-none focus:ring-0"
                   style={{ background: 'linear-gradient(to right, #0F1520, #1a2332)' }}
                   aria-label="Get started with Homyfy"
                 >
                   <span className="relative z-10">Get Started</span>
-                  <motion.div
-                    className="absolute inset-0"
-                    style={{ background: 'linear-gradient(to right, #1a2332, #253549)' }}
-                    initial={{ x: "-100%" }}
-                    whileHover={{ x: 0 }}
-                    transition={{ duration: 0.3 }}
-                  />
                 </Link>
               </motion.div>
             )}

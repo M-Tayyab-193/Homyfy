@@ -44,8 +44,13 @@ html.lenis {
 /* Smooth scroll behavior */
 html {
   scroll-behavior: smooth;
+  overflow: hidden!important;
+
 }
 
+body{
+  overflow: hidden!important;
+}
 /* Glass morphism utility */
 @layer utilities {
   .glass {

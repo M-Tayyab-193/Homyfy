@@ -1,0 +1,297 @@
+# HOMYFY - User Manual
+### Property Rental Platform
+
+---
+
+## TABLE OF CONTENTS
+
+1. Introduction & Getting Started
+2. Searching for Properties
+3. Viewing & Booking Properties
+4. Hosting Your Property
+5. Managing Bookings & Listings
+6. Additional Features
+
+---
+
+## 1. INTRODUCTION & GETTING STARTED
+
+### What is Homyfy?
+
+Homyfy is a modern property rental platform connecting property owners with travelers. Find your perfect accommodation or list your property to earn income.
+
+**[IMAGE PLACEHOLDER 1: Homyfy Homepage]**
+
+### Key Features
+
+- Smart search with location autocomplete
+- Interactive map-based location selection
+- 3D virtual property tours
+- Advanced filtering (price, amenities, property type)
+- Real-time notifications
+- Wishlist for saving favorites
+
+### Creating an Account
+
+1. Click **"Sign Up"**
+2. Enter email and password
+3. Click **"Create Account"**
+
+**[IMAGE PLACEHOLDER 2: Sign Up/Login Screen]**
+
+---
+
+## 2. SEARCHING FOR PROPERTIES
+
+### Using the Search Bar
+
+The main search bar on the homepage allows you to find properties:
+
+**[IMAGE PLACEHOLDER 3: Search Bar Interface]**
+
+**Steps:**
+1. **Location** - Type at least 3 characters to see autocomplete suggestions
+2. **Dates** - Select check-in and check-out dates
+3. **Guests** - Use +/- buttons to select number of guests
+4. Click **"Search"**
+
+### Location Autocomplete
+
+As you type, location suggestions appear automatically:
+- Shows cities, states, and countries worldwide
+- Click any suggestion to auto-fill
+- Powered by OpenStreetMap geocoding
+
+**[IMAGE PLACEHOLDER 4: Location Autocomplete Dropdown]**
+
+### Filtering Search Results
+
+**[IMAGE PLACEHOLDER 5: Search Results with Filters]**
+
+Filter results by:
+- **Property Type**: House, Apartment, Villa, Cabin
+- **Price Range**: Use slider for min/max price per night
+- **Amenities**: WiFi, Kitchen, Parking, Pool, etc.
+
+Sort results by:
+- Price (Low to High / High to Low)
+- Rating (Highest first)
+
+---
+
+## 3. VIEWING & BOOKING PROPERTIES
+
+### Property Details Page
+
+Click any property to view full details:
+
+**[IMAGE PLACEHOLDER 6: Property Details Page]**
+
+**What You'll See:**
+- High-quality images with gallery
+- Complete description
+- Price per night
+- Amenities list
+- Location on interactive map
+- Host information
+- Reviews and ratings
+
+### Image Gallery
+
+- Click **"Show all photos"** button (always visible)
+- Browse all property images in full-screen mode
+- Navigate with arrow keys or swipe gestures
+
+### 3D Virtual Tours
+
+If available, switch to **"3D Virtual Tour"** tab to explore the property in 3D using Matterport technology.
+
+**[IMAGE PLACEHOLDER 7: 3D Virtual Tour View]**
+
+### Making a Booking
+
+1. Select your dates
+2. Choose number of guests
+3. Review price breakdown
+4. Click **"Book Now"**
+5. Confirm booking
+
+---
+
+## 4. HOSTING YOUR PROPERTY
+
+### Creating a New Listing
+
+Navigate to **"List Property"** or **"Become a Host"** to start.
+
+**[IMAGE PLACEHOLDER 8: Add Property Form]**
+
+### Step-by-Step Guide
+
+**1. Basic Information**
+- Property title
+- Detailed description
+- Property type (dropdown)
+- Price per night
+
+**2. Property Details**
+
+Use number steppers for:
+- Beds (1-20)
+- Bathrooms (1-10)
+- Max Guests (1-50)
+
+**[IMAGE PLACEHOLDER 9: Number Steppers Interface]**
+
+**3. Location Selection**
+
+**[IMAGE PLACEHOLDER 10: Interactive Map Location Picker]**
+
+Set your property location using the interactive map:
+- Search for an address in the search box
+- Or click directly on the map
+- Drag the marker to fine-tune position
+- City, latitude, and longitude auto-fill automatically
+- Select country from dropdown (50 countries available)
+- Select state/province (dynamic based on country)
+
+**4. Amenities**
+Check all amenities your property offers:
+- WiFi, Kitchen, Parking, Pool, AC, Heating, TV, Workspace, etc.
+
+**5. Upload Images**
+- Upload up to 10 images (JPEG/PNG)
+- First image becomes cover photo
+- Remove images by clicking X
+
+**6. 3D Virtual Tour (Optional)**
+- Paste your Matterport URL if available
+- Format: `https://my.matterport.com/show/?m=XXXXXXXXXX`
+
+**7. Submit**
+- Review all details
+- Click **"Create Listing"**
+- Your property is live!
+
+---
+
+## 5. MANAGING BOOKINGS & LISTINGS
+
+### Your Bookings (Guest View)
+
+Access via Profile Menu → **"My Bookings"**
+
+**[IMAGE PLACEHOLDER 11: Bookings Page]**
+
+View bookings by status:
+- **Upcoming** - Future reservations
+- **Past** - Completed stays
+- **Cancelled** - Cancelled bookings
+
+Cancel a booking:
+1. Find the booking
+2. Click **"Cancel Booking"**
+3. Confirm cancellation
+
+### Your Listings (Host View)
+
+Access via Profile Menu → **"Hosting"**
+
+**[IMAGE PLACEHOLDER 12: Hosting Dashboard]**
+
+**Managing Listings:**
+- View all your active properties
+- **Edit** - Update property details, images, price, location
+- **Delete** - Permanently remove a listing
+
+**Editing a Listing:**
+- Uses the same interface as creating a listing
+- Update any details including:
+  - Title, description, price
+  - Number of beds/bathrooms/guests (with steppers)
+  - Location on map
+  - Amenities
+  - Images
+  - 3D tour link
+
+---
+
+## 6. ADDITIONAL FEATURES
+
+### Notifications
+
+**[IMAGE PLACEHOLDER 13: Notification Bell & Dropdown]**
+
+- Click the **bell icon** in the navigation bar
+- Red badge shows unread count
+- View booking requests, confirmations, and messages
+- Click **"Mark all as read"** to clear notifications
+
+### Wishlist
+
+- Click the **heart icon** on any property card to save
+- Heart turns red when added
+- Access saved properties via Profile Menu → **"Wishlist"**
+- Remove by clicking the heart again
+
+### Profile Management
+
+Access via Profile Icon → **"Profile"**
+- Update personal information
+- Change contact details
+- Update profile picture
+- Manage account settings
+
+---
+
+## QUICK TIPS
+
+### For Guests
+✅ Use autocomplete for faster location search
+✅ Add properties to wishlist to compare later
+✅ View 3D tours when available
+✅ Read reviews before booking
+
+### For Hosts
+✅ Upload high-quality images
+✅ Write detailed, accurate descriptions
+✅ Use the map picker carefully for precise location
+✅ Add 3D virtual tour to increase bookings
+✅ Keep amenities list accurate
+
+---
+
+## TROUBLESHOOTING
+
+**Search showing no results?**
+- Try different location spellings
+- Adjust filters or date range
+- Increase price range
+
+**Can't upload images?**
+- Max file size: 5MB per image
+- Accepted formats: JPEG, PNG
+- Try fewer images at once
+
+**Map not showing location?**
+- Check internet connection
+- Refresh the page
+- Click map directly if search fails
+
+**Location suggestions not appearing?**
+- Type at least 3 characters
+- Wait a moment for results
+- Check internet connection
+
+---
+
+## CONTACT & SUPPORT
+
+**Website:** www.homyfy.com
+**Email:** support@homyfy.com
+
+---
+
+**End of User Manual**
+
+*Homyfy - Find Your Perfect Stay*

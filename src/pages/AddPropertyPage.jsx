@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FaUpload, FaImage, FaCube, FaBed, FaBath, FaUser } from 'react-icons/fa'
+import { FaUpload, FaImage, FaCube, FaBed, FaBath, FaUser, FaInfoCircle } from 'react-icons/fa'
 import { toast } from 'react-toastify'
 import supabase from '../supabase/supabase'
 import useCurrentUser from '../hooks/useCurrentUser'
 import axios from 'axios'
 import NumberStepper from '../components/ui/NumberStepper'
+import Tooltip from '../components/ui/Tooltip'
 import LocationPicker from '../components/forms/LocationPicker'
 import { extractMatterportId, isValidMatterportUrl } from '../utils/matterportHelper'
 import { COUNTRIES, getProvincesForCountry } from '../data/countries'
@@ -247,7 +248,12 @@ function AddPropertyPage() {
 
           {/* Location */}
           <div className="space-y-4 mb-8">
-            <h2 className="text-xl font-semibold mb-4">Location</h2>
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              Location
+              <Tooltip content="Drag the map marker to set precise location">
+                <FaInfoCircle className="text-gray-400 text-sm" />
+              </Tooltip>
+            </h2>
             
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -340,7 +346,12 @@ function AddPropertyPage() {
 
           {/* Details */}
           <div className="space-y-4 mb-8">
-            <h2 className="text-xl font-semibold mb-4">Property Details</h2>
+            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+              Property Details
+              <Tooltip content="Use steppers to increment counts">
+                <FaInfoCircle className="text-gray-400 text-sm" />
+              </Tooltip>
+            </h2>
             
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -427,6 +438,9 @@ function AddPropertyPage() {
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
               <FaCube className="text-blue-600" />
               3D Virtual Tour (Optional)
+              <Tooltip content="Paste link from Matterport only">
+                <FaInfoCircle className="text-gray-400 text-sm" />
+              </Tooltip>
             </h2>
             
             <div className="bg-blue-50 border-l-4 border-blue-500 rounded-lg p-4 mb-4">

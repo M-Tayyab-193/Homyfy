@@ -11,7 +11,7 @@ function GuestsCounter({ guests, onChange, onClose }) {
     <motion.div 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="p-5 w-95sy"
+      className="p-5 w-95"
     >
       <div className="flex items-center gap-3 mb-4">
         <div className="w-9 h-9 rounded-full bg-gradient-to-br from-gray-50 to-blue-100 flex items-center justify-center flex-shrink-0">

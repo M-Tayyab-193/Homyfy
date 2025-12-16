@@ -154,15 +154,28 @@ function UserMenu({ onClose, currentUser, profileImage }) {
         <div className="border-t border-gray-200 py-2">
           
           {currentUser && (
-            <motion.div variants={itemVariants}>
-              <button 
-                className="flex items-center gap-3 w-full text-left px-5 py-3 hover:bg-red-50 transition-colors group"
-                onClick={handleLogout}
-              >
-                <FaSignOutAlt className="text-red-500 group-hover:text-red-600" />
-                <span className="font-medium text-gray-700 group-hover:text-red-600">Log out</span>
-              </button>
-            </motion.div>
+            <>
+              <motion.div variants={itemVariants}>
+                <Link 
+                  to="/help" 
+                  className="flex items-center gap-3 w-full text-left px-5 py-3 hover:bg-gray-50 transition-colors group"
+                  onClick={onClose}
+                >
+                  <FaQuestionCircle className="text-gray-500 group-hover:text-[#0F1520]" />
+                  <span className="font-medium text-gray-700 group-hover:text-[#0F1520]">Help Center</span>
+                </Link>
+              </motion.div>
+
+              <motion.div variants={itemVariants}>
+                <button 
+                  className="flex items-center gap-3 w-full text-left px-5 py-3 hover:bg-red-50 transition-colors group"
+                  onClick={handleLogout}
+                >
+                  <FaSignOutAlt className="text-red-500 group-hover:text-red-600" />
+                  <span className="font-medium text-gray-700 group-hover:text-red-600">Log out</span>
+                </button>
+              </motion.div>
+            </>
           )}
         </div>
       </div>

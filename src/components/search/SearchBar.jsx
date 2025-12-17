@@ -316,7 +316,7 @@ function SearchBar({ onSearch }) {
         {/* Search Button */}
         <motion.button
           type="submit"
-          className="text-white px-6 py-4 mx-2 my-2 lg:my-0 rounded-full relative overflow-hidden group flex items-center justify-center gap-2"
+          className="text-white px-8 py-3 mx-2 my-2 lg:my-0 rounded-full relative overflow-hidden group flex items-center justify-center gap-2 self-center"
           style={{ background: 'linear-gradient(to right, #0F1520, #1a2332)' }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}

@@ -4,6 +4,8 @@ A full-stack accommodation rental platform built for the Pakistani market. Homyf
 
 ---
 
+<img width="1920" height="1243" alt="Screenshot 2026-02-11 at 12 13 27 PM (1)" src="https://github.com/user-attachments/assets/c85b616e-1999-4a4a-9f37-c59af72fa817" />
+
 ## Table of Contents
 
 - [Overview](#overview)
